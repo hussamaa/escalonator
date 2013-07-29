@@ -1,5 +1,5 @@
 package br.eti.hussamaismail.scheduler.domain;
 
-public class RateMonotonicScheduler extends StaticScheduler {
-
+public class RateMonotonicScheduler extends MonotonicScheduler {
+	
 }

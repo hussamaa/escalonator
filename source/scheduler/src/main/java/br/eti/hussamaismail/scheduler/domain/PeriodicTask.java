@@ -5,6 +5,15 @@ public class PeriodicTask extends Task {
 	private double computationTime;
 	private double period;
 	private double deadline;
+	private double responseTime;
+
+	public double getResponseTime() {
+		return responseTime;
+	}
+
+	public void setResponseTime(double responseTime) {
+		this.responseTime = responseTime;
+	}
 
 	public double getComputationTime() {
 		return computationTime;

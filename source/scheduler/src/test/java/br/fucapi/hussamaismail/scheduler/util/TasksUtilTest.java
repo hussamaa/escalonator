@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
+import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
 import br.eti.hussamaismail.scheduler.domain.Scheduler;
 import br.eti.hussamaismail.scheduler.domain.StaticScheduler;
 import br.eti.hussamaismail.scheduler.util.TasksUtil;
@@ -23,7 +24,7 @@ public class TasksUtilTest {
 	@Before
 	public void configure(){
 		this.tasksUtil = new TasksUtil();
-		this.scheduler = new StaticScheduler();
+		this.scheduler = new RateMonotonicScheduler();
 		StaticScheduler staticScheduler = (StaticScheduler) this.scheduler;
 		staticScheduler.setTasks(new ArrayList<PeriodicTask>());
 		
