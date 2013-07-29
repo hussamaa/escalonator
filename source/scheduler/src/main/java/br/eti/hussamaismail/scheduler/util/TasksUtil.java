@@ -43,11 +43,30 @@ public class TasksUtil {
 		StaticScheduler staticScheduler = (StaticScheduler) scheduler; 
 		Collections.sort(staticScheduler.getTasks(), new Comparator<PeriodicTask>() {
 			public int compare(PeriodicTask pt1, PeriodicTask pt2) {
-				return compareValues(pt1.getComputationTime(), pt1.getComputationTime());
+				return compareValues(pt1.getComputationTime(), pt2.getComputationTime());
 			}
 		});		
 	}
+	
+	/**
+	 * Metodo que ordena a lista de tarefas de um  
+	 * scheduler com base no seu periodo
+	 * 
+	 * @param scheduler
+	 */
+	public void sortTasksByPeriod(Scheduler scheduler){		
 		
+		if (!(scheduler instanceof StaticScheduler))
+			return;
+		
+		StaticScheduler staticScheduler = (StaticScheduler) scheduler; 
+		Collections.sort(staticScheduler.getTasks(), new Comparator<PeriodicTask>() {
+			public int compare(PeriodicTask pt1, PeriodicTask pt2) {
+				return compareValues(pt1.getPeriod(), pt2.getPeriod());
+			}
+		});		
+	}
+
 	/**
 	 * Metodo que compara dois valores e devolve
 	 * o valor 1 caso o value1 seja maior que o value2,

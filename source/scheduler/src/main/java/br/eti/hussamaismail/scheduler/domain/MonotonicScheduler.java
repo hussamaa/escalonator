@@ -1,7 +1,5 @@
 package br.eti.hussamaismail.scheduler.domain;
 
-import java.util.Iterator;
-
 import org.apache.log4j.Logger;
 
 import br.eti.hussamaismail.scheduler.util.TasksUtil;
@@ -54,14 +52,27 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 			return;
 		}
 
-		this.taskUtil.sortTasksByComputationTime(this);
+		this.taskUtil.sortTasksByPeriod(this);
 		
-		Iterator<PeriodicTask> tasksIterator = this.getTasks().iterator();		
-		PeriodicTask firstTask = tasksIterator.next();
-		firstTask.setResponseTime(firstTask.getComputationTime());
-		
-		while(tasksIterator.hasNext()){
-			
+		for(int i = (this.getTasks().size() - 1); i >= 0 ; i--){
+			PeriodicTask actualTask = this.getTasks().get(i);	
+			log.debug("Calculando tempo máximo de resposta para tarefa: " + actualTask.getName() + " - " +actualTask);
+			double actualValue = actualTask.getComputationTime();
+			while (true){
+				double accumulator = 0;
+				for (int j = 0; j < i ; j++){
+					PeriodicTask tempTask = this.getTasks().get(j);
+					accumulator = accumulator + Math.ceil(actualValue / tempTask.getPeriod()) * tempTask.getComputationTime(); 
+				}
+				double newValue = actualTask.getComputationTime() + accumulator;
+				if (newValue != actualValue){
+					actualValue = newValue;
+				}else{
+					break;
+				}
+			}
+			log.debug("O Tempo máximo de resposta da atividade '" + actualTask.getName() + "' é: " + actualValue);
+			actualTask.setResponseTime(actualValue);
 		}
 	}	
 }

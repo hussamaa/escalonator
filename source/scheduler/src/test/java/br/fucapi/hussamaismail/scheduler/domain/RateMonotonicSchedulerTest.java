@@ -91,5 +91,14 @@ public class RateMonotonicSchedulerTest {
 		setNotScalableTasks();
 		Assert.assertFalse(scheduler.isScalable());
 		
-	}	
+	}
+	
+	@Test
+	public void validateCalculateMaximumResponseTimeToTheTasks(){
+		setNotScalableTasks();
+		this.scheduler.calculateMaximumResponseTimeToTheTasks();
+		Assert.assertEquals(6.25, this.scheduler.getTasks().get(0).getResponseTime());
+		Assert.assertEquals(12.5, this.scheduler.getTasks().get(1).getResponseTime());
+		Assert.assertEquals(71.25, this.scheduler.getTasks().get(2).getResponseTime());
+	}
 }

@@ -39,4 +39,11 @@ public class PeriodicTask extends Task {
 		this.deadline = deadline;
 	}
 
+	@Override
+	public String toString() {
+		return "PeriodicTask [computationTime=" + computationTime + ", period="
+				+ period + ", deadline=" + deadline + ", responseTime="
+				+ responseTime + "]";
+	}
+
 }
