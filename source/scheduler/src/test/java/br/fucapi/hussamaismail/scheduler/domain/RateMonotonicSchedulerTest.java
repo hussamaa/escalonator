@@ -12,6 +12,7 @@ import org.junit.runners.JUnit4;
 
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
+import br.fucapi.hussamaismail.scheduler.exception.TaskNotScalableException;
 
 @RunWith(JUnit4.class)
 public class RateMonotonicSchedulerTest {
@@ -94,11 +95,12 @@ public class RateMonotonicSchedulerTest {
 	}
 	
 	@Test
-	public void validateCalculateMaximumResponseTimeToTheTasks(){
+	public void validateCalculateMaximumResponseTimeToTheTasks() throws TaskNotScalableException{
 		setNotScalableTasks();
 		this.scheduler.calculateMaximumResponseTimeToTheTasks();
 		Assert.assertEquals(6.25, this.scheduler.getTasks().get(0).getResponseTime());
 		Assert.assertEquals(12.5, this.scheduler.getTasks().get(1).getResponseTime());
 		Assert.assertEquals(71.25, this.scheduler.getTasks().get(2).getResponseTime());
 	}
+
 }
