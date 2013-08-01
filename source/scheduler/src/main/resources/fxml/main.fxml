@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?scenebuilder-preview-i18n-resource ../../../../../../../../Desenvolvimento/workspace/scheduler/src/main/resources/message_pt_BR.properties?>
+
+<BorderPane id="mainPane" prefHeight="600.0" prefWidth="800.0"  fx:controller="br.eti.hussamaismail.scheduler.controller.MainController" style="" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <top>
+    <VBox prefHeight="318.0" prefWidth="800.0" style="">
+      <children>
+        <Pane prefHeight="108.0" prefWidth="800.0" style="-fx-background-color: #2d2d2d">
+          <children>
+            <Label layoutX="25.0" layoutY="41.0" text="%title" textFill="#bfbfbf">
+              <font>
+                <Font name="System Bold" size="25.0" />
+              </font>
+            </Label>
+            <Button layoutX="710.0" layoutY="35.0" mnemonicParsing="false" prefHeight="40.1328125" prefWidth="72.0" style="-fx-background-color:  #d14836;" text="?">
+              <font>
+                <Font name="System Bold" size="20.0" />
+              </font>
+              <textFill>
+                <Color blue="0.875" green="0.875" red="0.875" fx:id="x1" />
+              </textFill>
+            </Button>
+          </children>
+        </Pane>
+        <Pane prefHeight="210.0" prefWidth="800.0" style="-fx-background-color: #F1F1F1">
+          <children>
+            <TableView fx:id="tasksTable" layoutX="20.0" layoutY="23.0" prefHeight="100.0" prefWidth="644.0">
+              <columns>
+                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="88.0" text="%color" />
+                <TableColumn fx:id="taskNameColumn" maxWidth="5000.0" minWidth="10.0" prefWidth="114.0" text="%name" />
+                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="85.0" text="%type" />
+                <TableColumn fx:id="taskComputationTimeColumn" maxWidth="5000.0" minWidth="10.0" prefWidth="206.0" text="%computationTime" />
+                <TableColumn fx:id="taskPeriodColumn" prefWidth="75.0" text="%period" />
+                <TableColumn fx:id="taskDeadlineColumn" prefWidth="75.0" text="%deadline" />
+              </columns>
+            </TableView>
+            <Button fx:id="addTasts" onMouseClicked="#openNewTaskDialog" layoutX="696.0" layoutY="45.0" mnemonicParsing="false" prefHeight="40.1328125" prefWidth="72.0" style="-fx-background-color: #4d90fe" text="+" textFill="$x1">
+              <font>
+                <Font name="System Bold" size="35.0" />
+              </font>
+            </Button>
+            <Label layoutX="20.0" layoutY="4.0" text="%tasks">
+              <font>
+                <Font name="System Bold" size="13.0" fx:id="x2" />
+              </font>
+            </Label>
+            <Label font="$x2" layoutX="20.0" layoutY="131.0" text="%technique" />
+            <RadioButton layoutX="19.0" layoutY="151.0" mnemonicParsing="false" text="%rateMonotonic" />
+            <RadioButton layoutX="163.0" layoutY="151.0" mnemonicParsing="false" text="%deadLineMonotonic" />
+            <RadioButton layoutX="329.0" layoutY="151.0" mnemonicParsing="false" text="%edf" />
+            <Button font="$x2" layoutX="654.0" layoutY="150.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="130.0" style="-fx-background-color : #88BD38" text="%simulate" textFill="#5d6c50" />
+          </children>
+        </Pane>
+      </children>
+    </VBox>
+  </top>
+</BorderPane>
