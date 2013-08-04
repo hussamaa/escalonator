@@ -1,4 +1,4 @@
-package br.fucapi.hussamaismail.scheduler.exception;
+package br.eti.hussamaismail.scheduler.exception;
 
 import br.eti.hussamaismail.scheduler.domain.Task;
 

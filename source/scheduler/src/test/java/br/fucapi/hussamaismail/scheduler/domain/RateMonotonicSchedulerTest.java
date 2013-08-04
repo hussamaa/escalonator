@@ -12,7 +12,7 @@ import org.junit.runners.JUnit4;
 
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
-import br.fucapi.hussamaismail.scheduler.exception.TaskNotScalableException;
+import br.eti.hussamaismail.scheduler.exception.TaskNotScalableException;
 
 @RunWith(JUnit4.class)
 public class RateMonotonicSchedulerTest {

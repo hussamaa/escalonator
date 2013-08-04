@@ -6,8 +6,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import br.eti.hussamaismail.scheduler.exception.TaskNotScalableException;
 import br.eti.hussamaismail.scheduler.util.TasksUtil;
-import br.fucapi.hussamaismail.scheduler.exception.TaskNotScalableException;
 
 public class RateMonotonicScheduler extends MonotonicScheduler {
 	

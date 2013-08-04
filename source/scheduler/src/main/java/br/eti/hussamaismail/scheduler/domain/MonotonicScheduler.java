@@ -2,7 +2,7 @@ package br.eti.hussamaismail.scheduler.domain;
 
 import org.apache.log4j.Logger;
 
-import br.fucapi.hussamaismail.scheduler.exception.TaskNotScalableException;
+import br.eti.hussamaismail.scheduler.exception.TaskNotScalableException;
 
 public abstract class MonotonicScheduler extends StaticScheduler {
 
