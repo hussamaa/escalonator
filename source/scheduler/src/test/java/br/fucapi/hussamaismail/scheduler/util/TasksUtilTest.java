@@ -23,7 +23,7 @@ public class TasksUtilTest {
 	
 	@Before
 	public void configure(){
-		this.tasksUtil = new TasksUtil();
+		this.tasksUtil = TasksUtil.getInstance();
 		this.scheduler = new RateMonotonicScheduler();
 		StaticScheduler staticScheduler = (StaticScheduler) this.scheduler;
 		staticScheduler.setTasks(new ArrayList<PeriodicTask>());

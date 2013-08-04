@@ -1,15 +1,35 @@
 package br.eti.hussamaismail.scheduler.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.Scheduler;
 import br.eti.hussamaismail.scheduler.domain.StaticScheduler;
-
+import br.eti.hussamaismail.scheduler.domain.Task;
 
 public class TasksUtil {
 
+	private static TasksUtil instance;
+	
+	private TasksUtil() {
+	}
+	
+	/**
+	 * Metodo getInstance referente ao padrao de projeto 
+	 * 'Singleton' aplicado a classe TaskUtil
+	 * 
+	 * @return
+	 */
+	public static TasksUtil getInstance(){
+		if (instance == null){
+			instance = new TasksUtil();
+		}
+		return instance;
+	}
+	
 	/**
 	 * Metodo que ordena a lista de tarefas de um  
 	 * scheduler com base no seu deadline
@@ -86,4 +106,24 @@ public class TasksUtil {
 			return 0;
 		}
 	}
+	
+	/**
+	 * Metodo que devolve uma lista de PeriodicTask
+	 * a partir de uma lista de 'Tasks'.
+	 * 
+	 * @param tasks
+	 * @return
+	 */
+	public List<PeriodicTask> getOnlyPeriodicTasksFromTaskList(List<Task> tasks){
+	
+		List<PeriodicTask> periodicTasks = new ArrayList<PeriodicTask>();
+		
+		for (Task task : tasks){
+			if (task instanceof PeriodicTask){
+				periodicTasks.add((PeriodicTask) task);
+			}
+		}
+		
+		return periodicTasks;
+	}	
 }

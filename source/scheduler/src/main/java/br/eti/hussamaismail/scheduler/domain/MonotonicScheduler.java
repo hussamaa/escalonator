@@ -2,13 +2,11 @@ package br.eti.hussamaismail.scheduler.domain;
 
 import org.apache.log4j.Logger;
 
-import br.eti.hussamaismail.scheduler.util.TasksUtil;
 import br.fucapi.hussamaismail.scheduler.exception.TaskNotScalableException;
 
 public abstract class MonotonicScheduler extends StaticScheduler {
 
 	private Logger log = Logger.getLogger(MonotonicScheduler.class);
-	private TasksUtil taskUtil = new TasksUtil();
 	private static final int MAX_CONVERGENCE_ATTEMPTS = 10;
 	
 	/**
@@ -54,8 +52,6 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 			log.debug("Não existem tarefas adicionadas ao escalonador");
 			return;
 		}
-
-		this.taskUtil.sortTasksByPeriod(this);
 		
 		for(int i = (this.getTasks().size() - 1); i >= 0 ; i--){
 			PeriodicTask actualTask = this.getTasks().get(i);	
