@@ -34,7 +34,7 @@ public class MainApp extends Application {
         Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
         
         Scene scene = new Scene(rootNode, 800, 600);
-        stage.setTitle("Escalonator - Hussama Ismail");
+        stage.setTitle("Escalonator");
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();

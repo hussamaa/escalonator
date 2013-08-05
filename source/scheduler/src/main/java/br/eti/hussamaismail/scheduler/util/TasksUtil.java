@@ -126,4 +126,24 @@ public class TasksUtil {
 		
 		return periodicTasks;
 	}	
+	
+	/**
+	 * Metodo que devolve o deadline mais alto
+	 * dentre as tarefas periodicas existentes.
+	 * 
+	 * @param tasks
+	 * @return
+	 */
+	public double getHigherDeadlineFromPeriodicTasks(List<PeriodicTask> tasks){
+		
+		double higherDeadline = 0;
+		
+		for (PeriodicTask pTask : tasks) {
+			if (pTask.getDeadline() > higherDeadline){
+				higherDeadline = pTask.getDeadline();
+			}
+		}
+		
+		return higherDeadline;		
+	}
 }

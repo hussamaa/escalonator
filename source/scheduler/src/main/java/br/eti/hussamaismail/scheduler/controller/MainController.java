@@ -125,9 +125,14 @@ public class MainController implements Initializable {
 			}
 		}
 		
-		simulatedChart.setMaxWidth(640);
-		simulatedChart.setPrefWidth(640);
-		simulatedChart.setMinWidth(640);
+		if (simulatedChart == null){
+			log.error("Não foi possível escalonar com a técnica desejada");
+			return;
+		}
+		
+		simulatedChart.setMaxWidth(790);
+		simulatedChart.setPrefWidth(790);
+		simulatedChart.setMinWidth(790);
 		
 		simulatedChart.setPrefHeight(270);
 		simulatedChart.setMaxHeight(270);

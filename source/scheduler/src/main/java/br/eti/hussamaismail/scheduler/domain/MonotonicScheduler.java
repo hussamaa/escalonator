@@ -75,7 +75,7 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 					throw new TaskNotScalableException(actualTask);
 				}
 			}
-			log.debug("O Tempo máximo de resposta da atividade '" + actualTask.getName() + "' é: " + actualValue);
+			log.debug("O Tempo máximo de resposta da tarefa '" + actualTask.getName() + "' é: " + actualValue);
 			actualTask.setResponseTime(actualValue);
 		}
 	}	

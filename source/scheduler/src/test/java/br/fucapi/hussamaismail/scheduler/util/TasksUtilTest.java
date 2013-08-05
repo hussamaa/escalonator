@@ -79,4 +79,15 @@ public class TasksUtilTest {
 		Assert.assertEquals(6.25d, staticScheduler.getTasks().get(staticScheduler.getTasks().size() - 1).getComputationTime());
 	}
 	
+	/**
+	 * Teste unitario que verifica o funcionamento da funcao
+	 * que obtem o maior deadline dentre as tarefas.
+	 * 
+	 */
+	@Test
+	public void testHigherDeadlineFromPeriodicTasks(){
+		StaticScheduler staticScheduler = (StaticScheduler) this.scheduler;
+		Assert.assertEquals(50d, this.tasksUtil.getHigherDeadlineFromPeriodicTasks(staticScheduler.getTasks()));
+		
+	}	
 }
