@@ -32,21 +32,21 @@ public class TasksUtilTest {
 		pt1.setName("pt1");
 		pt1.setComputationTime(6.25);
 		pt1.setDeadline(50);
-		pt1.setPeriod(100);
+		pt1.setPeriod(110);
 		staticScheduler.getTasks().add(pt1);
 		
 		PeriodicTask pt2 = new PeriodicTask();
 		pt2.setName("pt2");
 		pt2.setComputationTime(3.98);
 		pt2.setDeadline(20);
-		pt2.setPeriod(100);
+		pt2.setPeriod(130);
 		staticScheduler.getTasks().add(pt2);
 		
 		PeriodicTask pt3 = new PeriodicTask();
 		pt3.setName("pt3");
 		pt3.setComputationTime(5.01);
 		pt3.setDeadline(25);
-		pt3.setPeriod(100);
+		pt3.setPeriod(120);
 		staticScheduler.getTasks().add(pt3);		
 
 	}
@@ -89,5 +89,17 @@ public class TasksUtilTest {
 		StaticScheduler staticScheduler = (StaticScheduler) this.scheduler;
 		Assert.assertEquals(50d, this.tasksUtil.getHigherDeadlineFromPeriodicTasks(staticScheduler.getTasks()));
 		
-	}	
+	}
+	
+	/**
+	 * Teste unitario que verifica o funcionamento da funcao
+	 * que obtem o maior deadline dentre as tarefas.
+	 * 
+	 */
+	@Test
+	public void testHigherPeriodFromPeriodicTasks(){
+		StaticScheduler staticScheduler = (StaticScheduler) this.scheduler;
+		Assert.assertEquals(130d, this.tasksUtil.getHigherPeriodFromPeriodicTasks(staticScheduler.getTasks()));
+		
+	}
 }

@@ -1,7 +1,5 @@
 package br.eti.hussamaismail.scheduler.domain;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,9 +50,9 @@ public class RateMonotonicScheduler extends MonotonicScheduler {
 			}
 		}
 		
-		double higherDeadline = taskUtil.getHigherDeadlineFromPeriodicTasks(getTasks());
+		double higherPeriod = taskUtil.getHigherPeriodFromPeriodicTasks(getTasks());
 		/* Geração padrão dos gráficos com representação do processador livre */
-		NumberAxis xAxis = new NumberAxis(1,higherDeadline,1);
+		NumberAxis xAxis = new NumberAxis(1,higherPeriod,1);
 		NumberAxis yAxis = new NumberAxis(0,2,1);
 		AreaChart<Number,Number> ac = new AreaChart<Number,Number>(xAxis, yAxis);
 		
@@ -62,38 +60,41 @@ public class RateMonotonicScheduler extends MonotonicScheduler {
 		Series<Number, Number> lazy = new XYChart.Series<Number, Number>();		
 		lazy.setName("Processador Livre");
 		lazy.getData().add(new Data<Number, Number>(1,1));
-		lazy.getData().add(new Data<Number, Number>(higherDeadline,1));
+		lazy.getData().add(new Data<Number, Number>(higherPeriod,1));
 		chartTasks.add(lazy);
+
+		Map<Double, List<PeriodicTask>> mapWithPeriodsAndTasks = getMapWithPeriodsAndTasks();
 		
-		Map<Double, List<PeriodicTask>> mapWithDeadlinesAndTasks = getMapWithDeadlinesAndTasks();
-		double index = 0;
-		double partSize = 0.05;
-		double aux = 0;
 		
-		List<PeriodicTask> list = mapWithDeadlinesAndTasks.get(index);
-		double currentIndex = 0;
-		for (PeriodicTask periodicTask : list) {
-			Series<Number, Number> tempTask = new XYChart.Series<Number, Number>();		
-			tempTask.setName(periodicTask.getName());
-			boolean started = false;
-			double processRemaining = periodicTask.getProcessRemaining();
-			
-			while (aux <= (index + processRemaining)){
-				currentIndex = aux;
-				
-				if((started == true) && mapWithDeadlinesAndTasks.containsKey(currentIndex)){
-					break;
-				}
-				
-				tempTask.getData().add(new Data<Number, Number>(currentIndex,1));
-				tempTask.getData().add(new Data<Number, Number>(currentIndex,0));
-				periodicTask.process(partSize);
-				started = true;
-				aux = new BigDecimal(aux + partSize).setScale(2, RoundingMode.HALF_UP).doubleValue();
-			}
-			chartTasks.add(tempTask);
-			index = currentIndex;
-		}				
+//		Map<Double, List<PeriodicTask>> mapWithDeadlinesAndTasks = getMapWithDeadlinesAndTasks();
+//		double index = 0;
+//		double partSize = 0.05;
+//		double aux = 0;
+//		
+//		List<PeriodicTask> list = mapWithDeadlinesAndTasks.get(index);
+//		double currentIndex = 0;
+//		for (PeriodicTask periodicTask : list) {
+//			Series<Number, Number> tempTask = new XYChart.Series<Number, Number>();		
+//			tempTask.setName(periodicTask.getName());
+//			boolean started = false;
+//			double processRemaining = periodicTask.getProcessRemaining();
+//			
+//			while (aux <= (index + processRemaining)){
+//				currentIndex = aux;
+//				
+//				if((started == true) && mapWithDeadlinesAndTasks.containsKey(currentIndex)){
+//					break;
+//				}
+//				
+//				tempTask.getData().add(new Data<Number, Number>(currentIndex,1));
+//				tempTask.getData().add(new Data<Number, Number>(currentIndex,0));
+//				periodicTask.process(partSize);
+//				started = true;
+//				aux = new BigDecimal(aux + partSize).setScale(2, RoundingMode.HALF_UP).doubleValue();
+//			}
+//			chartTasks.add(tempTask);
+//			index = currentIndex;
+//		}				
 
 		ac.getData().addAll(chartTasks);
 		return ac;
@@ -139,6 +140,48 @@ public class RateMonotonicScheduler extends MonotonicScheduler {
 		}
 		
 		return mapDeadLines;
+	}
+	
+	/**
+	 * Metodo que gera um mapeamento de todas as periodic tasks
+	 * e seus periodos do grafico.
+	 * 
+	 * Ex:
+	 * Task1 - Computation = 6.25, Periodo = 25.
+     * Task2 - Computation = 6.25, Periodo = 50.
+	 * 
+	 * Map<Double,List<PeriodicTask>> - Mapa gerado:
+	 * 
+	 *  0 = Task1, Task2
+	 *	25 = Task1,
+	 *  50 = Task1, Task2,
+	 *  75 = Task1,
+	 *  100 = Task1, Task2,
+	 * 
+	 * @return
+	 */
+	private Map<Double, List<PeriodicTask>> getMapWithPeriodsAndTasks(){
+		
+		Map<Double, List<PeriodicTask>> mapPeriods = new HashMap<Double,List<PeriodicTask>>();
+		mapPeriods.put(0d, this.getTasks());
+		List<PeriodicTask> tasks = getTasks();
+		double higherPeriodFromPeriodicTasks = this.taskUtil.getHigherPeriodFromPeriodicTasks(tasks);
+		
+		for (PeriodicTask periodicTask : tasks) {
+			double periodAccumulator = periodicTask.getPeriod();
+			while (periodAccumulator <= higherPeriodFromPeriodicTasks){
+				if (mapPeriods.containsKey(periodAccumulator) == false){
+					List<PeriodicTask> periodTaskList = new ArrayList<PeriodicTask>();
+					periodTaskList.add(periodicTask);
+					mapPeriods.put(periodAccumulator, periodTaskList);
+				}else{
+					mapPeriods.get(periodAccumulator).add(periodicTask);
+				}
+				periodAccumulator = periodAccumulator + periodicTask.getPeriod();
+			}	
+		}
+		
+		return mapPeriods;
 	}
 	
 }
