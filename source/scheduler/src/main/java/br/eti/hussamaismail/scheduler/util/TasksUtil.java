@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Series;
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.Scheduler;
 import br.eti.hussamaismail.scheduler.domain.StaticScheduler;
@@ -165,5 +167,33 @@ public class TasksUtil {
 		}
 		
 		return higherPeriod;		
+	}
+	
+	/**
+	 * Metodo que retorna a representacao de uma
+	 * determinada tarefa no grafico.
+	 * 
+	 * @param chartTasks
+	 * @param pTask
+	 * @return
+	 */
+	public Series<Number, Number> getChartTask(List<Series<Number, Number>>  chartTasks, Task task){
+		
+		Series<Number, Number> chartTask = null;
+		
+		for (Series<Number, Number> series : chartTasks) {
+			if (series.getName().equals(task.getName())){
+				chartTask = series;
+				break;
+			}
+		}
+		
+		if (chartTask == null){
+			chartTask = new XYChart.Series<Number, Number>();
+			chartTask.setName(task.getName());
+			chartTasks.add(chartTask);
+		}
+		
+		return chartTask;
 	}
 }

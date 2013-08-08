@@ -45,7 +45,7 @@ public class MainController implements Initializable {
 	@FXML private TableColumn<Task, String> taskComputationTimeColumn;
 	@FXML private TableColumn<Task, String> taskPeriodColumn;
 	@FXML private TableColumn<Task, String> taskDeadlineColumn;
-	@FXML private TableColumn<Task, String> taskColorColumn;
+//	@FXML private TableColumn<Task, String> taskColorColumn;
 	@FXML private TableColumn<Task, String> taskTypeColumn;
 	
 	@FXML private RadioButton radioRateMonotonic;
@@ -65,24 +65,24 @@ public class MainController implements Initializable {
 		taskComputationTimeColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("computationTime"));
 		taskPeriodColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("period"));
 		taskDeadlineColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("deadline"));		
-		taskColorColumn.setCellFactory(new Callback<TableColumn<Task,String>, TableCell<Task,String>>() {			
-			@SuppressWarnings({ "rawtypes", "unchecked" })
-			public TableCell<Task, String> call(TableColumn<Task, String> arg0) {
-				TableCell cell = new TableCell<Task, Object>(){
-					@Override
-					protected void updateItem(Object arg0, boolean arg1) {
-						super.updateItem(arg0, arg1);
-						
-			            TableRow currentRow = getTableRow();
-			            Task task = (Task) currentRow.getItem();
-			            if(task != null){
-				            setStyle("-fx-background-color: " + getHexColor(task.getColor()));	
-			            }			           
-					}
-				};	
-				return cell;
-			}
-		});
+//		taskColorColumn.setCellFactory(new Callback<TableColumn<Task,String>, TableCell<Task,String>>() {			
+//			@SuppressWarnings({ "rawtypes", "unchecked" })
+//			public TableCell<Task, String> call(TableColumn<Task, String> arg0) {
+//				TableCell cell = new TableCell<Task, Object>(){
+//					@Override
+//					protected void updateItem(Object arg0, boolean arg1) {
+//						super.updateItem(arg0, arg1);
+//						
+//			            TableRow currentRow = getTableRow();
+//			            Task task = (Task) currentRow.getItem();
+//			            if(task != null){
+//				            setStyle("-fx-background-color: " + getHexColor(task.getColor()));	
+//			            }			           
+//					}
+//				};	
+//				return cell;
+//			}
+//		});
 		taskTypeColumn.setCellFactory(new Callback<TableColumn<Task,String>, TableCell<Task,String>>() {			
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			public TableCell<Task, String> call(TableColumn<Task, String> arg0) {
@@ -142,20 +142,20 @@ public class MainController implements Initializable {
 		chartPanel.getChildren().add(simulatedChart);
 	}
 
-	private String getHexColor(Color color){
-		
-		if (color.equals(Color.RED)){
-			return "#b22924";
-		}else if (color.equals(Color.BLUE)){
-			return "#81a3d0";
-		}else if (color.equals(Color.GREEN)){
-			return "#8cb990";		
-		}else if (color.equals(Color.YELLOW)){
-			return "#e1ee6d";
-		}else{
-			return "#FFFFF";
-		}
-	}
+//	private String getHexColor(Color color){
+//		
+//		if (color.equals(Color.RED)){
+//			return "#b22924";
+//		}else if (color.equals(Color.BLUE)){
+//			return "#81a3d0";
+//		}else if (color.equals(Color.GREEN)){
+//			return "#8cb990";		
+//		}else if (color.equals(Color.YELLOW)){
+//			return "#e1ee6d";
+//		}else{
+//			return "#FFFFF";
+//		}
+//	}
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -177,7 +177,7 @@ public class MainController implements Initializable {
 		PeriodicTask t3 = new PeriodicTask();
 		t3.setColor(Color.YELLOW);
 		t3.setName("t3");
-		t3.setComputationTime(40);
+		t3.setComputationTime(20);
 		t3.setPeriod(100);
 		t3.setDeadline(100);
 		
