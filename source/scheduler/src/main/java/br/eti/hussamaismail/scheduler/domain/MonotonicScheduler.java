@@ -9,7 +9,6 @@ import java.util.Map;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 
@@ -139,17 +138,12 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 		
 		/* Geração padrão dos gráficos com representação do processador livre */
 		NumberAxis xAxis = new NumberAxis(1,higherValue,1);
-		NumberAxis yAxis = new NumberAxis(0,1,1);
+		NumberAxis yAxis = new NumberAxis(0,2,1);
 		AreaChart<Number,Number> ac = new AreaChart<Number,Number>(xAxis, yAxis);
 		
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
-		Series<Number, Number> lazy = new XYChart.Series<Number, Number>();		
-		lazy.setName("Processador Livre");
-		lazy.getData().add(new Data<Number, Number>(1,1));
-		lazy.getData().add(new Data<Number, Number>(higherValue,1));
-		chartTasks.add(lazy);
 
-		double partSize = 0.25;
+		double partSize = getTasksUtil().calculateMinPartSizeFromTasks(this);		
 		double position = 0;	
 		
 		if (isPreemptive() == false) { 
@@ -160,29 +154,29 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 					List<PeriodicTask> pendentTasks = null;
 					for (PeriodicTask pTask : actualExecutionTasks) {
 						Series<Number, Number> tempTask = this.tasksUtil.getChartTask(chartTasks, pTask);		
-						tempTask.getData().add(new Data<Number, Number>(position,0));					
+						tempTask.getData().add(new Data<Number, Number>(position,0));
 						for (double j=0; j < pTask.getComputationTime(); j = j + partSize){
 							if (containsPosition != position && mapTaskEvent.containsKey(position)){
 								pendentTasks = mapTaskEvent.get(position);
 							}
 							tempTask.getData().add(new Data<Number, Number>(position,1));
-							position = new BigDecimal(position + partSize).setScale(2,RoundingMode.UP).doubleValue();
+							position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
 						}
 						tempTask.getData().add(new Data<Number, Number>(position,0));					
 					}
 					if (pendentTasks != null){
 						for (PeriodicTask pTask : pendentTasks) {
 							Series<Number, Number> tempTask = this.tasksUtil.getChartTask(chartTasks, pTask);
-							tempTask.getData().add(new Data<Number, Number>(position,0));						
+							tempTask.getData().add(new Data<Number, Number>(position,0));
 							for (double j=0; j < pTask.getComputationTime(); j = j + partSize){
 								tempTask.getData().add(new Data<Number, Number>(position,1));
-								position = position + partSize;
+								position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
 							}
 							tempTask.getData().add(new Data<Number, Number>(position,0));						
 						}
 					}
 				}
-				position = position + partSize;
+				position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
 			}			
 		}
 		

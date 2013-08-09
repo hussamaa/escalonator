@@ -196,4 +196,29 @@ public class TasksUtil {
 		
 		return chartTask;
 	}
+	
+	/**
+	 * Metodo que calcula o tamanho da menor parte
+	 * para geracao do grafico;
+	 * 
+	 * @param scheduler
+	 * @return
+	 */
+	public double calculateMinPartSizeFromTasks(Scheduler scheduler){
+		
+		double tempPartSize = 0;
+		double partSize = 1;
+		
+		if (scheduler instanceof StaticScheduler){
+			StaticScheduler staticScheduler = (StaticScheduler) scheduler;
+			for (PeriodicTask pTask : staticScheduler.getTasks()){
+				tempPartSize = pTask.getComputationTime() - ((int) pTask.getComputationTime());
+				if ((tempPartSize > 0) && (tempPartSize < partSize)){
+					partSize = tempPartSize;
+				}				
+			}
+		}
+		
+		return partSize;
+	}
 }

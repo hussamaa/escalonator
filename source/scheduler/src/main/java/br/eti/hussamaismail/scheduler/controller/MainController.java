@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.Chart;
@@ -16,6 +17,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -25,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.eti.hussamaismail.scheduler.MainApp;
+import br.eti.hussamaismail.scheduler.domain.DeadlineMonotonicScheduler;
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
 import br.eti.hussamaismail.scheduler.domain.Task;
@@ -45,7 +48,6 @@ public class MainController implements Initializable {
 	@FXML private TableColumn<Task, String> taskComputationTimeColumn;
 	@FXML private TableColumn<Task, String> taskPeriodColumn;
 	@FXML private TableColumn<Task, String> taskDeadlineColumn;
-//	@FXML private TableColumn<Task, String> taskColorColumn;
 	@FXML private TableColumn<Task, String> taskTypeColumn;
 	
 	@FXML private RadioButton radioRateMonotonic;
@@ -62,27 +64,19 @@ public class MainController implements Initializable {
 		
 		ObservableList<Task> list = FXCollections.observableList(tasks);
 		taskNameColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("name"));	
+		taskNameColumn.setOnEditCommit(		
+			new EventHandler<TableColumn.CellEditEvent<Task,String>>() {				
+				@Override
+				public void handle(CellEditEvent<Task, String> t) {
+					System.out.println("QUER EDITAR?!");
+					t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());						
+				}
+			}				
+		);
+				
 		taskComputationTimeColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("computationTime"));
 		taskPeriodColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("period"));
 		taskDeadlineColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("deadline"));		
-//		taskColorColumn.setCellFactory(new Callback<TableColumn<Task,String>, TableCell<Task,String>>() {			
-//			@SuppressWarnings({ "rawtypes", "unchecked" })
-//			public TableCell<Task, String> call(TableColumn<Task, String> arg0) {
-//				TableCell cell = new TableCell<Task, Object>(){
-//					@Override
-//					protected void updateItem(Object arg0, boolean arg1) {
-//						super.updateItem(arg0, arg1);
-//						
-//			            TableRow currentRow = getTableRow();
-//			            Task task = (Task) currentRow.getItem();
-//			            if(task != null){
-//				            setStyle("-fx-background-color: " + getHexColor(task.getColor()));	
-//			            }			           
-//					}
-//				};	
-//				return cell;
-//			}
-//		});
 		taskTypeColumn.setCellFactory(new Callback<TableColumn<Task,String>, TableCell<Task,String>>() {			
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			public TableCell<Task, String> call(TableColumn<Task, String> arg0) {
@@ -122,6 +116,10 @@ public class MainController implements Initializable {
 				RateMonotonicScheduler scheduler = new RateMonotonicScheduler();
 				scheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
 				simulatedChart = scheduler.simulate();
+			}else if (selectedRadio.equals(radioDeadlineMonotonic)){
+				DeadlineMonotonicScheduler scheduler = new DeadlineMonotonicScheduler();
+				scheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+				simulatedChart = scheduler.simulate();
 			}
 		}
 		
@@ -141,21 +139,6 @@ public class MainController implements Initializable {
 		chartPanel.getChildren().clear();
 		chartPanel.getChildren().add(simulatedChart);
 	}
-
-//	private String getHexColor(Color color){
-//		
-//		if (color.equals(Color.RED)){
-//			return "#b22924";
-//		}else if (color.equals(Color.BLUE)){
-//			return "#81a3d0";
-//		}else if (color.equals(Color.GREEN)){
-//			return "#8cb990";		
-//		}else if (color.equals(Color.YELLOW)){
-//			return "#e1ee6d";
-//		}else{
-//			return "#FFFFF";
-//		}
-//	}
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {

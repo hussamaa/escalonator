@@ -6,24 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.scene.chart.Chart;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import br.eti.hussamaismail.scheduler.exception.TaskNotScalableException;
 
 public class RateMonotonicScheduler extends MonotonicScheduler {
 	
-	private Logger log = LoggerFactory.getLogger(RateMonotonicScheduler.class);
-	
-	public RateMonotonicScheduler() {
-		super();
-	}
-
 	@Override
 	public void calculateMaximumResponseTimeToTheTasks()
-			throws TaskNotScalableException {
-	
+			throws TaskNotScalableException {	
 		this.getTasksUtil().sortTasksByPeriod(this);
 		super.calculateMaximumResponseTimeToTheTasks();
 	}
