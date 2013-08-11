@@ -5,8 +5,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import javafx.geometry.Side;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.NumberAxis;
@@ -137,17 +137,27 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 	
 	public AreaChart<Number,Number> generateMonotonicChart(Map<Double, List<PeriodicTask>> mapTaskEvent, double higherValue){
 		
-		/* Geração padrão dos gráficos com representação do processador livre */
 		NumberAxis xAxis = new NumberAxis(1,higherValue,1);
 		NumberAxis yAxis = new NumberAxis(0,2,1);
 		AreaChart<Number,Number> ac = new AreaChart<Number,Number>(xAxis, yAxis);
-		
-		ac.setLegendSide(Side.BOTTOM);
-		
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
-
+		
+		Set<Double> keys = mapTaskEvent.keySet();
+		
+		for (Double double1 : keys) {
+			double temp = 0.2;
+			List<PeriodicTask> tasks = mapTaskEvent.get(double1);
+			for (PeriodicTask periodicTask : tasks) {
+				Series<Number, Number> chartTask = this.tasksUtil.getChartTask(chartTasks, periodicTask);
+				chartTask.getData().add(new Data<Number, Number>(double1, 0));
+				chartTask.getData().add(new Data<Number, Number>(double1, 1 + temp));
+				chartTask.getData().add(new Data<Number, Number>(double1, 0));
+				temp = temp + 0.2;
+			}
+		}
+		
 		double partSize = getTasksUtil().calculateMinPartSizeFromTasks(this);		
-		double position = 0;	
+		double position = 0;
 		
 		if (isPreemptive() == false) { 
 			while (position <= higherValue){
