@@ -60,7 +60,7 @@ public class PeriodicTask extends Task {
 		return "PeriodicTask [computationTime=" + computationTime + ", period="
 				+ period + ", deadline=" + deadline + ", responseTime="
 				+ responseTime + ", currentProcessed=" + currentProcessed
-				+ ", getName()=" + getName() + ", getColor()=" + getColor() + "]";
+				+ ", getName()=" + getName() + "]";
 	}
 
 }

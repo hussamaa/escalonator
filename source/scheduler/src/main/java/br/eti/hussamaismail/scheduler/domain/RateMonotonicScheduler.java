@@ -19,9 +19,8 @@ public class RateMonotonicScheduler extends MonotonicScheduler {
 	
 	@Override
 	public Chart simulate() {
-		
+		this.getTasksUtil().sortTasksByPeriod(this);
 		super.simulate();
-		
 		double higherPeriod = getTasksUtil().getHigherPeriodFromPeriodicTasks(getTasks());
 		Map<Double, List<PeriodicTask>> mapWithPeriodsAndTasks = getMapWithPeriodsAndTasks();			
 		

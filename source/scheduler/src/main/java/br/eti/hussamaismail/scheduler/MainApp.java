@@ -32,10 +32,13 @@ public class MainApp extends Application {
   
         log.info("Carregando arquivo fxml principal");      
         Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
+        rootNode.setStyle("-fx-padding: 0; -fx-background-color: radial-gradient(center 70% 5%, radius 60%, #767a7b,#2b2f32); -fx-background-image: url(\"/styles/images/noise.png\") , url(\"title.png\"); -fx-background-repeat: repeat, no-repeat; -fx-background-position: left top, left 19px top 15px ;");
         
-        Scene scene = new Scene(rootNode, 800, 600);
+        Scene scene = new Scene(rootNode, 1024, 768);
+        scene.getStylesheets().add("/styles/styles.css");
         stage.setTitle("Escalonator");
         stage.setScene(scene);
+//        stage.setFullScreen(true);
         stage.setResizable(false);
         stage.show();
     }

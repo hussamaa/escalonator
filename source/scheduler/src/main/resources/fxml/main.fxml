@@ -1,66 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
 <?import java.lang.*?>
 <?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.collections.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
-<?import javafx.scene.text.*?>
-<?scenebuilder-preview-i18n-resource ../message_pt_BR.properties?>
+<?import javafx.scene.image.*?>
 
-<BorderPane id="mainPane" prefHeight="600.0" prefWidth="800.0" style="" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="br.eti.hussamaismail.scheduler.controller.MainController">
-  <bottom>
-    <Pane fx:id="chartPanel" prefHeight="272.0" prefWidth="800.0000999999975" style="-fx-background-color : #F0F0F0" />
-  </bottom>
-  <top>
-    <VBox prefHeight="318.0" prefWidth="800.0" style="">
-      <children>
-        <Pane prefHeight="108.0" prefWidth="800.0" style="-fx-background-color: #2d2d2d">
-          <children>
-            <Label layoutX="25.0" layoutY="41.0" text="%title" textFill="#bfbfbf">
-              <font>
-                <Font name="System Bold" size="25.0" />
-              </font>
-            </Label>
-            <Button layoutX="710.0" layoutY="35.0" mnemonicParsing="false" prefHeight="40.1328125" prefWidth="72.0" style="-fx-background-color:  #d14836;" text="?">
-              <font>
-                <Font name="System Bold" size="20.0" />
-              </font>
-              <textFill>
-                <Color blue="0.875" green="0.875" red="0.875" fx:id="x1" />
-              </textFill>
-            </Button>
-          </children>
-        </Pane>
-        <Pane prefHeight="210.0" prefWidth="800.0" style="-fx-background-color: #F1F1F1">
-          <children>
-            <TableView fx:id="tasksTable" editable="true" layoutX="19.0" layoutY="23.0" prefHeight="120.0" prefWidth="644.0">
-              <columns>
-                <TableColumn editable="true" maxWidth="5000.0" minWidth="10.0" prefWidth="114.0" text="%name" fx:id="taskNameColumn" />
-                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="85.0" text="%type" fx:id="taskTypeColumn" />
-                <TableColumn editable="true" maxWidth="5000.0" minWidth="10.0" prefWidth="206.0" text="%computationTime" fx:id="taskComputationTimeColumn" />
-                <TableColumn editable="true" prefWidth="75.0" text="%period" fx:id="taskPeriodColumn" />
-                <TableColumn editable="true" prefWidth="75.0" text="%deadline" fx:id="taskDeadlineColumn" />
-              </columns>
-            </TableView>
-            <Button fx:id="addTasts" layoutX="697.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#openNewTaskDialog" prefHeight="40.1328125" prefWidth="72.0" style="-fx-background-color: #4d90fe" text="+" textFill="$x1">
-              <font>
-                <Font name="System Bold" size="35.0" />
-              </font>
-            </Button>
-            <Label layoutX="15.0" layoutY="4.0" text="%tasks">
-              <font>
-                <Font name="System Bold" size="13.0" fx:id="x2" />
-              </font>
-            </Label>
-            <Label font="$x2" layoutX="20.0" layoutY="157.0" text="%technique" />
-            <RadioButton fx:id="radioRateMonotonic" layoutX="19.0" layoutY="177.0" mnemonicParsing="false" text="%rateMonotonic" />
-            <RadioButton fx:id="radioDeadlineMonotonic" layoutX="163.0" layoutY="176.0" mnemonicParsing="false" text="%deadLineMonotonic" />
-            <RadioButton fx:id="radioEDF" layoutX="329.0" layoutY="176.0" mnemonicParsing="false" text="%edf" />
-            <Button font="$x2" layoutX="657.0" layoutY="150.0" mnemonicParsing="false" onMouseClicked="#simulate" prefHeight="48.0" prefWidth="130.0" style="-fx-background-color : #88BD38" text="%simulate" textFill="#5d6c50" />
-          </children>
-        </Pane>
-      </children>
-    </VBox>
-  </top>
-</BorderPane>
+<TabPane id="MainTabs" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml">
+    <tabs>
+        <fx:include source="/fxml/tabs/generator.fxml"/>
+    </tabs>
+</TabPane>

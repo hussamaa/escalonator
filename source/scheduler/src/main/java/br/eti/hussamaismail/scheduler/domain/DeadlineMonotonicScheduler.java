@@ -14,15 +14,14 @@ public class DeadlineMonotonicScheduler extends MonotonicScheduler {
 	@Override
 	public void calculateMaximumResponseTimeToTheTasks()
 			throws TaskNotScalableException {	
-		this.getTasksUtil().sortTasksByPeriod(this);
+		this.getTasksUtil().sortTasksByDeadline(this);
 		super.calculateMaximumResponseTimeToTheTasks();
 	}
 	
 	@Override
 	public Chart simulate() {
-		
+		this.getTasksUtil().sortTasksByDeadline(this);
 		super.simulate();
-		
 		double higherDeadline = getTasksUtil().getHigherDeadlineFromPeriodicTasks(getTasks());
 		Map<Double, List<PeriodicTask>> mapWithPeriodsAndTasks = getMapWithDeadlinesAndTasks();			
 		

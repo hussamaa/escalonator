@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javafx.geometry.Side;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.NumberAxis;
@@ -141,6 +142,8 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 		NumberAxis yAxis = new NumberAxis(0,2,1);
 		AreaChart<Number,Number> ac = new AreaChart<Number,Number>(xAxis, yAxis);
 		
+		ac.setLegendSide(Side.BOTTOM);
+		
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
 
 		double partSize = getTasksUtil().calculateMinPartSizeFromTasks(this);		
@@ -162,7 +165,7 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 							tempTask.getData().add(new Data<Number, Number>(position,1));
 							position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
 						}
-						tempTask.getData().add(new Data<Number, Number>(position,0));					
+						tempTask.getData().add(new Data<Number, Number>(position - partSize,0));					
 					}
 					if (pendentTasks != null){
 						for (PeriodicTask pTask : pendentTasks) {
@@ -170,9 +173,10 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 							tempTask.getData().add(new Data<Number, Number>(position,0));
 							for (double j=0; j < pTask.getComputationTime(); j = j + partSize){
 								tempTask.getData().add(new Data<Number, Number>(position,1));
+														
 								position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
 							}
-							tempTask.getData().add(new Data<Number, Number>(position,0));						
+							tempTask.getData().add(new Data<Number, Number>(position - partSize,0));
 						}
 					}
 				}
