@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.Chart;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
@@ -30,6 +33,7 @@ import br.eti.hussamaismail.scheduler.MainApp;
 import br.eti.hussamaismail.scheduler.domain.DeadlineMonotonicScheduler;
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
+import br.eti.hussamaismail.scheduler.domain.RoundRobinScheduler;
 import br.eti.hussamaismail.scheduler.domain.Task;
 import br.eti.hussamaismail.scheduler.util.EditingCell;
 import br.eti.hussamaismail.scheduler.util.TasksUtil;
@@ -53,6 +57,7 @@ public class GeneratorController implements Initializable {
 
 	@FXML private ChoiceBox techniqueChoiceBox;
 	@FXML private GridPane simulateControl;
+	@FXML private CheckBox preemptiveCheckBox;
 
 	@FXML private RadioButton radioRateMonotonic;
 	@FXML private RadioButton radioDeadlineMonotonic;
@@ -149,7 +154,9 @@ public class GeneratorController implements Initializable {
 	public void simulate(){
 
 		Chart simulatedChart = null;
-	
+		boolean preemptive = preemptiveCheckBox.isSelected();
+		chartPanel.getChildren().clear();
+		
 		Object techniqueSelected = techniqueChoiceBox.getSelectionModel().getSelectedItem();
 		techniqueSelected = techniqueSelected != null ? techniqueSelected.toString().toUpperCase().replaceAll(" ", "") : "";
 		
@@ -159,6 +166,7 @@ public class GeneratorController implements Initializable {
 			
 			RateMonotonicScheduler rateMonotonicScheduler = new RateMonotonicScheduler();
 			rateMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+			rateMonotonicScheduler.setPreemptive(preemptive);
 			simulatedChart = rateMonotonicScheduler.simulate();
 			
 		break;
@@ -171,13 +179,23 @@ public class GeneratorController implements Initializable {
 			
 		break;
 		
+		case "ROUNDROBIN" : 
+			
+			RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
+			roundRobinScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+			simulatedChart = roundRobinScheduler.simulate();
+			
+		break;
+		
 		default : 
+			JOptionPane.showMessageDialog(null, "É necessário escolher uma técnica para simular");
 			log.error("É necessário escolher uma técnica para simular");
 			return; 
 			
 		}
 		
 		if (simulatedChart == null){
+			JOptionPane.showMessageDialog(null, "Não foi possível escalonar com a técnica desejada");
 			log.error("Não foi possível escalonar com a técnica desejada");
 			return;
 		}
@@ -189,11 +207,7 @@ public class GeneratorController implements Initializable {
 		simulatedChart.setPrefHeight(chartPanel.getHeight() - simulateControl.getHeight());
 		simulatedChart.setMaxHeight(chartPanel.getHeight() - simulateControl.getHeight());
 		simulatedChart.setMinHeight(chartPanel.getHeight() - simulateControl.getHeight());
-
-		System.out.println(chartPanel.getHeight());
-		System.out.println(simulateControl.getHeight());
 		
-		chartPanel.getChildren().clear();
 		chartPanel.getChildren().add(simulatedChart);
 	}
 
@@ -202,29 +216,56 @@ public class GeneratorController implements Initializable {
 
 		techniqueChoiceBox.setItems(FXCollections.observableArrayList(
 				"RateMonotonic", "Deadline Monotonic",
-				"Earliest Deadline First"));
+				"Earliest Deadline First", "Round Robin"));
 
+//		PeriodicTask t1 = new PeriodicTask();
+//		t1.setName("t1");
+//		t1.setComputationTime(6.25);
+//		t1.setPeriod(25);
+//		t1.setDeadline(25);
+//
+//		PeriodicTask t2 = new PeriodicTask();
+//		t2.setName("t2");
+//		t2.setComputationTime(6.25);
+//		t2.setPeriod(50);
+//		t2.setDeadline(50);
+//
+//		PeriodicTask t3 = new PeriodicTask();
+//		t3.setName("t3");
+//		t3.setComputationTime(20);
+//		t3.setPeriod(100);
+//		t3.setDeadline(100);
+		
 		PeriodicTask t1 = new PeriodicTask();
-		t1.setName("t1");
-		t1.setComputationTime(6.25);
-		t1.setPeriod(25);
-		t1.setDeadline(25);
+		t1.setName("A");
+		t1.setComputationTime(25);
+		t1.setPeriod(100);
+		t1.setDeadline(100);
 
 		PeriodicTask t2 = new PeriodicTask();
-		t2.setName("t2");
-		t2.setComputationTime(6.25);
-		t2.setPeriod(50);
-		t2.setDeadline(50);
+		t2.setName("B");
+		t2.setComputationTime(20);
+		t2.setPeriod(80);
+		t2.setDeadline(80);
 
 		PeriodicTask t3 = new PeriodicTask();
-		t3.setName("t3");
-		t3.setComputationTime(20);
+		t3.setName("C");
+		t3.setComputationTime(30);
 		t3.setPeriod(100);
 		t3.setDeadline(100);
+		
+		PeriodicTask t4 = new PeriodicTask();
+		t4.setName("D");
+		t4.setComputationTime(20);
+		t4.setPeriod(80);
+		t4.setDeadline(80);
+
 
 		tasks.add(t1);
 		tasks.add(t2);
 		tasks.add(t3);
+		tasks.add(t4);
+
 
 		openNewTaskDialog();
 	}

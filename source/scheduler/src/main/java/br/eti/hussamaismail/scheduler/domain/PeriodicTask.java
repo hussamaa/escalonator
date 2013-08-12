@@ -47,7 +47,7 @@ public class PeriodicTask extends Task {
 		this.currentProcessed = new BigDecimal(currentProcessed + computationTime).setScale(2, RoundingMode.HALF_UP).doubleValue(); 
 	}
 
-	public double getProcessRemaining(){
+	public double getRemaining(){
 		return this.computationTime - this.currentProcessed;
 	}
 	

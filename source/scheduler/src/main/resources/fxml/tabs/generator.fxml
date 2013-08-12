@@ -27,7 +27,7 @@
                                 <Label  style=" -fx-text-fill: #e1fdff; -fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"  text="%technique"/>
                                 <ChoiceBox fx:id="techniqueChoiceBox" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="200"/>
                                 <Label  style=" -fx-text-fill: #e1fdff; -fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0"  text="%preemptive"/>
-                                <CheckBox GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="200"/>
+                                <CheckBox fx:id="preemptiveCheckBox" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="200"/>
                                 <Button GridPane.rowIndex="2" onMouseClicked="#simulate" GridPane.columnIndex="4" font="$x2" mnemonicParsing="false" prefHeight="48.0" prefWidth="130.0" style="-fx-background-color : #88BD38" text="%simulate" textFill="#5d6c50" />
                             </children>
                         </GridPane>

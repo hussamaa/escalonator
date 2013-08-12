@@ -13,6 +13,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 
+import javax.swing.JOptionPane;
+
 import org.apache.log4j.Logger;
 
 import br.eti.hussamaismail.scheduler.exception.TaskNotScalableException;
@@ -143,7 +145,6 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
 		
 		Set<Double> keys = mapTaskEvent.keySet();
-		
 		for (Double double1 : keys) {
 			double temp = 0.2;
 			List<PeriodicTask> tasks = mapTaskEvent.get(double1);
@@ -163,35 +164,54 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 			while (position <= higherValue){
 				if (mapTaskEvent.containsKey(position)){
 					double containsPosition = position;
+					double pendentTasksPosition = 0;
 					List<PeriodicTask> actualExecutionTasks = mapTaskEvent.get(position);
 					List<PeriodicTask> pendentTasks = null;
 					for (PeriodicTask pTask : actualExecutionTasks) {
 						Series<Number, Number> tempTask = this.tasksUtil.getChartTask(chartTasks, pTask);		
 						tempTask.getData().add(new Data<Number, Number>(position,0));
-						for (double j=0; j < pTask.getComputationTime(); j = j + partSize){
+						for (double j=0; j <= pTask.getComputationTime(); j = j + partSize){
 							if (containsPosition != position && mapTaskEvent.containsKey(position)){
 								pendentTasks = mapTaskEvent.get(position);
+								pendentTasksPosition = position;
 							}
 							tempTask.getData().add(new Data<Number, Number>(position,1));
 							position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
 						}
-						tempTask.getData().add(new Data<Number, Number>(position - partSize,0));					
+						position = position - partSize;
+						System.out.println("Final Execucao Tarefa: " + pTask.getName() + " em " + position);
+						tempTask.getData().add(new Data<Number, Number>(position,0));					
 					}
 					if (pendentTasks != null){
 						for (PeriodicTask pTask : pendentTasks) {
 							Series<Number, Number> tempTask = this.tasksUtil.getChartTask(chartTasks, pTask);
 							tempTask.getData().add(new Data<Number, Number>(position,0));
-							for (double j=0; j < pTask.getComputationTime(); j = j + partSize){
+							
+							if (this instanceof RateMonotonicScheduler){
+								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getPeriod()){
+									return null;
+								}	
+							}else{
+								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getDeadline()){
+									return null;
+								}									
+							}		
+							
+							for (double j=0; j <= pTask.getComputationTime(); j = j + partSize){
 								tempTask.getData().add(new Data<Number, Number>(position,1));
-														
 								position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
 							}
+							position = position - partSize;
+							System.out.println("Final Execucao Tarefa: " + pTask.getName() + " em " + position);
 							tempTask.getData().add(new Data<Number, Number>(position - partSize,0));
 						}
 					}
 				}
 				position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
 			}			
+		}else{
+			JOptionPane.showMessageDialog(null, "Preemptivo - Não Implementado!");
+			return null;
 		}
 		
 		ac.getData().addAll(chartTasks);		
