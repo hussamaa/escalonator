@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import br.eti.hussamaismail.scheduler.MainApp;
 import br.eti.hussamaismail.scheduler.domain.DeadlineMonotonicScheduler;
+import br.eti.hussamaismail.scheduler.domain.LeastLaxityScheduler;
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
 import br.eti.hussamaismail.scheduler.domain.RoundRobinScheduler;
@@ -156,6 +157,7 @@ public class GeneratorController implements Initializable {
 		Chart simulatedChart = null;
 		boolean preemptive = preemptiveCheckBox.isSelected();
 		chartPanel.getChildren().clear();
+		tasksUtil.resetAllTasks(tasks);
 		
 		Object techniqueSelected = techniqueChoiceBox.getSelectionModel().getSelectedItem();
 		techniqueSelected = techniqueSelected != null ? techniqueSelected.toString().toUpperCase().replaceAll(" ", "") : "";
@@ -180,10 +182,20 @@ public class GeneratorController implements Initializable {
 		break;
 		
 		case "ROUNDROBIN" : 
-			
+			Long partTimeRB = Long.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
 			RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
 			roundRobinScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+			roundRobinScheduler.setPartTime(partTimeRB);
 			simulatedChart = roundRobinScheduler.simulate();
+			
+		break;
+		
+		case "LEASTLAXITY" : 
+			Long partTime = Long.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
+			LeastLaxityScheduler leastLaxityScheduler = new LeastLaxityScheduler();
+			leastLaxityScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+			leastLaxityScheduler.setPartTime(partTime);
+			simulatedChart = leastLaxityScheduler.simulate();
 			
 		break;
 		
@@ -216,7 +228,7 @@ public class GeneratorController implements Initializable {
 
 		techniqueChoiceBox.setItems(FXCollections.observableArrayList(
 				"RateMonotonic", "Deadline Monotonic",
-				"Earliest Deadline First", "Round Robin"));
+				"Earliest Deadline First", "Round Robin", "Least Laxity"));
 
 //		PeriodicTask t1 = new PeriodicTask();
 //		t1.setName("t1");

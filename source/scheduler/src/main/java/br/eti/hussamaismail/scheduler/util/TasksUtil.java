@@ -221,4 +221,19 @@ public class TasksUtil {
 		
 		return partSize;
 	}
+	
+	/**
+	 * Metodo que reseta todas as tarefas
+	 * de uma determinada lista, zendo o valor
+	 * de processamento das mesmas.
+	 * 
+	 * @param tasks
+	 */
+	public void resetAllTasks(List<Task> tasks){
+		for (Task task : tasks) {
+			if (task instanceof PeriodicTask){
+				((PeriodicTask) task).reset();
+			}
+		}
+	}
 }

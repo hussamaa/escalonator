@@ -10,7 +10,7 @@ public class PeriodicTask extends Task {
 	private double deadline;
 	private double responseTime;
 	private double currentProcessed;
-	
+		
 	public double getResponseTime() {
 		return responseTime;
 	}
@@ -43,8 +43,8 @@ public class PeriodicTask extends Task {
 		this.deadline = deadline;
 	}
 	
-	public void process(double computationTime){
-		this.currentProcessed = new BigDecimal(currentProcessed + computationTime).setScale(2, RoundingMode.HALF_UP).doubleValue(); 
+	public void process(double processTime){
+		this.currentProcessed = new BigDecimal(currentProcessed + processTime).setScale(2, RoundingMode.HALF_UP).doubleValue(); 
 	}
 
 	public double getRemaining(){
