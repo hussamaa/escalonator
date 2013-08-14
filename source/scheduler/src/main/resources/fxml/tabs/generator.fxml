@@ -65,7 +65,10 @@
                             <cellValueFactory><PropertyValueFactory property="deadline"/></cellValueFactory>
                             <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory>
                         </TableColumn>
-
+                        <TableColumn text="%activation" fx:id="taskActivationTimeColumn" minWidth="100" prefWidth="100">
+                            <cellValueFactory><PropertyValueFactory property="activationTime"/></cellValueFactory>
+                            <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory>
+                        </TableColumn>
                     </columns>
                 </TableView>
             </items>

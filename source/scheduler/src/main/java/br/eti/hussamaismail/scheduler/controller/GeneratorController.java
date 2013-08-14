@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.JOptionPane;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -25,6 +23,8 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
+
+import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,8 @@ public class GeneratorController implements Initializable {
 	@FXML private TableColumn taskPeriodColumn;
 	@FXML private TableColumn taskDeadlineColumn;
 	@FXML private TableColumn taskTypeColumn;
-
+	@FXML private TableColumn taskActivationTimeColumn;
+	
 	@FXML private ChoiceBox techniqueChoiceBox;
 	@FXML private GridPane simulateControl;
 	@FXML private CheckBox preemptiveCheckBox;
@@ -125,6 +126,19 @@ public class GeneratorController implements Initializable {
 				
 			}
 		 });
+		
+		taskActivationTimeColumn.setCellFactory(cellFactory);
+		taskActivationTimeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Double>>() {
+			@Override
+			public void handle(CellEditEvent<Task, Double> t) {
+				Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
+				if (task instanceof PeriodicTask){
+					PeriodicTask pTask = (PeriodicTask) task;
+					pTask.setActivationTime(t.getNewValue());
+				}
+				
+			}
+		 });
 				
 		taskTypeColumn.setCellFactory(new Callback<TableColumn<Task, String>, TableCell<Task, String>>() {
 			public TableCell<Task, String> call(
@@ -147,6 +161,7 @@ public class GeneratorController implements Initializable {
 				};
 				return cell;
 			}
+
 		});
 
 		this.tasksTable.setItems(list);
@@ -248,36 +263,72 @@ public class GeneratorController implements Initializable {
 //		t3.setPeriod(100);
 //		t3.setDeadline(100);
 		
+// ROUND ROBIN 		
+//		PeriodicTask t1 = new PeriodicTask();
+//		t1.setName("A");
+//		t1.setComputationTime(25);
+//		t1.setPeriod(100);
+//		t1.setDeadline(100);
+//
+//		PeriodicTask t2 = new PeriodicTask();
+//		t2.setName("B");
+//		t2.setComputationTime(20);
+//		t2.setPeriod(80);
+//		t2.setDeadline(80);
+//
+//		PeriodicTask t3 = new PeriodicTask();
+//		t3.setName("C");
+//		t3.setComputationTime(30);
+//		t3.setPeriod(100);
+//		t3.setDeadline(100);
+//		
+//		PeriodicTask t4 = new PeriodicTask();
+//		t4.setName("D");
+//		t4.setComputationTime(20);
+//		t4.setPeriod(80);
+//		t4.setDeadline(80);
+
+
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("A");
-		t1.setComputationTime(25);
-		t1.setPeriod(100);
-		t1.setDeadline(100);
+		t1.setComputationTime(30);
+		t1.setPeriod(0);
+		t1.setDeadline(40);
+		t1.setActivationTime(0);
 
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("B");
-		t2.setComputationTime(20);
-		t2.setPeriod(80);
-		t2.setDeadline(80);
+		t2.setComputationTime(10);
+		t2.setPeriod(0);
+		t2.setDeadline(30);
+		t2.setActivationTime(0);
 
 		PeriodicTask t3 = new PeriodicTask();
 		t3.setName("C");
 		t3.setComputationTime(30);
-		t3.setPeriod(100);
+		t3.setPeriod(0);
 		t3.setDeadline(100);
+		t3.setActivationTime(30);
 		
 		PeriodicTask t4 = new PeriodicTask();
 		t4.setName("D");
-		t4.setComputationTime(20);
-		t4.setPeriod(80);
-		t4.setDeadline(80);
-
-
+		t4.setComputationTime(40);
+		t4.setPeriod(0);
+		t4.setDeadline(200);
+		t4.setActivationTime(50);
+		
+		PeriodicTask t5 = new PeriodicTask();
+		t5.setName("E");
+		t5.setComputationTime(10);
+		t5.setPeriod(0);
+		t5.setDeadline(90);
+		t5.setActivationTime(70);
+		
 		tasks.add(t1);
 		tasks.add(t2);
 		tasks.add(t3);
 		tasks.add(t4);
-
+		tasks.add(t5);
 
 		openNewTaskDialog();
 	}

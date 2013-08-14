@@ -36,9 +36,10 @@ public class MainApp extends Application {
         
         Scene scene = new Scene(rootNode, 1024, 768);
         scene.getStylesheets().add("/styles/styles.css");
-        stage.setTitle("Escalonator");
+
+        stage.setTitle("Escalonator");        
         stage.setScene(scene);
-//        stage.setFullScreen(true);
+        stage.setFullScreen(true);
         stage.setResizable(false);
         stage.show();
     }

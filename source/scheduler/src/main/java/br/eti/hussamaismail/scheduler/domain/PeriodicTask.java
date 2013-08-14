@@ -10,7 +10,16 @@ public class PeriodicTask extends Task {
 	private double deadline;
 	private double responseTime;
 	private double currentProcessed;
-		
+	private double activationTime;
+	
+	public double getActivationTime() {
+		return activationTime;
+	}
+
+	public void setActivationTime(double activationTime) {
+		this.activationTime = activationTime;
+	}
+
 	public double getResponseTime() {
 		return responseTime;
 	}
