@@ -14,18 +14,19 @@ import br.eti.hussamaismail.scheduler.util.TasksUtil;
 
 public class LeastLaxityScheduler extends StaticScheduler {
 
-	private long partTime;
 	private TasksUtil tasksUtil;
 	
+	private Double partSize;
+	
+	public void setPartSize(Double partSize) {
+		this.partSize = partSize;
+	}
+
 	public LeastLaxityScheduler() {
 		super();
 		this.tasksUtil = TasksUtil.getInstance();
 	}
 	
-	public void setPartTime(long partTime) {				
-		this.partTime = partTime;
-	}
-
 	@Override
 	public Chart simulate() {
 		
@@ -36,9 +37,16 @@ public class LeastLaxityScheduler extends StaticScheduler {
 		NumberAxis xAxis = new NumberAxis(1, higherValue, 1);
 		NumberAxis yAxis = new NumberAxis(0, 2, 1);
 		AreaChart<Number, Number> ac = new AreaChart<Number, Number>(xAxis,yAxis);
+		
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
 		List<PeriodicTask> currentTasks = new ArrayList<PeriodicTask>();
 		
+		double partSize = 1;
+		if (this.partSize == null){
+			 partSize = this.tasksUtil.calculateMinPartSizeFromTasks(this);
+		}else{
+			partSize = this.partSize;
+		}
 		
 		while (position <= higherValue){
 			if (mapWithActivationTimeAndTasks.containsKey(position)){
@@ -65,10 +73,10 @@ public class LeastLaxityScheduler extends StaticScheduler {
 			chartTask.getData().add(new Data<Number, Number>(position, 0));
 			chartTask.getData().add(new Data<Number, Number>(position, 1));
 			
-			if (leastLaxity.getRemaining() >= this.partTime){
-				leastLaxity.process(this.partTime);
-				position = position + this.partTime;
-			}else if (leastLaxity.getRemaining() < this.partTime){
+			if (leastLaxity.getRemaining() >= partSize){
+				leastLaxity.process(partSize);
+				position = position + partSize;
+			}else if (leastLaxity.getRemaining() < partSize){
 				position = position + leastLaxity.getRemaining();
 				leastLaxity.process(leastLaxity.getRemaining());
 			}

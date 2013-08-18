@@ -39,7 +39,7 @@ public class MainApp extends Application {
 
         stage.setTitle("Escalonator");        
         stage.setScene(scene);
-        stage.setFullScreen(true);
+//        stage.setFullScreen(true);
         stage.setResizable(false);
         stage.show();
     }
