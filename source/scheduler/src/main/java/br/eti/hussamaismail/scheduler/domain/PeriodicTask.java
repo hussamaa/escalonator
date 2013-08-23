@@ -5,58 +5,58 @@ import java.math.RoundingMode;
 
 public class PeriodicTask extends Task {
 
-	private double computationTime;
-	private double period;
-	private double deadline;
-	private double responseTime;
-	private double currentProcessed;
-	private double activationTime;
+	private int computationTime;
+	private int period;
+	private int deadline;
+	private int responseTime;
+	private int currentProcessed;
+	private int activationTime;
 	
-	public double getActivationTime() {
+	public int getActivationTime() {
 		return activationTime;
 	}
 
-	public void setActivationTime(double activationTime) {
+	public void setActivationTime(int activationTime) {
 		this.activationTime = activationTime;
 	}
 
-	public double getResponseTime() {
+	public int getResponseTime() {
 		return responseTime;
 	}
 
-	public void setResponseTime(double responseTime) {
+	public void setResponseTime(int responseTime) {
 		this.responseTime = responseTime;
 	}
 
-	public double getComputationTime() {
+	public int getComputationTime() {
 		return computationTime;
 	}
 
-	public void setComputationTime(double computationTime) {
+	public void setComputationTime(int computationTime) {
 		this.computationTime = computationTime;
 	}
 
-	public double getPeriod() {
+	public int getPeriod() {
 		return period;
 	}
 
-	public void setPeriod(double period) {
+	public void setPeriod(int period) {
 		this.period = period;
 	}
 
-	public double getDeadline() {
+	public int getDeadline() {
 		return deadline;
 	}
 
-	public void setDeadline(double deadline) {
+	public void setDeadline(int deadline) {
 		this.deadline = deadline;
 	}
 	
-	public void process(double processTime){
-		this.currentProcessed = new BigDecimal(currentProcessed + processTime).setScale(2, RoundingMode.HALF_UP).doubleValue(); 
+	public void process(int processTime){
+		this.currentProcessed = new BigDecimal(currentProcessed + processTime).setScale(2, RoundingMode.HALF_UP).intValue(); 
 	}
 
-	public double getRemaining(){
+	public int getRemaining(){
 		return this.computationTime - this.currentProcessed;
 	}
 	

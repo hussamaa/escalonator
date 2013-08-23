@@ -110,17 +110,17 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 			PeriodicTask actualTask = this.getTasks().get(i);
 			log.debug("Calculando tempo máximo de resposta para tarefa: "
 					+ actualTask.getName() + " - " + actualTask);
-			double actualValue = actualTask.getComputationTime();
+			int actualValue = actualTask.getComputationTime();
 			int attempts = 0;
 			while (true) {
-				double accumulator = 0;
+				int accumulator = 0;
 				for (int j = 0; j < i; j++) {
 					PeriodicTask tempTask = this.getTasks().get(j);
-					accumulator = accumulator
-							+ Math.ceil(actualValue / tempTask.getPeriod())
-							* tempTask.getComputationTime();
+//					accumulator = accumulator
+//							+ Math.ceil(actualValue / tempTask.getPeriod())
+//							* tempTask.getComputationTime();
 				}
-				double newValue = actualTask.getComputationTime() + accumulator;
+				int newValue = actualTask.getComputationTime() + accumulator;
 				if (newValue != actualValue) {
 					actualValue = newValue;
 				} else {

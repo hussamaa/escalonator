@@ -13,18 +13,18 @@ import br.eti.hussamaismail.scheduler.util.TasksUtil;
 public class RoundRobinScheduler extends StaticScheduler {
 
 	private TasksUtil tasksUtil;
-	private long partTime;
+	private int partTime;
 
 	public RoundRobinScheduler() {
 		this.tasksUtil = TasksUtil.getInstance();
 		this.partTime = 1;
 	}
 
-	public long getPartTime() {
+	public int getPartTime() {
 		return partTime;
 	}
 
-	public void setPartTime(long partTime) {
+	public void setPartTime(int partTime) {
 		this.partTime = partTime;
 	}
 
@@ -40,7 +40,7 @@ public class RoundRobinScheduler extends StaticScheduler {
 				yAxis);
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
 
-		long partTime = getPartTime();
+		int partTime = getPartTime();
 		List<PeriodicTask> pendentTasks = new ArrayList<PeriodicTask>(
 				getTasks());
 		double index = 0;
@@ -57,7 +57,7 @@ public class RoundRobinScheduler extends StaticScheduler {
 					index = index + partTime;
 					pTask.process(partTime);
 				} else if (pTask.getRemaining() < partTime) {
-					double remaining = pTask.getRemaining();
+					int remaining = pTask.getRemaining();
 					index = index + remaining;
 					pTask.process(remaining);
 				}

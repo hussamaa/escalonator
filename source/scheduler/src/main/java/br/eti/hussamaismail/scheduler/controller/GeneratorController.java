@@ -89,9 +89,9 @@ public class GeneratorController implements Initializable {
 		 });
 		
 		taskComputationTimeColumn.setCellFactory(cellFactory);
-		taskComputationTimeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Double>>() {
+		taskComputationTimeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
 			@Override
-			public void handle(CellEditEvent<Task, Double> t) {
+			public void handle(CellEditEvent<Task, Integer> t) {
 				Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
 				if (task instanceof PeriodicTask){
 					PeriodicTask pTask = (PeriodicTask) task;
@@ -102,9 +102,9 @@ public class GeneratorController implements Initializable {
 		 });
 		
 		taskPeriodColumn.setCellFactory(cellFactory);
-		taskPeriodColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Double>>() {
+		taskPeriodColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
 			@Override
-			public void handle(CellEditEvent<Task, Double> t) {
+			public void handle(CellEditEvent<Task, Integer> t) {
 				Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
 				if (task instanceof PeriodicTask){
 					PeriodicTask pTask = (PeriodicTask) task;
@@ -115,9 +115,9 @@ public class GeneratorController implements Initializable {
 		 });
 		
 		taskDeadlineColumn.setCellFactory(cellFactory);
-		taskDeadlineColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Double>>() {
+		taskDeadlineColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
 			@Override
-			public void handle(CellEditEvent<Task, Double> t) {
+			public void handle(CellEditEvent<Task, Integer> t) {
 				Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
 				if (task instanceof PeriodicTask){
 					PeriodicTask pTask = (PeriodicTask) task;
@@ -128,9 +128,9 @@ public class GeneratorController implements Initializable {
 		 });
 		
 		taskActivationTimeColumn.setCellFactory(cellFactory);
-		taskActivationTimeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Double>>() {
+		taskActivationTimeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
 			@Override
-			public void handle(CellEditEvent<Task, Double> t) {
+			public void handle(CellEditEvent<Task, Integer> t) {
 				Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
 				if (task instanceof PeriodicTask){
 					PeriodicTask pTask = (PeriodicTask) task;
@@ -161,9 +161,7 @@ public class GeneratorController implements Initializable {
 				};
 				return cell;
 			}
-
 		});
-
 		this.tasksTable.setItems(list);
 	}
 
@@ -197,7 +195,7 @@ public class GeneratorController implements Initializable {
 		break;
 		
 		case "ROUNDROBIN" : 
-			Long partTimeRB = Long.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
+			Integer partTimeRB = Integer.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
 			RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
 			roundRobinScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
 			roundRobinScheduler.setPartTime(partTimeRB);
@@ -206,7 +204,7 @@ public class GeneratorController implements Initializable {
 		break;
 		
 		case "LEASTLAXITY" : 
-			Double partTimeLL = Double.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
+			Integer partTimeLL = Integer.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
 			LeastLaxityScheduler leastLaxityScheduler = new LeastLaxityScheduler();
 			leastLaxityScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
 			leastLaxityScheduler.setPartSize(partTimeLL);

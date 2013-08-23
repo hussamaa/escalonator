@@ -1,5 +1,7 @@
 package br.eti.hussamaismail.scheduler.domain;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,9 +18,9 @@ public class LeastLaxityScheduler extends StaticScheduler {
 
 	private TasksUtil tasksUtil;
 	
-	private Double partSize;
+	private Integer partSize;
 	
-	public void setPartSize(Double partSize) {
+	public void setPartSize(Integer partSize) {
 		this.partSize = partSize;
 	}
 
@@ -41,11 +43,9 @@ public class LeastLaxityScheduler extends StaticScheduler {
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
 		List<PeriodicTask> currentTasks = new ArrayList<PeriodicTask>();
 		
-		double partSize = 1;
-		if (this.partSize == null){
-			 partSize = this.tasksUtil.calculateMinPartSizeFromTasks(this);
-		}else{
-			partSize = this.partSize;
+		int partSize = 1;
+		if (this.partSize != null){
+			 partSize = this.partSize;
 		}
 		
 		while (position <= higherValue){
@@ -75,9 +75,9 @@ public class LeastLaxityScheduler extends StaticScheduler {
 			
 			if (leastLaxity.getRemaining() >= partSize){
 				leastLaxity.process(partSize);
-				position = position + partSize;
+				position = (new BigDecimal(position + partSize)).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
 			}else if (leastLaxity.getRemaining() < partSize){
-				position = position + leastLaxity.getRemaining();
+				position = (new BigDecimal(position + leastLaxity.getRemaining())).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
 				leastLaxity.process(leastLaxity.getRemaining());
 			}
 			

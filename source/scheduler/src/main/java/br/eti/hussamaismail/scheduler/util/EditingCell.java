@@ -8,7 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import br.eti.hussamaismail.scheduler.domain.Task;
 
-public class EditingCell extends TableCell<Task, Double> {
+public class EditingCell extends TableCell<Task, Integer> {
 	 
     private TextField textField;
    
@@ -36,7 +36,7 @@ public class EditingCell extends TableCell<Task, Double> {
     }
 
     @Override
-    public void updateItem(Double item, boolean empty) {
+    public void updateItem(Integer item, boolean empty) {
         super.updateItem(item, empty);
        
         if (empty) {
@@ -64,7 +64,7 @@ public class EditingCell extends TableCell<Task, Double> {
             @Override
             public void handle(KeyEvent t) {
                 if (t.getCode() == KeyCode.ENTER) {
-                    commitEdit(Double.parseDouble(textField.getText()));
+                    commitEdit(Integer.parseInt(textField.getText()));
                 } else if (t.getCode() == KeyCode.ESCAPE) {
                     cancelEdit();
                 }
