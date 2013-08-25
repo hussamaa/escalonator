@@ -136,9 +136,9 @@ public class TasksUtil {
 	 * @param tasks
 	 * @return
 	 */
-	public double getHigherDeadlineFromPeriodicTasks(List<PeriodicTask> tasks){
+	public int getHigherDeadlineFromPeriodicTasks(List<PeriodicTask> tasks){
 		
-		double higherDeadline = 0;
+		int higherDeadline = 0;
 		
 		for (PeriodicTask pTask : tasks) {
 			if (pTask.getDeadline() > higherDeadline){
@@ -156,9 +156,9 @@ public class TasksUtil {
 	 * @param tasks
 	 * @return
 	 */
-	public double getHigherPeriodFromPeriodicTasks(List<PeriodicTask> tasks){
+	public int getHigherPeriodFromPeriodicTasks(List<PeriodicTask> tasks){
 		
-		double higherPeriod = 0;
+		int higherPeriod = 0;
 		
 		for (PeriodicTask pTask : tasks) {
 			if (pTask.getPeriod() > higherPeriod){
