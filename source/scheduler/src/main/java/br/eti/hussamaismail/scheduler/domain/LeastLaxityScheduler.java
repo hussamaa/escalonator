@@ -36,7 +36,7 @@ public class LeastLaxityScheduler extends StaticScheduler {
 		double position = 0;
 		double higherValue = tasksUtil.getHigherDeadlineFromPeriodicTasks(getTasks());
 		
-		NumberAxis xAxis = new NumberAxis(1, higherValue, 1);
+		NumberAxis xAxis = new NumberAxis(0, higherValue, 1);
 		NumberAxis yAxis = new NumberAxis(0, 2, 1);
 		AreaChart<Number, Number> ac = new AreaChart<Number, Number>(xAxis,yAxis);
 		

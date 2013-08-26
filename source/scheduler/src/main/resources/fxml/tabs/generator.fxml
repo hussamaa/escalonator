@@ -1,77 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import java.lang.*?>
-<?import java.util.*?>
 <?import java.text.*?>
+<?import java.util.*?>
 <?import javafx.collections.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
-<?import br.eti.hussamaismail.scheduler.util.FormatedTableCellFactory?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<!-- <?import br.eti.hussamaismail.scheduler.util.FormatedTableCellFactory?> -->
+<?scenebuilder-preview-i18n-resource ../../../../../../../../../Desenvolvimento/workspace/scheduler/src/main/resources/message_pt_BR.properties?>
+<?scenebuilder-stylesheet ../../styles/styles.css?>
 
-<Tab text="Diagrama Temporal" fx:id="liveTab" fx:controller="br.eti.hussamaismail.scheduler.controller.GeneratorController" xmlns:fx="http://javafx.com/fxml">
-    <content>
-        <SplitPane orientation="vertical" fx:id="liveView">
-            <items>
-                <AnchorPane>
-                    <children>
-<!--                     	<Label text="DIAGRAMA TEMPORAL"/> -->
-                        <Pane fx:id="chartPanel" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"/>
-                     	<GridPane fx:id="simulateControl" AnchorPane.rightAnchor="15" alignment="BASELINE_RIGHT" AnchorPane.bottomAnchor="15" vgap="10" hgap="5">
-                            <children>
-                                <Label  style=" -fx-text-fill: #e1fdff; -fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"  text="%technique"/>
-                                <ChoiceBox fx:id="techniqueChoiceBox" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="200"/>
-                                <Label  style=" -fx-text-fill: #e1fdff; -fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0"  text="%preemptive"/>
-                                <CheckBox fx:id="preemptiveCheckBox" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="200"/>
-                                <Button GridPane.rowIndex="2" onMouseClicked="#simulate" GridPane.columnIndex="4" font="$x2" mnemonicParsing="false" prefHeight="48.0" prefWidth="130.0" style="-fx-background-color : #88BD38" text="%simulate" textFill="#5d6c50" />
-                            </children>
-                        </GridPane>
-                        <VBox AnchorPane.leftAnchor="15"  AnchorPane.bottomAnchor="15" spacing="5">
-                            <children>
-                                <Label style="-fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="Adicionar Tarefa">
-                                    <graphic><Circle radius="6" fill="#22bad9"/></graphic>
-                                </Label>                               
-                            </children>
-                        </VBox>
-                    </children>
-                </AnchorPane>
-                <TableView fx:id="tasksTable" editable="true" prefHeight="200" minHeight="200" maxHeight="200">
-                    <columns>
-                        <TableColumn fx:id="taskNameColumn" editable="true" text="%name" minWidth="100" prefWidth="100">
-                            <cellValueFactory><PropertyValueFactory property="name"/></cellValueFactory>
-                        </TableColumn>
-                        <TableColumn fx:id="taskTypeColumn" text="%type" minWidth="100" prefWidth="100" >
-                            <cellValueFactory><PropertyValueFactory property="type"/></cellValueFactory>
-                            <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory>
-                        </TableColumn>
-                        <TableColumn fx:id="taskComputationTimeColumn" editable="true" text="%computationTime" minWidth="200" prefWidth="200">
-                            <cellValueFactory><PropertyValueFactory property="computationTime"/></cellValueFactory>
-                            <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory>
-                        </TableColumn>
-                        <TableColumn text="%period" fx:id="taskPeriodColumn" minWidth="100" prefWidth="100">
-                            <cellValueFactory><PropertyValueFactory property="period"/></cellValueFactory>
-                            <cellFactory>
-                                <FormatedTableCellFactory alignment="CENTER" > 
-<!--                                     <format><NumberFormat fx:factory="getCurrencyInstance" maximumFractionDigits="0"/></format> -->
-                                </FormatedTableCellFactory>
-                            </cellFactory>
-                        </TableColumn>
-                        <TableColumn text="%deadline" fx:id="taskDeadlineColumn" minWidth="100" prefWidth="100">
-                            <cellValueFactory><PropertyValueFactory property="deadline"/></cellValueFactory>
-                            <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory>
-                        </TableColumn>
-                        <TableColumn text="%activation" fx:id="taskActivationTimeColumn" minWidth="100" prefWidth="100">
-                            <cellValueFactory><PropertyValueFactory property="activationTime"/></cellValueFactory>
-                            <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory>
-                        </TableColumn>
-                    </columns>
-                </TableView>
-            </items>
-        </SplitPane>
-    </content>
+<Tab fx:id="liveTab" text="Diagrama Temporal" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="br.eti.hussamaismail.scheduler.controller.GeneratorController">
+  <content>
+    <SplitPane fx:id="liveView" orientation="VERTICAL">
+      <items>
+        <AnchorPane>
+          <children>
+            <!--                     	<Label text="DIAGRAMA TEMPORAL"/> -->
+            <Pane fx:id="chartPanel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <GridPane fx:id="simulateControl" alignment="BASELINE_RIGHT" hgap="5.0" vgap="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">
+              <children>
+                <Label style=" -fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="%technique" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <ChoiceBox fx:id="techniqueChoiceBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label style=" -fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="%preemptive" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <CheckBox fx:id="preemptiveCheckBox" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Button alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="false" mnemonicParsing="false" onMouseClicked="#simulate" prefHeight="48.0" prefWidth="130.0" style="-fx-background-color : #88BD38" text="%simulate" textAlignment="LEFT" textFill="#5d6c50" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <font>
+                    <Font size="13.0" />
+                  </font>
+                </Button>
+              </children>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+            <VBox spacing="5.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0">
+              <children>
+                <Label style="-fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="Adicionar Tarefa">
+                  <graphic>
+                    <Circle fill="#22bad9" radius="6.0" />
+                  </graphic>
+                </Label>
+              </children>
+            </VBox>
+          </children>
+        </AnchorPane>
+        <TableView fx:id="tasksTable" editable="true" maxHeight="200.0" minHeight="200.0" prefHeight="200.0">
+          <columns>
+            <TableColumn editable="true" minWidth="100.0" prefWidth="100.0" text="%name" fx:id="taskNameColumn">
+              <cellValueFactory>
+                <PropertyValueFactory property="name" />
+              </cellValueFactory>
+            </TableColumn>
+            <TableColumn minWidth="100.0" prefWidth="100.0" text="%type" fx:id="taskTypeColumn">
+              <cellValueFactory>
+                <PropertyValueFactory property="type" />
+              </cellValueFactory>
+              <!--                             <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory> -->
+            </TableColumn>
+            <TableColumn editable="true" minWidth="200.0" prefWidth="200.0" text="%computationTime" fx:id="taskComputationTimeColumn">
+              <cellValueFactory>
+                <PropertyValueFactory property="computationTime" />
+              </cellValueFactory>
+              <!--                             <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory> -->
+            </TableColumn>
+            <TableColumn minWidth="100.0" prefWidth="100.0" text="%period" fx:id="taskPeriodColumn">
+              <cellValueFactory>
+                <PropertyValueFactory property="period" />
+              </cellValueFactory>
+              <!--                             <cellFactory> -->
+              <!--                                 <FormatedTableCellFactory alignment="CENTER" >  -->
+              <!--                                     <format><NumberFormat fx:factory="getCurrencyInstance" maximumFractionDigits="0"/></format> -->
+              <!--                                 </FormatedTableCellFactory> -->
+              <!--                             </cellFactory> -->
+            </TableColumn>
+            <TableColumn minWidth="100.0" prefWidth="100.0" text="%deadline" fx:id="taskDeadlineColumn">
+              <cellValueFactory>
+                <PropertyValueFactory property="deadline" />
+              </cellValueFactory>
+              <!--                             <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory> -->
+            </TableColumn>
+            <TableColumn minWidth="100.0" prefWidth="100.0" text="%activation" fx:id="taskActivationTimeColumn">
+              <cellValueFactory>
+                <PropertyValueFactory property="activationTime" />
+              </cellValueFactory>
+              <!--                             <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory> -->
+            </TableColumn>
+          </columns>
+        </TableView>
+      </items>
+    </SplitPane>
+  </content>
 </Tab>

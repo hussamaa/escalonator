@@ -85,6 +85,38 @@ public class LeastLaxitySchedulerTest {
 		this.scheduler.getTasks().add(t5);
 	}
 	
+	public void setTasksCase2(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+		
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("A");
+		t1.setComputationTime(1);
+		t1.setPeriod(2);
+		t1.setDeadline(2);
+		t1.setActivationTime(0);
+
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("B");
+		t2.setComputationTime(4);
+		t2.setPeriod(6);
+		t2.setDeadline(6);
+		t2.setActivationTime(1);
+
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("C");
+		t3.setComputationTime(2);
+		t3.setPeriod(3);
+		t3.setDeadline(10);
+		t3.setActivationTime(3);
+		
+		this.scheduler.setPartSize(1);
+		
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(t3);
+	}
+	
 	@SuppressWarnings({"unchecked" })
 	@Test
 	public void testCase1(){
@@ -174,7 +206,64 @@ public class LeastLaxitySchedulerTest {
 		/* Verifica os intevalos da tarefa C [110-120] */
 		Integer[] intervalD4 = map.get("D").get(3);
 		Assert.assertEquals(Long.valueOf(110), Long.valueOf(intervalD4[0]));
-		Assert.assertEquals(Long.valueOf(120), Long.valueOf(intervalD4[1]));
+		Assert.assertEquals(Long.valueOf(120), Long.valueOf(intervalD4[1]));	
+	}
+	
+	@SuppressWarnings({"unchecked" })
+	@Test
+	public void testCase2(){
+		
+		this.setTasksCase2();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas tarefas foram criadas no mapa */
+		Assert.assertEquals(3, map.keySet().size());
+		
+		/* Verifica quantas vezes a tarefa 'A' aparece no grafico */
+		Assert.assertEquals(1, map.get("A").size());
+		
+		Integer[] intervalA1 = map.get("A").get(0);
+		Assert.assertEquals(Long.valueOf(0), Long.valueOf(intervalA1[0]));
+		Assert.assertEquals(Long.valueOf(1), Long.valueOf(intervalA1[1]));
+		
+		
+		/* Verifica quantas vezes a tarefa 'B' aparece no grafico */
+		Assert.assertEquals(4, map.get("B").size());
+		
+		/* Verifica os intevalos da tarefa B [1-2] */
+		Integer[] intervalB1 = map.get("B").get(0);
+		Assert.assertEquals(Long.valueOf(1), Long.valueOf(intervalB1[0]));
+		Assert.assertEquals(Long.valueOf(2), Long.valueOf(intervalB1[1]));
+		
+		/* Verifica os intevalos da tarefa B [2-3] */
+		Integer[] intervalB2 = map.get("B").get(1);
+		Assert.assertEquals(Long.valueOf(2), Long.valueOf(intervalB2[0]));
+		Assert.assertEquals(Long.valueOf(3), Long.valueOf(intervalB2[1]));
+		
+		/* Verifica os intevalos da tarefa B [3-4] */
+		Integer[] intervalB3 = map.get("B").get(2);
+		Assert.assertEquals(Long.valueOf(3), Long.valueOf(intervalB3[0]));
+		Assert.assertEquals(Long.valueOf(4), Long.valueOf(intervalB3[1]));
+		
+		/* Verifica os intevalos da tarefa B [4-5] */
+		Integer[] intervalB4 = map.get("B").get(3);
+		Assert.assertEquals(Long.valueOf(4), Long.valueOf(intervalB4[0]));
+		Assert.assertEquals(Long.valueOf(5), Long.valueOf(intervalB4[1]));
+		
+		
+		/* Verifica quantas vezes a tarefa 'C' aparece no grafico */
+		Assert.assertEquals(2, map.get("C").size());
+		
+		/* Verifica os intevalos da tarefa C [5-6] */
+		Integer[] intervalC1 = map.get("C").get(0);
+		Assert.assertEquals(Long.valueOf(5), Long.valueOf(intervalC1[0]));
+		Assert.assertEquals(Long.valueOf(6), Long.valueOf(intervalC1[1]));
+		
+		/* Verifica os intevalos da tarefa C [6-7] */
+		Integer[] intervalC2 = map.get("C").get(1);
+		Assert.assertEquals(Long.valueOf(6), Long.valueOf(intervalC2[0]));
+		Assert.assertEquals(Long.valueOf(7), Long.valueOf(intervalC2[1]));
 		
 	}
 	
