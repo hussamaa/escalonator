@@ -11,7 +11,7 @@ public class PeriodicTask extends Task {
 	private int responseTime;
 	private int currentProcessed;
 	private int activationTime;
-	
+
 	public int getActivationTime() {
 		return activationTime;
 	}
@@ -51,19 +51,20 @@ public class PeriodicTask extends Task {
 	public void setDeadline(int deadline) {
 		this.deadline = deadline;
 	}
-	
-	public void process(int processTime){
-		this.currentProcessed = new BigDecimal(currentProcessed + processTime).setScale(2, RoundingMode.HALF_UP).intValue(); 
+
+	public void process(int processTime) {
+		this.currentProcessed = new BigDecimal(currentProcessed + processTime)
+				.setScale(2, RoundingMode.HALF_UP).intValue();
 	}
 
-	public int getRemaining(){
+	public int getRemaining() {
 		return this.computationTime - this.currentProcessed;
 	}
-	
-	public void reset(){
+
+	public void reset() {
 		this.currentProcessed = 0;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "PeriodicTask [computationTime=" + computationTime + ", period="
@@ -71,5 +72,4 @@ public class PeriodicTask extends Task {
 				+ responseTime + ", currentProcessed=" + currentProcessed
 				+ ", getName()=" + getName() + "]";
 	}
-
 }

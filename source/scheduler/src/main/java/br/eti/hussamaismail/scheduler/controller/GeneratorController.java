@@ -207,7 +207,7 @@ public class GeneratorController implements Initializable {
 			Integer partTimeLL = Integer.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
 			LeastLaxityScheduler leastLaxityScheduler = new LeastLaxityScheduler();
 			leastLaxityScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
-			leastLaxityScheduler.setPartSize(partTimeLL);
+			leastLaxityScheduler.setSlotSize(partTimeLL);
 			simulatedChart = leastLaxityScheduler.simulate();
 			
 		break;

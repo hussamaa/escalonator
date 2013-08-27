@@ -1,27 +1,28 @@
 package br.eti.hussamaismail.scheduler.domain;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.util.TasksUtil;
 
 public class LeastLaxityScheduler extends StaticScheduler {
 
 	private TasksUtil tasksUtil;
 	
-	private Integer partSize;
+	private Integer slotSize;
 	
-	public void setPartSize(Integer partSize) {
-		this.partSize = partSize;
+	public void setSlotSize(Integer slotSize) {
+		this.slotSize = slotSize;
 	}
 
 	public LeastLaxityScheduler() {
@@ -32,23 +33,24 @@ public class LeastLaxityScheduler extends StaticScheduler {
 	@Override
 	public Chart simulate() {
 		
-		Map<Double, List<PeriodicTask>> mapWithActivationTimeAndTasks = getMapWithActivationTimeAndTasks();
-		double position = 0;
-		double higherValue = tasksUtil.getHigherDeadlineFromPeriodicTasks(getTasks());
+		Map<Integer, List<PeriodicTask>> mapWithActivationTimeAndTasks = getMapWithActivationTimeAndTasks();
+		int position = 0;
+		int higherValue = tasksUtil.getHigherDeadlineFromPeriodicTasks(getTasks());
 		
 		NumberAxis xAxis = new NumberAxis(0, higherValue, 1);
 		NumberAxis yAxis = new NumberAxis(0, 2, 1);
 		AreaChart<Number, Number> ac = new AreaChart<Number, Number>(xAxis,yAxis);
 		
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
-		List<PeriodicTask> currentTasks = new ArrayList<PeriodicTask>();
+		Set<PeriodicTask> currentTasks = new LinkedHashSet<PeriodicTask>();
 		
-		int partSize = 1;
-		if (this.partSize != null){
-			 partSize = this.partSize;
+		int slotSize = 1;
+		if (this.slotSize != null){
+			slotSize = this.slotSize;
 		}
 		
 		while (position <= higherValue){
+			
 			if (mapWithActivationTimeAndTasks.containsKey(position)){
 				List<PeriodicTask> pendentTasks = mapWithActivationTimeAndTasks.get(position);
 				currentTasks.addAll(pendentTasks);
@@ -70,18 +72,32 @@ public class LeastLaxityScheduler extends StaticScheduler {
 			Series<Number, Number> chartTask = this.tasksUtil.getChartTask(
 					chartTasks, leastLaxity);	
 			
+			
+			/* Verifica se o que falta para executar da tarefa e menor que o slot */
+//			int i = 1;
+			int startedPosition = position;
+			int positionAfterSlot = position + slotSize;
+			boolean firstTime = true;
 			chartTask.getData().add(new Data<Number, Number>(position, 0));
-			chartTask.getData().add(new Data<Number, Number>(position, 1));
-			
-			if (leastLaxity.getRemaining() >= partSize){
-				leastLaxity.process(partSize);
-				position = (new BigDecimal(position + partSize)).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
-			}else if (leastLaxity.getRemaining() < partSize){
-				position = (new BigDecimal(position + leastLaxity.getRemaining())).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
-				leastLaxity.process(leastLaxity.getRemaining());
+			for (int aux = startedPosition; aux <= positionAfterSlot; aux++){
+				if (leastLaxity.getRemaining() > 0){
+					chartTask.getData().add(new Data<Number, Number>(aux, 1));
+					if (firstTime == false){
+						if (leastLaxity.getDeadline() < aux){
+							throw new DeadlineNotSatisfiedException(leastLaxity);
+						}
+						leastLaxity.process(1);
+					}
+					firstTime = false;
+				}else{
+					chartTask.getData().add(new Data<Number, Number>(aux-1, 0));
+				}
+				position = aux;
+				if (mapWithActivationTimeAndTasks.containsKey(aux)){
+					List<PeriodicTask> pendentTasks = mapWithActivationTimeAndTasks.get(aux);
+					currentTasks.addAll(pendentTasks);
+				}
 			}
-			
-			chartTask.getData().add(new Data<Number, Number>(position, 1));
 			chartTask.getData().add(new Data<Number, Number>(position, 0));
 			
 			if (leastLaxity.getRemaining() == 0){
@@ -100,13 +116,13 @@ public class LeastLaxityScheduler extends StaticScheduler {
 	 * 
 	 * @return
 	 */
-	private Map<Double, List<PeriodicTask>> getMapWithActivationTimeAndTasks(){
+	private Map<Integer, List<PeriodicTask>> getMapWithActivationTimeAndTasks(){
 		
-		Map<Double, List<PeriodicTask>> mapActivationTime = new HashMap<Double,List<PeriodicTask>>();
+		Map<Integer, List<PeriodicTask>> mapActivationTime = new HashMap<Integer, List<PeriodicTask>>();
 		List<PeriodicTask> tasks = getTasks();
 		
 		for (PeriodicTask periodicTask : tasks) {
-			double activationTime = periodicTask.getActivationTime();
+			int activationTime = periodicTask.getActivationTime();
 			if (mapActivationTime.containsKey(activationTime) == false){
 				List<PeriodicTask> periodTaskList = new ArrayList<PeriodicTask>();
 				periodTaskList.add(periodicTask);
