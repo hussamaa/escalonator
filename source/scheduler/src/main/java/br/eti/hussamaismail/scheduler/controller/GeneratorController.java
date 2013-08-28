@@ -36,6 +36,7 @@ import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
 import br.eti.hussamaismail.scheduler.domain.RoundRobinScheduler;
 import br.eti.hussamaismail.scheduler.domain.Task;
+import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.util.EditingCell;
 import br.eti.hussamaismail.scheduler.util.TasksUtil;
 
@@ -165,7 +166,7 @@ public class GeneratorController implements Initializable {
 		this.tasksTable.setItems(list);
 	}
 
-	public void simulate(){
+	public void simulate() throws DeadlineNotSatisfiedException{
 
 		Chart simulatedChart = null;
 		boolean preemptive = preemptiveCheckBox.isSelected();
@@ -346,26 +347,47 @@ public class GeneratorController implements Initializable {
 //		t3.setActivationTime(3);
 		
 
+//		PeriodicTask t1 = new PeriodicTask();
+//		t1.setName("A");
+//		t1.setComputationTime(2);
+//		t1.setPeriod(0);
+//		t1.setDeadline(7);
+//		t1.setActivationTime(0);
+//
+//		PeriodicTask t2 = new PeriodicTask();
+//		t2.setName("B");
+//		t2.setComputationTime(4);
+//		t2.setPeriod(0);
+//		t2.setDeadline(9);
+//		t2.setActivationTime(2);
+//
+//		PeriodicTask t3 = new PeriodicTask();
+//		t3.setName("C");
+//		t3.setComputationTime(5);
+//		t3.setPeriod(0);
+//		t3.setDeadline(13);
+//		t3.setActivationTime(3);
+		
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("A");
-		t1.setComputationTime(2);
+		t1.setComputationTime(10);
 		t1.setPeriod(0);
-		t1.setDeadline(7);
+		t1.setDeadline(33);
 		t1.setActivationTime(0);
 
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("B");
-		t2.setComputationTime(4);
+		t2.setComputationTime(3);
 		t2.setPeriod(0);
-		t2.setDeadline(9);
-		t2.setActivationTime(2);
+		t2.setDeadline(28);
+		t2.setActivationTime(4);
 
 		PeriodicTask t3 = new PeriodicTask();
 		t3.setName("C");
-		t3.setComputationTime(5);
+		t3.setComputationTime(10);
 		t3.setPeriod(0);
-		t3.setDeadline(13);
-		t3.setActivationTime(3);
+		t3.setDeadline(29);
+		t3.setActivationTime(5);
 		
 		tasks.add(t1);
 		tasks.add(t2);

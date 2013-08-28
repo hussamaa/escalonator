@@ -1,5 +1,6 @@
 package br.eti.hussamaismail.scheduler.domain;
 
+import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import javafx.scene.chart.Chart;
 
 public interface Scheduler {
@@ -10,7 +11,8 @@ public interface Scheduler {
 	 * pelo usuario
 	 * 
 	 * @return
+	 * @throws DeadlineNotSatisfiedException 
 	 */
-	Chart simulate();
+	Chart simulate() throws DeadlineNotSatisfiedException;
 
 }

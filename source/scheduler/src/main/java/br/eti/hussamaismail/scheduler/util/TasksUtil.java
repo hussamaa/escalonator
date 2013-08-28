@@ -3,7 +3,9 @@ package br.eti.hussamaismail.scheduler.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
@@ -235,5 +237,29 @@ public class TasksUtil {
 				((PeriodicTask) task).reset();
 			}
 		}
+	}
+	
+	/**
+	 * Metodo que gera um mapeamento de todas as periodic tasks
+	 * e seus tempos de ativacao no grafico.
+	 * 
+	 * @return
+	 */
+	public Map<Integer, List<PeriodicTask>> getMapWithActivationTimeAndTasks(List<PeriodicTask> tasks){
+		
+		Map<Integer, List<PeriodicTask>> mapActivationTime = new HashMap<Integer, List<PeriodicTask>>();
+		
+		for (PeriodicTask periodicTask : tasks) {
+			int activationTime = periodicTask.getActivationTime();
+			if (mapActivationTime.containsKey(activationTime) == false){
+				List<PeriodicTask> periodTaskList = new ArrayList<PeriodicTask>();
+				periodTaskList.add(periodicTask);
+				mapActivationTime.put(activationTime, periodTaskList);
+			}else{
+				mapActivationTime.get(activationTime).add(periodicTask);
+			}
+		}
+		
+		return mapActivationTime;
 	}
 }

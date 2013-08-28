@@ -182,9 +182,41 @@ public class LeastLaxitySchedulerTest {
 		this.scheduler.getTasks().add(t3);
 	}
 	
+	public void setTasksCase5(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+		
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("A");
+		t1.setComputationTime(10);
+		t1.setPeriod(0);
+		t1.setDeadline(33);
+		t1.setActivationTime(0);
+
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("B");
+		t2.setComputationTime(3);
+		t2.setPeriod(0);
+		t2.setDeadline(28);
+		t2.setActivationTime(4);
+
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("C");
+		t3.setComputationTime(10);
+		t3.setPeriod(0);
+		t3.setDeadline(29);
+		t3.setActivationTime(5);
+		
+		this.scheduler.setSlotSize(5);
+		
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(t3);
+	}
+	
 	@SuppressWarnings({"unchecked" })
 	@Test
-	public void testCase1(){
+	public void testCase1() throws DeadlineNotSatisfiedException{
 		
 		this.setTasksCase1();
 		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
@@ -276,7 +308,7 @@ public class LeastLaxitySchedulerTest {
 	
 	@SuppressWarnings({"unchecked" })
 	@Test
-	public void testCase2(){
+	public void testCase2() throws DeadlineNotSatisfiedException{
 		
 		this.setTasksCase2();
 		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
@@ -334,7 +366,7 @@ public class LeastLaxitySchedulerTest {
 	
 	@SuppressWarnings({"unchecked" })
 	@Test
-	public void testCase3(){
+	public void testCase3() throws DeadlineNotSatisfiedException{
 		
 		this.setTasksCase3();
 		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
@@ -380,8 +412,57 @@ public class LeastLaxitySchedulerTest {
 	}
 	
 	@Test(expected=DeadlineNotSatisfiedException.class)
-	public void testCase4(){
+	public void testCase4() throws DeadlineNotSatisfiedException{
 		this.setTasksCase4();
 		this.scheduler.simulate();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testCase5() throws DeadlineNotSatisfiedException{
+		this.setTasksCase5();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas tarefas foram criadas no mapa */
+		Assert.assertEquals(3, map.keySet().size());
+		
+		/* Verifica quantas vezes a tarefa 'A' aparece no grafico */
+		Assert.assertEquals(2, map.get("A").size());
+
+		/* Verifica os intevalos da tarefa A [0-5] */
+		Integer[] intervalA1 = map.get("A").get(0);
+		Assert.assertEquals(Long.valueOf(0), Long.valueOf(intervalA1[0]));
+		Assert.assertEquals(Long.valueOf(5), Long.valueOf(intervalA1[1]));
+		
+		/* Verifica os intevalos da tarefa A [20-25] */
+		Integer[] intervalA2 = map.get("A").get(1);
+		Assert.assertEquals(Long.valueOf(20), Long.valueOf(intervalA2[0]));
+		Assert.assertEquals(Long.valueOf(25), Long.valueOf(intervalA2[1]));
+		
+
+		/* Verifica quantas vezes a tarefa 'B' aparece no grafico */
+		Assert.assertEquals(1, map.get("B").size());
+
+		/* Verifica os intevalos da tarefa A [0-5] */
+		Integer[] intervalB1 = map.get("B").get(0);
+		Assert.assertEquals(Long.valueOf(15), Long.valueOf(intervalB1[0]));
+		Assert.assertEquals(Long.valueOf(18), Long.valueOf(intervalB1[1]));
+		
+		
+		/* Verifica quantas vezes a tarefa 'C' aparece no grafico */
+		Assert.assertEquals(2, map.get("C").size());
+
+		/* Verifica os intevalos da tarefa A [0-5] */
+		Integer[] intervalC1 = map.get("C").get(0);
+		Assert.assertEquals(Long.valueOf(5), Long.valueOf(intervalC1[0]));
+		Assert.assertEquals(Long.valueOf(10), Long.valueOf(intervalC1[1]));
+				
+		/* Verifica os intevalos da tarefa A [0-5] */
+		Integer[] intervalC2 = map.get("C").get(1);
+		Assert.assertEquals(Long.valueOf(10), Long.valueOf(intervalC2[0]));
+		Assert.assertEquals(Long.valueOf(15), Long.valueOf(intervalC2[1]));
+			
+	}
+	
 }
