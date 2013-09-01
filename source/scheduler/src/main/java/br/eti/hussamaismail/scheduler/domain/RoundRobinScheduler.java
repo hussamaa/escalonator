@@ -8,55 +8,62 @@ import javafx.scene.chart.Chart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
-import br.eti.hussamaismail.scheduler.util.TasksUtil;
 
+/**
+ * Classe que implementa o comportamento do
+ * escalonador com tecnica RoundRobin
+ * 
+ * @author Hussama Ismail
+ *
+ */
 public class RoundRobinScheduler extends StaticScheduler {
 
-	private TasksUtil tasksUtil;
-	private int partTime;
+	private Integer slotSize;
 
 	public RoundRobinScheduler() {
-		this.tasksUtil = TasksUtil.getInstance();
-		this.partTime = 1;
 	}
 
-	public int getPartTime() {
-		return partTime;
+	public Integer getSlotSize() {
+		return slotSize;
 	}
 
-	public void setPartTime(int partTime) {
-		this.partTime = partTime;
+	public void setSlotSize(Integer slotSize) {
+		this.slotSize = slotSize;
 	}
 
 	@Override
 	public Chart simulate() {
 
-		double higherValue = tasksUtil
-				.getHigherDeadlineFromPeriodicTasks(getTasks());
+		double higherValue = getTasksUtil().getHigherDeadlineFromPeriodicTasks(getTasks());
 
-		NumberAxis xAxis = new NumberAxis(1, higherValue, 1);
+		NumberAxis xAxis = new NumberAxis(0, higherValue * 3, 1);
 		NumberAxis yAxis = new NumberAxis(0, 2, 1);
 		AreaChart<Number, Number> ac = new AreaChart<Number, Number>(xAxis,
 				yAxis);
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
 
-		int partTime = getPartTime();
-		List<PeriodicTask> pendentTasks = new ArrayList<PeriodicTask>(
-				getTasks());
+	
+		int slotSize = 1;
+		
+		if (this.getSlotSize() != null){
+			slotSize = this.getSlotSize();
+		}
+		
+		List<PeriodicTask> pendentTasks = new ArrayList<PeriodicTask>(getTasks());
 		double index = 0;
 
 		while (!pendentTasks.isEmpty()) {
 			int qtd = pendentTasks.size();
 			for (int i = 0; i < qtd; i++) {
 				PeriodicTask pTask = pendentTasks.get(i);
-				Series<Number, Number> chartTask = this.tasksUtil.getChartTask(
+				Series<Number, Number> chartTask = getTasksUtil().getChartTask(
 						chartTasks, pTask);
 				chartTask.getData().add(new Data<Number, Number>(index, 0));
 				chartTask.getData().add(new Data<Number, Number>(index, 1));
-				if (pTask.getRemaining() >= partTime) {
-					index = index + partTime;
-					pTask.process(partTime);
-				} else if (pTask.getRemaining() < partTime) {
+				if (pTask.getRemaining() >= slotSize) {
+					index = index + slotSize;
+					pTask.process(slotSize);
+				} else if (pTask.getRemaining() < slotSize) {
 					int remaining = pTask.getRemaining();
 					index = index + remaining;
 					pTask.process(remaining);

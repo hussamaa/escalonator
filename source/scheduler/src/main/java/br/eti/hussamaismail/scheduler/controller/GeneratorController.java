@@ -199,7 +199,7 @@ public class GeneratorController implements Initializable {
 			Integer partTimeRB = Integer.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
 			RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
 			roundRobinScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
-			roundRobinScheduler.setPartTime(partTimeRB);
+			roundRobinScheduler.setSlotSize(partTimeRB);
 			simulatedChart = roundRobinScheduler.simulate();
 			
 		break;
@@ -368,32 +368,68 @@ public class GeneratorController implements Initializable {
 //		t3.setDeadline(13);
 //		t3.setActivationTime(3);
 		
+//		PeriodicTask t1 = new PeriodicTask();
+//		t1.setName("A");
+//		t1.setComputationTime(10);
+//		t1.setPeriod(0);
+//		t1.setDeadline(33);
+//		t1.setActivationTime(0);
+//
+//		PeriodicTask t2 = new PeriodicTask();
+//		t2.setName("B");
+//		t2.setComputationTime(3);
+//		t2.setPeriod(0);
+//		t2.setDeadline(28);
+//		t2.setActivationTime(4);
+//
+//		PeriodicTask t3 = new PeriodicTask();
+//		t3.setName("C");
+//		t3.setComputationTime(10);
+//		t3.setPeriod(0);
+//		t3.setDeadline(29);
+//		t3.setActivationTime(5);
+		
+		
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("A");
-		t1.setComputationTime(10);
-		t1.setPeriod(0);
-		t1.setDeadline(33);
+		t1.setComputationTime(6);
+		t1.setPeriod(2);
+		t1.setDeadline(2);
 		t1.setActivationTime(0);
 
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("B");
-		t2.setComputationTime(3);
-		t2.setPeriod(0);
-		t2.setDeadline(28);
-		t2.setActivationTime(4);
+		t2.setComputationTime(5);
+		t2.setPeriod(6);
+		t2.setDeadline(6);
+		t2.setActivationTime(1);
 
 		PeriodicTask t3 = new PeriodicTask();
 		t3.setName("C");
-		t3.setComputationTime(10);
-		t3.setPeriod(0);
-		t3.setDeadline(29);
-		t3.setActivationTime(5);
+		t3.setComputationTime(2);
+		t3.setPeriod(3);
+		t3.setDeadline(10);
+		t3.setActivationTime(3);
+		
+		PeriodicTask t4 = new PeriodicTask();
+		t4.setName("D");
+		t4.setComputationTime(3);
+		t4.setPeriod(3);
+		t4.setDeadline(10);
+		t4.setActivationTime(3);
+		
+		PeriodicTask t5 = new PeriodicTask();
+		t5.setName("E");
+		t5.setComputationTime(7);
+		t5.setPeriod(3);
+		t5.setDeadline(10);
+		t5.setActivationTime(3);
 		
 		tasks.add(t1);
 		tasks.add(t2);
 		tasks.add(t3);
-//		tasks.add(t4);
-//		tasks.add(t5);
+		tasks.add(t4);
+		tasks.add(t5);
 
 		openNewTaskDialog();
 	}
