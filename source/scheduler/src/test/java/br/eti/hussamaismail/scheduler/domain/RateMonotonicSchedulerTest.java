@@ -1,3 +1,4 @@
+package br.eti.hussamaismail.scheduler.domain;
 //package br.fucapi.hussamaismail.scheduler.domain;
 //
 //import java.util.ArrayList;

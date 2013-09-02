@@ -1,4 +1,4 @@
-package br.fucapi.hussamaismail.scheduler.util;
+package br.eti.hussamaismail.scheduler.util;
 
 import java.util.List;
 import java.util.Map;

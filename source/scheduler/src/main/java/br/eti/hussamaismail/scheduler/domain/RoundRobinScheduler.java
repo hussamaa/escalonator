@@ -8,10 +8,11 @@ import javafx.scene.chart.Chart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 
 /**
  * Classe que implementa o comportamento do
- * escalonador com tecnica RoundRobin
+ * escalonador com tecnica RoundRobin.
  * 
  * @author Hussama Ismail
  *
@@ -32,17 +33,16 @@ public class RoundRobinScheduler extends StaticScheduler {
 	}
 
 	@Override
-	public Chart simulate() {
+	public Chart simulate() throws DeadlineNotSatisfiedException {
 
 		double higherValue = getTasksUtil().getHigherDeadlineFromPeriodicTasks(getTasks());
 
-		NumberAxis xAxis = new NumberAxis(0, higherValue * 3, 1);
+		NumberAxis xAxis = new NumberAxis(0, higherValue * 2, 1);
 		NumberAxis yAxis = new NumberAxis(0, 2, 1);
 		AreaChart<Number, Number> ac = new AreaChart<Number, Number>(xAxis,
 				yAxis);
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
 
-	
 		int slotSize = 1;
 		
 		if (this.getSlotSize() != null){
@@ -60,6 +60,11 @@ public class RoundRobinScheduler extends StaticScheduler {
 						chartTasks, pTask);
 				chartTask.getData().add(new Data<Number, Number>(index, 0));
 				chartTask.getData().add(new Data<Number, Number>(index, 1));
+				
+				if (index > pTask.getDeadline()){
+					throw new DeadlineNotSatisfiedException(pTask);
+				}
+				
 				if (pTask.getRemaining() >= slotSize) {
 					index = index + slotSize;
 					pTask.process(slotSize);
