@@ -13,6 +13,7 @@ import javafx.scene.chart.XYChart.Series;
 
 import org.apache.log4j.Logger;
 
+import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.exception.TaskNotScalableException;
 
 public abstract class MonotonicScheduler extends StaticScheduler {
@@ -30,7 +31,7 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 	}
 
 	@Override
-	public Chart simulate() {
+	public Chart simulate() throws DeadlineNotSatisfiedException {
 		
 		/* Verifica se é possível escalonar com a técnica desejada */
 		if (isScalable() == false){
@@ -123,7 +124,7 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 		}
 	}
 	
-	public AreaChart<Number,Number> generateMonotonicChart(Map<Integer, List<PeriodicTask>> mapTaskEvent, double higherValue){
+	public AreaChart<Number,Number> generateMonotonicChart(Map<Integer, List<PeriodicTask>> mapTaskEvent, double higherValue) throws DeadlineNotSatisfiedException{
 		
 		NumberAxis xAxis = new NumberAxis(0,higherValue,1);
 		NumberAxis yAxis = new NumberAxis(0,2,1);
@@ -152,12 +153,22 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 				chartTask.getData().add(new Data<Number, Number>(position, 0));
 				chartTask.getData().add(new Data<Number, Number>(position, 1));
 				while (pTask.getRemaining() > 0){
+					
+					if (position >= pTask.getDeadline()){
+						throw new DeadlineNotSatisfiedException(pTask);
+					}
+					
 					if (initialized == true){
 						if (mapTaskEvent.containsKey(position)){
 							chartTask.getData().add(new Data<Number, Number>(position, 1));
 							chartTask.getData().add(new Data<Number, Number>(position, 0));
 							List<PeriodicTask> priorityTasks = mapTaskEvent.get(position);
 							for (PeriodicTask pTask2 : priorityTasks) {
+								
+								if (position >= pTask2.getDeadline()){
+									throw new DeadlineNotSatisfiedException(pTask2);
+								}
+								
 								Series<Number, Number> chartTask2 = getTasksUtil().getChartTask(chartTasks, pTask2);	
 								chartTask2.getData().add(new Data<Number, Number>(position, 0));
 								chartTask2.getData().add(new Data<Number, Number>(position, 1));

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.scene.chart.Chart;
+import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.exception.TaskNotScalableException;
 
 public class RateMonotonicScheduler extends MonotonicScheduler {
@@ -16,7 +17,7 @@ public class RateMonotonicScheduler extends MonotonicScheduler {
 	}
 	
 	@Override
-	public Chart simulate() {
+	public Chart simulate() throws DeadlineNotSatisfiedException {
 		this.getTasksUtil().sortTasksByPeriod(this);
 		super.simulate();
 		double higherPeriod = getTasksUtil().getHigherPeriodFromPeriodicTasks(getTasks());

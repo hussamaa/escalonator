@@ -56,9 +56,10 @@ public class ChartsUtil {
 	  * [A = [{0,5},{8,9}], B = [{5,8}]];
 	  * 
 	  * @param temporalDiagramChart
+	  * @param maxValue - Seta até que posicao do eixo X será montado no mapa
 	  * @return
 	  */
-	 public Map<String,List<Integer[]>> getMapWithXIntervals(AreaChart<Number, Number> temporalDiagramChart){	
+	 public Map<String,List<Integer[]>> getMapWithXIntervals(AreaChart<Number, Number> temporalDiagramChart, int maxValue){	
 		 Map<String,List<Integer[]>> map = new HashMap<String, List<Integer[]>>();
 		 
 		 /* Percorre todos as tasks que compoem o grafico */
@@ -84,15 +85,29 @@ public class ChartsUtil {
 				if ((start != -1) && ocurrence.getYValue().intValue() != 1) {
 					finish = ocurrence.getXValue().intValue();
 				}
-
+				
 				if ((start != -1) && (finish != -1)) {
-					Integer[] interval = { start, finish };
-					map.get(task.getName()).add(interval);
-					start = -1;
-					finish = -1;
+					if (((maxValue != -1) && (start < maxValue)) || (maxValue == -1)){
+						Integer[] interval = { start, finish };
+						map.get(task.getName()).add(interval);
+						start = -1;
+						finish = -1;
+					}
 				}
 			}
     	}
         return map;
     }
+	 
+	/**
+	 * Chama o metodo de geracao do mapa
+	 * passando o parametro -1 para maxValue, ou seja
+	 * varre o eixo inteiro.
+	 * 
+	 * @param temporalDiagramChart
+	 * @return
+	 */
+	public Map<String,List<Integer[]>> getMapWithXIntervals(AreaChart<Number, Number> temporalDiagramChart){	
+		return getMapWithXIntervals(temporalDiagramChart, -1);
+	}
 }

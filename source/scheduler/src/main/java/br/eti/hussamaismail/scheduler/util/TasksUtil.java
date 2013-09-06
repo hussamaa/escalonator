@@ -292,10 +292,14 @@ public class TasksUtil {
 			while (periodAccumulator <= higherPeriodFromPeriodicTasks){
 				if (mapPeriods.containsKey(periodAccumulator) == false){
 					List<PeriodicTask> periodTaskList = new ArrayList<PeriodicTask>();
-					periodTaskList.add(periodicTask.clone());
+					PeriodicTask pTaskClone = periodicTask.clone();
+					pTaskClone.setDeadline(pTaskClone.getDeadline() + periodAccumulator);
+					periodTaskList.add(pTaskClone);
 					mapPeriods.put(periodAccumulator, periodTaskList);
 				}else{
-					mapPeriods.get(periodAccumulator).add(periodicTask.clone());
+					PeriodicTask pTaskClone = periodicTask.clone();
+					pTaskClone.setDeadline(pTaskClone.getDeadline() + periodAccumulator);
+					mapPeriods.get(periodAccumulator).add(pTaskClone);
 				}
 				periodAccumulator = periodAccumulator + periodicTask.getPeriod();
 			}	
