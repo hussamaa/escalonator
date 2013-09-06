@@ -244,23 +244,23 @@ public class GeneratorController implements Initializable {
 				"RateMonotonic", "Deadline Monotonic",
 				"Earliest Deadline First", "Round Robin", "Least Laxity"));
 
-//		PeriodicTask t1 = new PeriodicTask();
-//		t1.setName("t1");
-//		t1.setComputationTime(6.25);
-//		t1.setPeriod(25);
-//		t1.setDeadline(25);
-//
-//		PeriodicTask t2 = new PeriodicTask();
-//		t2.setName("t2");
-//		t2.setComputationTime(6.25);
-//		t2.setPeriod(50);
-//		t2.setDeadline(50);
-//
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("t3");
-//		t3.setComputationTime(20);
-//		t3.setPeriod(100);
-//		t3.setDeadline(100);
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(3);
+		t1.setPeriod(20);
+		t1.setDeadline(20);
+
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(2);
+		t2.setPeriod(5);
+		t2.setDeadline(5);
+
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("T3");
+		t3.setComputationTime(2);
+		t3.setPeriod(10);
+		t3.setDeadline(10);
 		
 // ROUND ROBIN 		
 //		PeriodicTask t1 = new PeriodicTask();
@@ -390,46 +390,46 @@ public class GeneratorController implements Initializable {
 //		t3.setActivationTime(5);
 		
 		
-		PeriodicTask t1 = new PeriodicTask();
-		t1.setName("A");
-		t1.setComputationTime(6);
-		t1.setPeriod(2);
-		t1.setDeadline(2);
-		t1.setActivationTime(0);
-
-		PeriodicTask t2 = new PeriodicTask();
-		t2.setName("B");
-		t2.setComputationTime(5);
-		t2.setPeriod(6);
-		t2.setDeadline(6);
-		t2.setActivationTime(1);
-
-		PeriodicTask t3 = new PeriodicTask();
-		t3.setName("C");
-		t3.setComputationTime(2);
-		t3.setPeriod(3);
-		t3.setDeadline(10);
-		t3.setActivationTime(3);
-		
-		PeriodicTask t4 = new PeriodicTask();
-		t4.setName("D");
-		t4.setComputationTime(3);
-		t4.setPeriod(3);
-		t4.setDeadline(10);
-		t4.setActivationTime(3);
-		
-		PeriodicTask t5 = new PeriodicTask();
-		t5.setName("E");
-		t5.setComputationTime(7);
-		t5.setPeriod(3);
-		t5.setDeadline(10);
-		t5.setActivationTime(3);
+//		PeriodicTask t1 = new PeriodicTask();
+//		t1.setName("A");
+//		t1.setComputationTime(6);
+//		t1.setPeriod(2);
+//		t1.setDeadline(2);
+//		t1.setActivationTime(0);
+//
+//		PeriodicTask t2 = new PeriodicTask();
+//		t2.setName("B");
+//		t2.setComputationTime(5);
+//		t2.setPeriod(6);
+//		t2.setDeadline(6);
+//		t2.setActivationTime(1);
+//
+//		PeriodicTask t3 = new PeriodicTask();
+//		t3.setName("C");
+//		t3.setComputationTime(2);
+//		t3.setPeriod(3);
+//		t3.setDeadline(10);
+//		t3.setActivationTime(3);
+//		
+//		PeriodicTask t4 = new PeriodicTask();
+//		t4.setName("D");
+//		t4.setComputationTime(3);
+//		t4.setPeriod(3);
+//		t4.setDeadline(10);
+//		t4.setActivationTime(3);
+//		
+//		PeriodicTask t5 = new PeriodicTask();
+//		t5.setName("E");
+//		t5.setComputationTime(7);
+//		t5.setPeriod(3);
+//		t5.setDeadline(10);
+//		t5.setActivationTime(3);
 		
 		tasks.add(t1);
 		tasks.add(t2);
 		tasks.add(t3);
-		tasks.add(t4);
-		tasks.add(t5);
+//		tasks.add(t4);
+//		tasks.add(t5);
 
 		openNewTaskDialog();
 	}

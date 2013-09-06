@@ -3,12 +3,17 @@ package br.eti.hussamaismail.scheduler.domain;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class PeriodicTask extends Task {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class PeriodicTask extends Task implements Cloneable {
+	
+	private Logger log = LoggerFactory.getLogger(PeriodicTask.class);
 
 	private int computationTime;
 	private int period;
 	private int deadline;
-	private int responseTime;
+	private double responseTime;
 	private int currentProcessed;
 	private int activationTime;
 
@@ -20,11 +25,11 @@ public class PeriodicTask extends Task {
 		this.activationTime = activationTime;
 	}
 
-	public int getResponseTime() {
+	public double getResponseTime() {
 		return responseTime;
 	}
 
-	public void setResponseTime(int responseTime) {
+	public void setResponseTime(double responseTime) {
 		this.responseTime = responseTime;
 	}
 
@@ -71,5 +76,15 @@ public class PeriodicTask extends Task {
 				+ period + ", deadline=" + deadline + ", responseTime="
 				+ responseTime + ", currentProcessed=" + currentProcessed
 				+ ", getName()=" + getName() + "]";
+	}
+	
+	public PeriodicTask clone() {
+		PeriodicTask pClonedTask = null;
+		try{
+			pClonedTask = (PeriodicTask) super.clone();
+		}catch(CloneNotSupportedException e){
+			log.error("Nao foi possivel clonar a PeriodicTask: " + this);
+		}		
+		return pClonedTask;
 	}
 }

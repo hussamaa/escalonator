@@ -262,4 +262,45 @@ public class TasksUtil {
 		
 		return mapActivationTime;
 	}
+	
+	/**
+	 * Metodo que gera um mapeamento de todas as periodic tasks
+	 * e seus periodos do grafico.
+	 * 
+	 * Ex:
+	 * Task1 - Computation = 6, Periodo = 25.
+     * Task2 - Computation = 6, Periodo = 50.
+	 * 
+	 * Map<Double,List<PeriodicTask>> - Mapa gerado:
+	 * 
+	 *  0 = Task1, Task2
+	 *	25 = Task1,
+	 *  50 = Task1, Task2,
+	 *  75 = Task1,
+	 *  100 = Task1, Task2,
+	 * 
+	 * @return
+	 */
+	public Map<Integer, List<PeriodicTask>> getMapWithPeriodsAndTasks(List<PeriodicTask> tasks){
+		
+		Map<Integer, List<PeriodicTask>> mapPeriods = new HashMap<Integer,List<PeriodicTask>>();
+		mapPeriods.put(0, tasks);
+		int higherPeriodFromPeriodicTasks = this.getHigherPeriodFromPeriodicTasks(tasks);
+		
+		for (PeriodicTask periodicTask : tasks) {
+			int periodAccumulator = periodicTask.getPeriod();
+			while (periodAccumulator <= higherPeriodFromPeriodicTasks){
+				if (mapPeriods.containsKey(periodAccumulator) == false){
+					List<PeriodicTask> periodTaskList = new ArrayList<PeriodicTask>();
+					periodTaskList.add(periodicTask.clone());
+					mapPeriods.put(periodAccumulator, periodTaskList);
+				}else{
+					mapPeriods.get(periodAccumulator).add(periodicTask.clone());
+				}
+				periodAccumulator = periodAccumulator + periodicTask.getPeriod();
+			}	
+		}
+		
+		return mapPeriods;
+	}
 }

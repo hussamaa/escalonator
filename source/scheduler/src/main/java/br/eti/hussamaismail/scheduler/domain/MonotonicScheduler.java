@@ -1,11 +1,9 @@
 package br.eti.hussamaismail.scheduler.domain;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.Chart;
@@ -13,27 +11,15 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 
-import javax.swing.JOptionPane;
-
 import org.apache.log4j.Logger;
 
 import br.eti.hussamaismail.scheduler.exception.TaskNotScalableException;
-import br.eti.hussamaismail.scheduler.util.TasksUtil;
 
 public abstract class MonotonicScheduler extends StaticScheduler {
 
 	private Logger log = Logger.getLogger(MonotonicScheduler.class);
 	private static final int MAX_CONVERGENCE_ATTEMPTS = 10;
 	private boolean preemptive;
-	private TasksUtil tasksUtil;
-
-	public TasksUtil getTasksUtil() {
-		return tasksUtil;
-	}
-
-	public MonotonicScheduler() {
-		this.tasksUtil = TasksUtil.getInstance();
-	}
 	
 	public boolean isPreemptive() {
 		return preemptive;
@@ -80,7 +66,7 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 		double p1 = 0, p2;
 
 		for (PeriodicTask pt : this.getTasks()) {
-			p1 = p1 + (pt.getComputationTime() / pt.getPeriod());
+			p1 = p1 + ((double) pt.getComputationTime() / ((double)pt.getPeriod()));
 		}
 
 		p2 = this.getTasks().size()
@@ -110,17 +96,17 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 			PeriodicTask actualTask = this.getTasks().get(i);
 			log.debug("Calculando tempo máximo de resposta para tarefa: "
 					+ actualTask.getName() + " - " + actualTask);
-			int actualValue = actualTask.getComputationTime();
+			double actualValue = actualTask.getComputationTime();
 			int attempts = 0;
 			while (true) {
-				int accumulator = 0;
+				double accumulator = 0;
 				for (int j = 0; j < i; j++) {
 					PeriodicTask tempTask = this.getTasks().get(j);
-//					accumulator = accumulator
-//							+ Math.ceil(actualValue / tempTask.getPeriod())
-//							* tempTask.getComputationTime();
+					accumulator =  (accumulator
+							+ Math.ceil(actualValue / tempTask.getPeriod())
+							* tempTask.getComputationTime());
 				}
-				int newValue = actualTask.getComputationTime() + accumulator;
+				double newValue = actualTask.getComputationTime() + accumulator;
 				if (newValue != actualValue) {
 					actualValue = newValue;
 				} else {
@@ -137,84 +123,139 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 		}
 	}
 	
-	public AreaChart<Number,Number> generateMonotonicChart(Map<Double, List<PeriodicTask>> mapTaskEvent, double higherValue){
+	public AreaChart<Number,Number> generateMonotonicChart(Map<Integer, List<PeriodicTask>> mapTaskEvent, double higherValue){
 		
-		NumberAxis xAxis = new NumberAxis(1,higherValue,1);
+		NumberAxis xAxis = new NumberAxis(0,higherValue,1);
 		NumberAxis yAxis = new NumberAxis(0,2,1);
 		AreaChart<Number,Number> ac = new AreaChart<Number,Number>(xAxis, yAxis);
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
 		
-		Set<Double> keys = mapTaskEvent.keySet();
-		for (Double double1 : keys) {
-			double temp = 0.2;
-			List<PeriodicTask> tasks = mapTaskEvent.get(double1);
-			for (PeriodicTask periodicTask : tasks) {
-				Series<Number, Number> chartTask = this.tasksUtil.getChartTask(chartTasks, periodicTask);
-				chartTask.getData().add(new Data<Number, Number>(double1, 0));
-				chartTask.getData().add(new Data<Number, Number>(double1, 1 + temp));
-				chartTask.getData().add(new Data<Number, Number>(double1, 0));
-				temp = temp + 0.2;
+		List<PeriodicTask> pendentTasks = new ArrayList<PeriodicTask>();
+
+		int position = 0;
+		while (position < higherValue){
+
+			if (mapTaskEvent.containsKey(position)){
+				pendentTasks.addAll(mapTaskEvent.get(position));
 			}
-		}
-		
-		double partSize = getTasksUtil().calculateMinPartSizeFromTasks(this);		
-		double position = 0;
-		
-		if (isPreemptive() == false) { 
-			while (position <= higherValue){
-				if (mapTaskEvent.containsKey(position)){
-					double containsPosition = position;
-					double pendentTasksPosition = 0;
-					List<PeriodicTask> actualExecutionTasks = mapTaskEvent.get(position);
-					List<PeriodicTask> pendentTasks = null;
-					for (PeriodicTask pTask : actualExecutionTasks) {
-						Series<Number, Number> tempTask = this.tasksUtil.getChartTask(chartTasks, pTask);		
-						tempTask.getData().add(new Data<Number, Number>(position,0));
-						for (double j=0; j <= pTask.getComputationTime(); j = j + partSize){
-							if (containsPosition != position && mapTaskEvent.containsKey(position)){
-								pendentTasks = mapTaskEvent.get(position);
-								pendentTasksPosition = position;
+			
+			if (pendentTasks.isEmpty()){
+				position = position + 1;
+				continue;
+			}
+			
+			boolean initialized = false;
+			Iterator<PeriodicTask> pendentTasksIterator = pendentTasks.iterator();
+			while (pendentTasksIterator.hasNext()){
+				PeriodicTask pTask = pendentTasksIterator.next();
+				Series<Number, Number> chartTask = getTasksUtil().getChartTask(chartTasks, pTask);	
+				chartTask.getData().add(new Data<Number, Number>(position, 0));
+				chartTask.getData().add(new Data<Number, Number>(position, 1));
+				while (pTask.getRemaining() > 0){
+					if (initialized == true){
+						if (mapTaskEvent.containsKey(position)){
+							chartTask.getData().add(new Data<Number, Number>(position, 1));
+							chartTask.getData().add(new Data<Number, Number>(position, 0));
+							List<PeriodicTask> priorityTasks = mapTaskEvent.get(position);
+							for (PeriodicTask pTask2 : priorityTasks) {
+								Series<Number, Number> chartTask2 = getTasksUtil().getChartTask(chartTasks, pTask2);	
+								chartTask2.getData().add(new Data<Number, Number>(position, 0));
+								chartTask2.getData().add(new Data<Number, Number>(position, 1));
+								while (pTask2.getRemaining() > 0){
+									pTask2.process(1);
+									position = position + 1;
+								}
+								chartTask2.getData().add(new Data<Number, Number>(position, 1));
+								chartTask2.getData().add(new Data<Number, Number>(position, 0));
 							}
-							tempTask.getData().add(new Data<Number, Number>(position,1));
-							position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
-						}
-						position = position - partSize;
-						System.out.println("Final Execucao Tarefa: " + pTask.getName() + " em " + position);
-						tempTask.getData().add(new Data<Number, Number>(position,0));					
-					}
-					if (pendentTasks != null){
-						for (PeriodicTask pTask : pendentTasks) {
-							Series<Number, Number> tempTask = this.tasksUtil.getChartTask(chartTasks, pTask);
-							tempTask.getData().add(new Data<Number, Number>(position,0));
-							
-							if (this instanceof RateMonotonicScheduler){
-								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getPeriod()){
-									return null;
-								}	
-							}else{
-								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getDeadline()){
-									return null;
-								}									
-							}		
-							
-							for (double j=0; j <= pTask.getComputationTime(); j = j + partSize){
-								tempTask.getData().add(new Data<Number, Number>(position,1));
-								position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
-							}
-							position = position - partSize;
-							System.out.println("Final Execucao Tarefa: " + pTask.getName() + " em " + position);
-							tempTask.getData().add(new Data<Number, Number>(position - partSize,0));
+							chartTask.getData().add(new Data<Number, Number>(position, 0));
+							chartTask.getData().add(new Data<Number, Number>(position, 1));
 						}
 					}
+					initialized = true;
+					pTask.process(1);
+					position = position + 1;
 				}
-				position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
-			}			
-		}else{
-			JOptionPane.showMessageDialog(null, "Preemptivo - Não Implementado!");
-			return null;
+				chartTask.getData().add(new Data<Number, Number>(position, 1));
+				chartTask.getData().add(new Data<Number, Number>(position, 0));				
+			}
+			pendentTasks.removeAll(pendentTasks);
 		}
-		
+
 		ac.getData().addAll(chartTasks);		
 		return ac;
+		
+		
+//		Set<Double> keys = mapTaskEvent.keySet();
+//		for (Double double1 : keys) {
+//			double temp = 0.2;
+//			List<PeriodicTask> tasks = mapTaskEvent.get(double1);
+//			for (PeriodicTask periodicTask : tasks) {
+//				Series<Number, Number> chartTask = getTasksUtil().getChartTask(chartTasks, periodicTask);
+//				chartTask.getData().add(new Data<Number, Number>(double1, 0));
+//				chartTask.getData().add(new Data<Number, Number>(double1, 1 + temp));
+//				chartTask.getData().add(new Data<Number, Number>(double1, 0));
+//				temp = temp + 0.2;
+//			}
+//		}
+		
+//		int partSize = 1;
+//		int position = 0;
+//		
+//		if (isPreemptive() == false) { 
+//			while (position <= higherValue){
+//				if (mapTaskEvent.containsKey(position)){
+//					double containsPosition = position;
+//					double pendentTasksPosition = 0;
+//					List<PeriodicTask> actualExecutionTasks = mapTaskEvent.get(position);
+//					List<PeriodicTask> pendentTasks = null;
+//					for (PeriodicTask pTask : actualExecutionTasks) {
+//						Series<Number, Number> tempTask = getTasksUtil().getChartTask(chartTasks, pTask);		
+//						tempTask.getData().add(new Data<Number, Number>(position,0));
+//						for (double j=0; j <= pTask.getComputationTime(); j = j + partSize){
+//							if (containsPosition != position && mapTaskEvent.containsKey(position)){
+//								pendentTasks = mapTaskEvent.get(position);
+//								pendentTasksPosition = position;
+//							}
+//							tempTask.getData().add(new Data<Number, Number>(position,1));
+//							position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
+//						}
+//						position = position - partSize;
+//						System.out.println("Final Execucao Tarefa: " + pTask.getName() + " em " + position);
+//						tempTask.getData().add(new Data<Number, Number>(position,0));					
+//					}
+//					if (pendentTasks != null){
+//						for (PeriodicTask pTask : pendentTasks) {
+//							Series<Number, Number> tempTask = getTasksUtil().getChartTask(chartTasks, pTask);
+//							tempTask.getData().add(new Data<Number, Number>(position,0));
+//							
+//							if (this instanceof RateMonotonicScheduler){
+//								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getPeriod()){
+//									return null;
+//								}	
+//							}else{
+//								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getDeadline()){
+//									return null;
+//								}									
+//							}		
+//							
+//							for (double j=0; j <= pTask.getComputationTime(); j = j + partSize){
+//								tempTask.getData().add(new Data<Number, Number>(position,1));
+//								position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
+//							}
+//							position = position - partSize;
+//							System.out.println("Final Execucao Tarefa: " + pTask.getName() + " em " + position);
+//							tempTask.getData().add(new Data<Number, Number>(position - partSize,0));
+//						}
+//					}
+//				}
+//				position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
+//			}			
+//		}else{
+//			JOptionPane.showMessageDialog(null, "Preemptivo - Não Implementado!");
+//			return null;
+//		}
+		
+//		return ac;
 	}
 }
