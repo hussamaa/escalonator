@@ -132,141 +132,115 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
 		
 		List<PeriodicTask> pendentTasks = new ArrayList<PeriodicTask>();
-
 		int position = 0;
-		while (position < higherValue){
 
-			if (mapTaskEvent.containsKey(position)){
-				pendentTasks.addAll(mapTaskEvent.get(position));
-			}
-			
-			if (pendentTasks.isEmpty()){
-				position = position + 1;
-				continue;
-			}
-			
-			boolean initialized = false;
-			Iterator<PeriodicTask> pendentTasksIterator = pendentTasks.iterator();
-			while (pendentTasksIterator.hasNext()){
-				PeriodicTask pTask = pendentTasksIterator.next();
-				Series<Number, Number> chartTask = getTasksUtil().getChartTask(chartTasks, pTask);	
-				chartTask.getData().add(new Data<Number, Number>(position, 0));
-				chartTask.getData().add(new Data<Number, Number>(position, 1));
-				while (pTask.getRemaining() > 0){
-					
-					if (position >= pTask.getDeadline()){
-						throw new DeadlineNotSatisfiedException(pTask);
-					}
-					
-					if (initialized == true){
-						if (mapTaskEvent.containsKey(position)){
-							chartTask.getData().add(new Data<Number, Number>(position, 1));
-							chartTask.getData().add(new Data<Number, Number>(position, 0));
-							List<PeriodicTask> priorityTasks = mapTaskEvent.get(position);
-							for (PeriodicTask pTask2 : priorityTasks) {
-								
-								if (position >= pTask2.getDeadline()){
-									throw new DeadlineNotSatisfiedException(pTask2);
+		if (isPreemptive() == true){
+			while (position < higherValue){
+	
+				if (mapTaskEvent.containsKey(position)){
+					pendentTasks.addAll(mapTaskEvent.get(position));
+				}
+				
+				if (pendentTasks.isEmpty()){
+					position = position + 1;
+					continue;
+				}
+				
+				boolean initialized = false;
+				Iterator<PeriodicTask> pendentTasksIterator = pendentTasks.iterator();
+				while (pendentTasksIterator.hasNext()){
+					PeriodicTask pTask = pendentTasksIterator.next();
+					Series<Number, Number> chartTask = getTasksUtil().getChartTask(chartTasks, pTask);	
+					chartTask.getData().add(new Data<Number, Number>(position, 0));
+					chartTask.getData().add(new Data<Number, Number>(position, 1));
+					while (pTask.getRemaining() > 0){
+						
+						if (position >= pTask.getDeadline()){
+							throw new DeadlineNotSatisfiedException(pTask);
+						}
+						
+						if (initialized == true){
+							if (mapTaskEvent.containsKey(position)){
+								chartTask.getData().add(new Data<Number, Number>(position, 1));
+								chartTask.getData().add(new Data<Number, Number>(position, 0));
+								List<PeriodicTask> priorityTasks = mapTaskEvent.get(position);
+								for (PeriodicTask pTask2 : priorityTasks) {
+									
+									if (position >= pTask2.getDeadline()){
+										throw new DeadlineNotSatisfiedException(pTask2);
+									}
+									
+									Series<Number, Number> chartTask2 = getTasksUtil().getChartTask(chartTasks, pTask2);	
+									chartTask2.getData().add(new Data<Number, Number>(position, 0));
+									chartTask2.getData().add(new Data<Number, Number>(position, 1));
+									while (pTask2.getRemaining() > 0){
+										pTask2.process(1);
+										position = position + 1;
+									}
+									chartTask2.getData().add(new Data<Number, Number>(position, 1));
+									chartTask2.getData().add(new Data<Number, Number>(position, 0));
 								}
-								
-								Series<Number, Number> chartTask2 = getTasksUtil().getChartTask(chartTasks, pTask2);	
-								chartTask2.getData().add(new Data<Number, Number>(position, 0));
-								chartTask2.getData().add(new Data<Number, Number>(position, 1));
-								while (pTask2.getRemaining() > 0){
-									pTask2.process(1);
-									position = position + 1;
-								}
-								chartTask2.getData().add(new Data<Number, Number>(position, 1));
-								chartTask2.getData().add(new Data<Number, Number>(position, 0));
+								chartTask.getData().add(new Data<Number, Number>(position, 0));
+								chartTask.getData().add(new Data<Number, Number>(position, 1));
 							}
-							chartTask.getData().add(new Data<Number, Number>(position, 0));
-							chartTask.getData().add(new Data<Number, Number>(position, 1));
+						}
+						initialized = true;
+						pTask.process(1);
+						position = position + 1;
+					}
+					chartTask.getData().add(new Data<Number, Number>(position, 1));
+					chartTask.getData().add(new Data<Number, Number>(position, 0));				
+				}
+				pendentTasks.removeAll(pendentTasks);
+			}	
+			ac.getData().addAll(chartTasks);
+		}else{
+			while (position <= higherValue){
+				if (mapTaskEvent.containsKey(position)){
+					int containsPosition = position;
+					int pendentTasksPosition = 0;
+					List<PeriodicTask> actualExecutionTasks = mapTaskEvent.get(position);
+					for (PeriodicTask pTask : actualExecutionTasks) {
+						Series<Number, Number> tempTask = getTasksUtil().getChartTask(chartTasks, pTask);		
+						tempTask.getData().add(new Data<Number, Number>(position,0));
+						for (int j=0; j <= pTask.getComputationTime(); j = j + 1){
+							if (containsPosition != position && mapTaskEvent.containsKey(position)){
+								pendentTasks = mapTaskEvent.get(position);
+								pendentTasksPosition = position;
+							}
+							tempTask.getData().add(new Data<Number, Number>(position,1));
+							position = position + 1;
+						}
+						position = position - 1;
+						tempTask.getData().add(new Data<Number, Number>(position,0));					
+					}
+					if (pendentTasks != null){
+						for (PeriodicTask pTask : pendentTasks) {
+							Series<Number, Number> tempTask = getTasksUtil().getChartTask(chartTasks, pTask);
+							tempTask.getData().add(new Data<Number, Number>(position,0));
+							
+							if (this instanceof RateMonotonicScheduler){
+								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getPeriod()){
+									return null;
+								}	
+							}else{
+								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getDeadline()){
+									return null;
+								}									
+							}		
+							
+							for (double j=0; j <= pTask.getComputationTime(); j = j + 1){
+								tempTask.getData().add(new Data<Number, Number>(position,1));
+								position = position + 1;
+							}
+							position = position - 1;
+							tempTask.getData().add(new Data<Number, Number>(position - 1,0));
 						}
 					}
-					initialized = true;
-					pTask.process(1);
-					position = position + 1;
 				}
-				chartTask.getData().add(new Data<Number, Number>(position, 1));
-				chartTask.getData().add(new Data<Number, Number>(position, 0));				
+				position = position + 1;
 			}
-			pendentTasks.removeAll(pendentTasks);
 		}
-
-		ac.getData().addAll(chartTasks);		
 		return ac;
-		
-		
-//		Set<Double> keys = mapTaskEvent.keySet();
-//		for (Double double1 : keys) {
-//			double temp = 0.2;
-//			List<PeriodicTask> tasks = mapTaskEvent.get(double1);
-//			for (PeriodicTask periodicTask : tasks) {
-//				Series<Number, Number> chartTask = getTasksUtil().getChartTask(chartTasks, periodicTask);
-//				chartTask.getData().add(new Data<Number, Number>(double1, 0));
-//				chartTask.getData().add(new Data<Number, Number>(double1, 1 + temp));
-//				chartTask.getData().add(new Data<Number, Number>(double1, 0));
-//				temp = temp + 0.2;
-//			}
-//		}
-		
-//		int partSize = 1;
-//		int position = 0;
-//		
-//		if (isPreemptive() == false) { 
-//			while (position <= higherValue){
-//				if (mapTaskEvent.containsKey(position)){
-//					double containsPosition = position;
-//					double pendentTasksPosition = 0;
-//					List<PeriodicTask> actualExecutionTasks = mapTaskEvent.get(position);
-//					List<PeriodicTask> pendentTasks = null;
-//					for (PeriodicTask pTask : actualExecutionTasks) {
-//						Series<Number, Number> tempTask = getTasksUtil().getChartTask(chartTasks, pTask);		
-//						tempTask.getData().add(new Data<Number, Number>(position,0));
-//						for (double j=0; j <= pTask.getComputationTime(); j = j + partSize){
-//							if (containsPosition != position && mapTaskEvent.containsKey(position)){
-//								pendentTasks = mapTaskEvent.get(position);
-//								pendentTasksPosition = position;
-//							}
-//							tempTask.getData().add(new Data<Number, Number>(position,1));
-//							position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
-//						}
-//						position = position - partSize;
-//						System.out.println("Final Execucao Tarefa: " + pTask.getName() + " em " + position);
-//						tempTask.getData().add(new Data<Number, Number>(position,0));					
-//					}
-//					if (pendentTasks != null){
-//						for (PeriodicTask pTask : pendentTasks) {
-//							Series<Number, Number> tempTask = getTasksUtil().getChartTask(chartTasks, pTask);
-//							tempTask.getData().add(new Data<Number, Number>(position,0));
-//							
-//							if (this instanceof RateMonotonicScheduler){
-//								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getPeriod()){
-//									return null;
-//								}	
-//							}else{
-//								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getDeadline()){
-//									return null;
-//								}									
-//							}		
-//							
-//							for (double j=0; j <= pTask.getComputationTime(); j = j + partSize){
-//								tempTask.getData().add(new Data<Number, Number>(position,1));
-//								position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
-//							}
-//							position = position - partSize;
-//							System.out.println("Final Execucao Tarefa: " + pTask.getName() + " em " + position);
-//							tempTask.getData().add(new Data<Number, Number>(position - partSize,0));
-//						}
-//					}
-//				}
-//				position = new BigDecimal(position + partSize).setScale(2,RoundingMode.HALF_EVEN).doubleValue();
-//			}			
-//		}else{
-//			JOptionPane.showMessageDialog(null, "Preemptivo - Não Implementado!");
-//			return null;
-//		}
-		
-//		return ac;
 	}
 }

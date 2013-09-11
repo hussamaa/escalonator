@@ -141,7 +141,8 @@ public class RateMonotonicSchedulerTest {
 		t3.setComputationTime(2);
 		t3.setPeriod(10);
 		t3.setDeadline(10);
-				
+
+		this.scheduler.setPreemptive(true);
 		this.scheduler.getTasks().add(t1);
 		this.scheduler.getTasks().add(t2);
 		this.scheduler.getTasks().add(t3);
