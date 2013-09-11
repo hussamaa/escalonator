@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.Chart;
@@ -16,6 +17,24 @@ import org.apache.log4j.Logger;
 import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.exception.TaskNotScalableException;
 
+/**
+ * Classe responsavel por gerar o diagrama
+ * temporal para os algoritmos RateMonotonic 
+ * e DeadLineMonotonic.
+ * 
+ * FIXME - Atualmente esses mecanismos funcionam
+ * bem para casos com ate um nivel de profundidade,
+ * ou seja, para o caso preemptivo: se e encontrado 
+ * um conjunto de tarefas, o algorimo para e o processa
+ * como prioridade, no entanto, caso durante esse processamento
+ * um novo conjunto surgir ocorrem problemas no algoritmo.
+ * 
+ * Para resolver esse ponto, é necessário implementar uma lógica
+ * recursiva.
+ * 
+ * @author Hussama Ismail
+ *
+ */
 public abstract class MonotonicScheduler extends StaticScheduler {
 
 	private Logger log = Logger.getLogger(MonotonicScheduler.class);
@@ -124,7 +143,7 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 		}
 	}
 	
-	public AreaChart<Number,Number> generateMonotonicChart(Map<Integer, List<PeriodicTask>> mapTaskEvent, double higherValue) throws DeadlineNotSatisfiedException{
+	public AreaChart<Number,Number> generateMonotonicChart(Map<Integer, List<PeriodicTask>> mapTaskEvent, int higherValue) throws DeadlineNotSatisfiedException{
 		
 		NumberAxis xAxis = new NumberAxis(0,higherValue,1);
 		NumberAxis yAxis = new NumberAxis(0,2,1);
@@ -132,115 +151,114 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
 		
 		List<PeriodicTask> pendentTasks = new ArrayList<PeriodicTask>();
+		
 		int position = 0;
 
-		if (isPreemptive() == true){
-			while (position < higherValue){
-	
-				if (mapTaskEvent.containsKey(position)){
-					pendentTasks.addAll(mapTaskEvent.get(position));
-				}
-				
-				if (pendentTasks.isEmpty()){
-					position = position + 1;
-					continue;
-				}
-				
-				boolean initialized = false;
-				Iterator<PeriodicTask> pendentTasksIterator = pendentTasks.iterator();
-				while (pendentTasksIterator.hasNext()){
-					PeriodicTask pTask = pendentTasksIterator.next();
-					Series<Number, Number> chartTask = getTasksUtil().getChartTask(chartTasks, pTask);	
-					chartTask.getData().add(new Data<Number, Number>(position, 0));
-					chartTask.getData().add(new Data<Number, Number>(position, 1));
-					while (pTask.getRemaining() > 0){
-						
-						if (position >= pTask.getDeadline()){
-							throw new DeadlineNotSatisfiedException(pTask);
-						}
-						
-						if (initialized == true){
-							if (mapTaskEvent.containsKey(position)){
-								chartTask.getData().add(new Data<Number, Number>(position, 1));
-								chartTask.getData().add(new Data<Number, Number>(position, 0));
-								List<PeriodicTask> priorityTasks = mapTaskEvent.get(position);
-								for (PeriodicTask pTask2 : priorityTasks) {
-									
-									if (position >= pTask2.getDeadline()){
-										throw new DeadlineNotSatisfiedException(pTask2);
-									}
-									
-									Series<Number, Number> chartTask2 = getTasksUtil().getChartTask(chartTasks, pTask2);	
-									chartTask2.getData().add(new Data<Number, Number>(position, 0));
-									chartTask2.getData().add(new Data<Number, Number>(position, 1));
-									while (pTask2.getRemaining() > 0){
-										pTask2.process(1);
-										position = position + 1;
-									}
-									chartTask2.getData().add(new Data<Number, Number>(position, 1));
-									chartTask2.getData().add(new Data<Number, Number>(position, 0));
-								}
-								chartTask.getData().add(new Data<Number, Number>(position, 0));
-								chartTask.getData().add(new Data<Number, Number>(position, 1));
-							}
-						}
-						initialized = true;
-						pTask.process(1);
-						position = position + 1;
+		while (position < higherValue){
+
+			if (mapTaskEvent.containsKey(position)){
+				pendentTasks.addAll(mapTaskEvent.get(position));
+			}
+			
+			if (pendentTasks.isEmpty()){
+				position = position + 1;
+				continue;
+			}
+			
+			boolean initialized = false;
+			Iterator<PeriodicTask> pendentTasksIterator = pendentTasks.iterator();
+			while (pendentTasksIterator.hasNext()){
+				PeriodicTask pTask = pendentTasksIterator.next();
+				Series<Number, Number> chartTask = getTasksUtil().getChartTask(chartTasks, pTask);	
+				chartTask.getData().add(new Data<Number, Number>(position, 0));
+				chartTask.getData().add(new Data<Number, Number>(position, 1));
+				Vector<List<PeriodicTask>> nonPreemptivePendentTasks = new Vector<List<PeriodicTask>>();
+				while (pTask.getRemaining() > 0){
+					
+					if (position >= pTask.getDeadline()){
+						throw new DeadlineNotSatisfiedException(pTask);
 					}
-					chartTask.getData().add(new Data<Number, Number>(position, 1));
-					chartTask.getData().add(new Data<Number, Number>(position, 0));				
-				}
-				pendentTasks.removeAll(pendentTasks);
-			}	
-			ac.getData().addAll(chartTasks);
-		}else{
-			while (position <= higherValue){
-				if (mapTaskEvent.containsKey(position)){
-					int containsPosition = position;
-					int pendentTasksPosition = 0;
-					List<PeriodicTask> actualExecutionTasks = mapTaskEvent.get(position);
-					for (PeriodicTask pTask : actualExecutionTasks) {
-						Series<Number, Number> tempTask = getTasksUtil().getChartTask(chartTasks, pTask);		
-						tempTask.getData().add(new Data<Number, Number>(position,0));
-						for (int j=0; j <= pTask.getComputationTime(); j = j + 1){
-							if (containsPosition != position && mapTaskEvent.containsKey(position)){
-								pendentTasks = mapTaskEvent.get(position);
-								pendentTasksPosition = position;
+					
+					if (initialized == true){
+						if (mapTaskEvent.containsKey(position) && (isPreemptive() == true)){
+							chartTask.getData().add(new Data<Number, Number>(position, 1));
+							chartTask.getData().add(new Data<Number, Number>(position, 0));
+							List<PeriodicTask> priorityTasks = mapTaskEvent.get(position);
+							for (PeriodicTask pTask2 : priorityTasks) {
+								
+								if (position >= pTask2.getDeadline()){
+									throw new DeadlineNotSatisfiedException(pTask2);
+								}
+								
+								Series<Number, Number> chartTask2 = getTasksUtil().getChartTask(chartTasks, pTask2);	
+								chartTask2.getData().add(new Data<Number, Number>(position, 0));
+								chartTask2.getData().add(new Data<Number, Number>(position, 1));
+								while (pTask2.getRemaining() > 0){
+									pTask2.process(1);
+									position = position + 1;
+								}
+								chartTask2.getData().add(new Data<Number, Number>(position, 1));
+								chartTask2.getData().add(new Data<Number, Number>(position, 0));
 							}
-							tempTask.getData().add(new Data<Number, Number>(position,1));
+							chartTask.getData().add(new Data<Number, Number>(position, 0));
+							chartTask.getData().add(new Data<Number, Number>(position, 1));
+						}else if (mapTaskEvent.containsKey(position) && (isPreemptive() == false)){
+							nonPreemptivePendentTasks.add(mapTaskEvent.get(position));
+						}
+
+					}
+					initialized = true;
+					pTask.process(1);
+					position = position + 1;
+				}
+				chartTask.getData().add(new Data<Number, Number>(position, 1));
+				chartTask.getData().add(new Data<Number, Number>(position, 0));		
+				
+				if (nonPreemptivePendentTasks.size() > 0){
+					List<PeriodicTask> resultantList = getResultantList(nonPreemptivePendentTasks);
+					for (PeriodicTask pTask2 : resultantList) {
+						
+						if (position >= pTask2.getDeadline()){
+							throw new DeadlineNotSatisfiedException(pTask2);
+						}
+						
+						Series<Number, Number> chartTask2 = getTasksUtil().getChartTask(chartTasks, pTask2);	
+						chartTask2.getData().add(new Data<Number, Number>(position, 0));
+						chartTask2.getData().add(new Data<Number, Number>(position, 1));
+						while (pTask2.getRemaining() > 0){
+							pTask2.process(1);
 							position = position + 1;
 						}
-						position = position - 1;
-						tempTask.getData().add(new Data<Number, Number>(position,0));					
+						chartTask2.getData().add(new Data<Number, Number>(position, 1));
+						chartTask2.getData().add(new Data<Number, Number>(position, 0));
 					}
-					if (pendentTasks != null){
-						for (PeriodicTask pTask : pendentTasks) {
-							Series<Number, Number> tempTask = getTasksUtil().getChartTask(chartTasks, pTask);
-							tempTask.getData().add(new Data<Number, Number>(position,0));
-							
-							if (this instanceof RateMonotonicScheduler){
-								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getPeriod()){
-									return null;
-								}	
-							}else{
-								if (position + pTask.getComputationTime() > pendentTasksPosition + pTask.getDeadline()){
-									return null;
-								}									
-							}		
-							
-							for (double j=0; j <= pTask.getComputationTime(); j = j + 1){
-								tempTask.getData().add(new Data<Number, Number>(position,1));
-								position = position + 1;
-							}
-							position = position - 1;
-							tempTask.getData().add(new Data<Number, Number>(position - 1,0));
-						}
-					}
+					chartTask.getData().add(new Data<Number, Number>(position, 0));
+					chartTask.getData().add(new Data<Number, Number>(position, 1));
 				}
-				position = position + 1;
+				
 			}
-		}
+			pendentTasks.removeAll(pendentTasks);
+		}	
+		ac.getData().addAll(chartTasks);
 		return ac;
+	}
+	
+	/**
+	 * Metodo que gera uma lista resultante com base
+	 * em um vetor com varias listas.
+	 * 
+	 * @param vector
+	 * @return
+	 */
+	private List<PeriodicTask> getResultantList(Vector<List<PeriodicTask>> vector){
+		List<PeriodicTask> resultantList = new ArrayList<PeriodicTask>();
+		
+		Iterator<List<PeriodicTask>> iterator = vector.iterator();
+		while (iterator.hasNext()){
+			List<PeriodicTask> next = iterator.next();
+			resultantList.addAll(next);
+		}
+		
+		return resultantList;
 	}
 }

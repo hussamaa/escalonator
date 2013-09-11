@@ -20,7 +20,7 @@ public class RateMonotonicScheduler extends MonotonicScheduler {
 	public Chart simulate() throws DeadlineNotSatisfiedException {
 		this.getTasksUtil().sortTasksByPeriod(this);
 		super.simulate();
-		double higherPeriod = getTasksUtil().getHigherPeriodFromPeriodicTasks(getTasks());
+		int higherPeriod = getTasksUtil().getHigherPeriodFromPeriodicTasks(getTasks());
 		Map<Integer, List<PeriodicTask>> mapWithPeriodsAndTasks = getTasksUtil().getMapWithPeriodsAndTasks(getTasks());			
 		
 		return generateMonotonicChart(mapWithPeriodsAndTasks, higherPeriod);		
