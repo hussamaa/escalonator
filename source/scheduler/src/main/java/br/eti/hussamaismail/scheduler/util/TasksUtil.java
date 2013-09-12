@@ -271,7 +271,7 @@ public class TasksUtil {
 	 * Task1 - Computation = 6, Periodo = 25.
      * Task2 - Computation = 6, Periodo = 50.
 	 * 
-	 * Map<Double,List<PeriodicTask>> - Mapa gerado:
+	 * Map<Integer,List<PeriodicTask>> - Mapa gerado:
 	 * 
 	 *  0 = Task1, Task2
 	 *	25 = Task1,
@@ -306,5 +306,50 @@ public class TasksUtil {
 		}
 		
 		return mapPeriods;
+	}
+	
+	/**
+	 * Metodo que gera um mapeamento de todas as periodic tasks
+	 * e seus deadlines do grafico.
+	 * 
+	 * Ex:
+	 * Task1 - Computation = 6, Deadline = 25.
+     * Task2 - Computation = 6, Deadline = 50.
+	 * 
+	 * Map<Integer,List<PeriodicTask>> - Mapa gerado:
+	 * 
+	 *  0 = Task1, Task2
+	 *	25 = Task1,
+	 *  50 = Task1, Task2,
+	 *  75 = Task1,
+	 *  100 = Task1, Task2,
+	 * 
+	 * @return
+	 */
+	public Map<Integer, List<PeriodicTask>> getMapWithDeadlinesAndTasks(List<PeriodicTask> tasks){
+		
+		Map<Integer, List<PeriodicTask>> mapDeadLines = new HashMap<Integer,List<PeriodicTask>>();
+		mapDeadLines.put(0, tasks);
+		int higherDeadlineFromPeriodicTasks = this.getHigherDeadlineFromPeriodicTasks(tasks);
+		
+		for (PeriodicTask periodicTask : tasks) {
+			int deadlineAccumulator = periodicTask.getDeadline();
+			while (deadlineAccumulator <= higherDeadlineFromPeriodicTasks){
+				if (mapDeadLines.containsKey(deadlineAccumulator) == false){
+					List<PeriodicTask> deadLineTaskList = new ArrayList<PeriodicTask>();
+					PeriodicTask pTaskClone = periodicTask.clone();
+					pTaskClone.setDeadline(pTaskClone.getDeadline() + deadlineAccumulator);
+					deadLineTaskList.add(pTaskClone);
+					mapDeadLines.put(deadlineAccumulator, deadLineTaskList);
+				}else{
+					PeriodicTask pTaskClone = periodicTask.clone();
+					pTaskClone.setDeadline(pTaskClone.getDeadline() + deadlineAccumulator);
+					mapDeadLines.get(deadlineAccumulator).add(pTaskClone);
+				}
+				deadlineAccumulator = deadlineAccumulator + periodicTask.getDeadline();
+			}	
+		}
+		
+		return mapDeadLines;
 	}
 }

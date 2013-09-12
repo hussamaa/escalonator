@@ -1,7 +1,5 @@
 package br.eti.hussamaismail.scheduler.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,9 +7,23 @@ import javafx.scene.chart.Chart;
 import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.exception.TaskNotScalableException;
 
+/**
+ * Classe responsavel por implementar o comportamento
+ * do escalonamento utilizando a técnica DeadlineMonotonic. 
+ * 
+ * Essa classe utiliza os comportamentos herdados da classe
+ * 'MonotonicScheduler' aplicando a particularidade das tarefas
+ * com menor deadline terem prioridade.
+ * 
+ * @author Hussama Ismail
+ *
+ */
 public class DeadlineMonotonicScheduler extends MonotonicScheduler {
 
-
+	/**
+	 * Modifica o comportamento ordendando as classes
+	 * por deadline de forma crescente
+	 */
 	@Override
 	public void calculateMaximumResponseTimeToTheTasks()
 			throws TaskNotScalableException {	
@@ -19,56 +31,18 @@ public class DeadlineMonotonicScheduler extends MonotonicScheduler {
 		super.calculateMaximumResponseTimeToTheTasks();
 	}
 	
+	/**
+	 * Gera o diagrama temporal utilizando o maior
+	 * deadline como referencia para o grafico e também 
+	 * menor deadline com prioridade.
+	 */
 	@Override
 	public Chart simulate() throws DeadlineNotSatisfiedException {
 		this.getTasksUtil().sortTasksByDeadline(this);
 		super.simulate();
-		double higherDeadline = getTasksUtil().getHigherDeadlineFromPeriodicTasks(getTasks());
-		Map<Double, List<PeriodicTask>> mapWithPeriodsAndTasks = getMapWithDeadlinesAndTasks();			
-		return null;
-//		return generateMonotonicChart(mapWithPeriodsAndTasks, higherDeadline);		
-	}
-	
-	/**
-	 * Metodo que gera um mapeamento de todas as periodic tasks
-	 * e seus deadlines do grafico.
-	 * 
-	 * Ex:
-	 * Task1 - Computation = 6.25, Deadline = 25.
-     * Task2 - Computation = 6.25, Deadline = 50.
-	 * 
-	 * Map<Double,List<PeriodicTask>> - Mapa gerado:
-	 * 
-	 *  0 = Task1, Task2
-	 *	25 = Task1,
-	 *  50 = Task1, Task2,
-	 *  75 = Task1,
-	 *  100 = Task1, Task2,
-	 * 
-	 * @return
-	 */
-	private Map<Double, List<PeriodicTask>> getMapWithDeadlinesAndTasks(){
-		
-		Map<Double, List<PeriodicTask>> mapDeadLines = new HashMap<Double,List<PeriodicTask>>();
-		mapDeadLines.put(0d, this.getTasks());
-		List<PeriodicTask> tasks = getTasks();
-		double higherDeadlineFromPeriodicTasks = getTasksUtil().getHigherDeadlineFromPeriodicTasks(tasks);
-		
-		for (PeriodicTask periodicTask : tasks) {
-			double deadlineAccumulator = periodicTask.getDeadline();
-			while (deadlineAccumulator <= higherDeadlineFromPeriodicTasks){
-				if (mapDeadLines.containsKey(deadlineAccumulator) == false){
-					List<PeriodicTask> deadLineTaskList = new ArrayList<PeriodicTask>();
-					deadLineTaskList.add(periodicTask);
-					mapDeadLines.put(deadlineAccumulator, deadLineTaskList);
-				}else{
-					mapDeadLines.get(deadlineAccumulator).add(periodicTask);
-				}
-				deadlineAccumulator = deadlineAccumulator + periodicTask.getDeadline();
-			}	
-		}
-		
-		return mapDeadLines;
+		int higherPeriod = getTasksUtil().getHigherPeriodFromPeriodicTasks(getTasks());
+		Map<Integer, List<PeriodicTask>> mapWithPeriodsAndTasks = getTasksUtil().getMapWithPeriodsAndTasks(this.getTasks());			
+		return generateMonotonicChart(mapWithPeriodsAndTasks, higherPeriod);		
 	}
 	
 }

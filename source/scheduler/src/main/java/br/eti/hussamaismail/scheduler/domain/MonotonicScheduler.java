@@ -143,6 +143,14 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 		}
 	}
 	
+	/**
+	 * Metodo que gera os graficos monotonics.
+	 * 
+	 * @param mapTaskEvent
+	 * @param higherValue
+	 * @return
+	 * @throws DeadlineNotSatisfiedException
+	 */
 	public AreaChart<Number,Number> generateMonotonicChart(Map<Integer, List<PeriodicTask>> mapTaskEvent, int higherValue) throws DeadlineNotSatisfiedException{
 		
 		NumberAxis xAxis = new NumberAxis(0,higherValue,1);
@@ -175,9 +183,13 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 				Vector<List<PeriodicTask>> nonPreemptivePendentTasks = new Vector<List<PeriodicTask>>();
 				while (pTask.getRemaining() > 0){
 					
+					if (position > higherValue){
+						break;
+					}
 					if (position >= pTask.getDeadline()){
 						throw new DeadlineNotSatisfiedException(pTask);
 					}
+					
 					
 					if (initialized == true){
 						if (mapTaskEvent.containsKey(position) && (isPreemptive() == true)){
@@ -186,6 +198,9 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 							List<PeriodicTask> priorityTasks = mapTaskEvent.get(position);
 							for (PeriodicTask pTask2 : priorityTasks) {
 								
+								if (position > higherValue){
+									break;
+								}
 								if (position >= pTask2.getDeadline()){
 									throw new DeadlineNotSatisfiedException(pTask2);
 								}
@@ -217,7 +232,10 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 				if (nonPreemptivePendentTasks.size() > 0){
 					List<PeriodicTask> resultantList = getResultantList(nonPreemptivePendentTasks);
 					for (PeriodicTask pTask2 : resultantList) {
-						
+					
+						if (position > higherValue){
+							break;
+						}
 						if (position >= pTask2.getDeadline()){
 							throw new DeadlineNotSatisfiedException(pTask2);
 						}
@@ -232,8 +250,6 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 						chartTask2.getData().add(new Data<Number, Number>(position, 1));
 						chartTask2.getData().add(new Data<Number, Number>(position, 0));
 					}
-					chartTask.getData().add(new Data<Number, Number>(position, 0));
-					chartTask.getData().add(new Data<Number, Number>(position, 1));
 				}
 				
 			}
