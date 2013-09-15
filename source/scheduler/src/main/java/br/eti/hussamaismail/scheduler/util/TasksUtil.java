@@ -14,6 +14,16 @@ import br.eti.hussamaismail.scheduler.domain.Scheduler;
 import br.eti.hussamaismail.scheduler.domain.StaticScheduler;
 import br.eti.hussamaismail.scheduler.domain.Task;
 
+/**
+ * Classe responsavel por ter metodos
+ * auxiliares para os escalonadores.
+ * 
+ * Ex: metodos de ordenacao de tarefas,
+ * de geracao de mapas de ativacao, entre outras.
+ * 
+ * @author Hussama Ismail
+ *
+ */
 public class TasksUtil {
 
 	private static TasksUtil instance;
@@ -284,20 +294,31 @@ public class TasksUtil {
 	public Map<Integer, List<PeriodicTask>> getMapWithPeriodsAndTasks(List<PeriodicTask> tasks){
 		
 		Map<Integer, List<PeriodicTask>> mapPeriods = new HashMap<Integer,List<PeriodicTask>>();
-		mapPeriods.put(0, tasks);
 		int higherPeriodFromPeriodicTasks = this.getHigherPeriodFromPeriodicTasks(tasks);
 		
 		for (PeriodicTask periodicTask : tasks) {
-			int periodAccumulator = periodicTask.getPeriod();
+
+			/* Cria a primeira tarefa no periodo de ativacao setado pelo usuario */
+			PeriodicTask activationTask = periodicTask.clone();
+			activationTask.setDeadline(activationTask.getDeadline() + activationTask.getActivationTime());
+			if (mapPeriods.containsKey(activationTask.getActivationTime()) == false){
+				List<PeriodicTask> periodTaskList = new ArrayList<PeriodicTask>();
+				periodTaskList.add(activationTask);
+				mapPeriods.put(activationTask.getActivationTime(), periodTaskList);
+			}else{
+				mapPeriods.get(activationTask.getActivationTime()).add(activationTask);
+			}
+			
+			/* Percorre ate o ultimo maior periodo adicionando todas as ativacoes  */
+			int periodAccumulator = periodicTask.getActivationTime() + periodicTask.getPeriod();
 			while (periodAccumulator <= higherPeriodFromPeriodicTasks){
+				PeriodicTask pTaskClone = periodicTask.clone();
 				if (mapPeriods.containsKey(periodAccumulator) == false){
 					List<PeriodicTask> periodTaskList = new ArrayList<PeriodicTask>();
-					PeriodicTask pTaskClone = periodicTask.clone();
 					pTaskClone.setDeadline(pTaskClone.getDeadline() + periodAccumulator);
 					periodTaskList.add(pTaskClone);
 					mapPeriods.put(periodAccumulator, periodTaskList);
 				}else{
-					PeriodicTask pTaskClone = periodicTask.clone();
 					pTaskClone.setDeadline(pTaskClone.getDeadline() + periodAccumulator);
 					mapPeriods.get(periodAccumulator).add(pTaskClone);
 				}
