@@ -248,23 +248,17 @@ public class GeneratorController implements Initializable {
 
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("T1");
-		t1.setComputationTime(1);
-		t1.setPeriod(4);
+		t1.setComputationTime(3);
+		t1.setPeriod(5);
 		t1.setDeadline(4);
-		t1.setActivationTime(4);
+		t1.setActivationTime(0);
 
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("T2");
-		t2.setComputationTime(10);
-		t2.setPeriod(14);
-		t2.setDeadline(14);
+		t2.setComputationTime(1);
+		t2.setPeriod(3);
+		t2.setDeadline(2);
 		t2.setActivationTime(0);
-
-		PeriodicTask t3 = new PeriodicTask();
-		t3.setName("T3");
-		t3.setComputationTime(2);
-		t3.setPeriod(10);
-		t3.setDeadline(9);
 		
 // ROUND ROBIN 		
 //		PeriodicTask t1 = new PeriodicTask();
