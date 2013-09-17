@@ -1,8 +1,17 @@
 package br.eti.hussamaismail.scheduler.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.Chart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
+
 import org.apache.log4j.Logger;
 
-import javafx.scene.chart.Chart;
 import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.exception.SchedulabilityConditionNotSatisfiedException;
 
@@ -52,9 +61,75 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 		if (this.isScalable() == false){
 			throw new SchedulabilityConditionNotSatisfiedException();
 		}
+
+		int position = 0;
+		int higherPeriod = getTasksUtil().getHigherPeriodFromPeriodicTasks(getTasks());
+		Map<Integer, List<PeriodicTask>> mapPeriods = getTasksUtil().getMapWithPeriodsAndTasks(getTasks());			
+		List<PeriodicTask> pendentTasks = new ArrayList<PeriodicTask>();
 		
+		NumberAxis xAxis = new NumberAxis(0,higherPeriod,1);
+		NumberAxis yAxis = new NumberAxis(0,2,1);
+		AreaChart<Number,Number> ac = new AreaChart<Number,Number>(xAxis, yAxis);
+		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
+				
+		while (position < higherPeriod){
+			
+			if (mapPeriods.containsKey(position)){
+				pendentTasks.addAll(mapPeriods.get(position));
+			}
+			
+			if (pendentTasks.isEmpty() == false){
+				
+				PeriodicTask earliestDeadline = getEarliestDeadline(pendentTasks, position);
+				
+				if (earliestDeadline.getDeadline() <= position){
+					throw new DeadlineNotSatisfiedException(earliestDeadline);
+				}
+				earliestDeadline.process(1);
+
+				Series<Number, Number> currentChartTask = getTasksUtil().getChartTask(chartTasks, earliestDeadline);	
+				currentChartTask.getData().add(new Data<Number, Number>(position, 0));
+				currentChartTask.getData().add(new Data<Number, Number>(position, 1));
+				position = position + 1;
+				currentChartTask.getData().add(new Data<Number, Number>(position, 1));
+				currentChartTask.getData().add(new Data<Number, Number>(position, 0));
+
+				if (earliestDeadline.getRemaining() == 0){
+					pendentTasks.remove(earliestDeadline);
+				}
+				continue;
+			}
 		
-		return null;
+			position = position + 1;			
+		}
+		
+		ac.getData().addAll(chartTasks);
+//		ChartsUtil.getInstance().chartReform(ac);
+		
+		return ac;
+	}
+	
+	/**
+	 * Metodo que devolve a tarefa com menor
+	 * deadline absoluto dentre as tarefas pendentes
+	 * 
+	 * @param tasks
+	 * @param position
+	 * @return
+	 */
+	private PeriodicTask getEarliestDeadline(List<PeriodicTask> pendentTasks, int position){
+		
+		PeriodicTask earliestDeadlineTask = null;
+		int earliestDeadline = Integer.MAX_VALUE, temp = 0;
+		
+		for (PeriodicTask pTask : pendentTasks) {
+			if ((temp = (pTask.getDeadline() - position)) < earliestDeadline){
+				earliestDeadline = temp;
+				earliestDeadlineTask = pTask;
+			}
+		}
+		
+		return earliestDeadlineTask;
 	}
 
 }

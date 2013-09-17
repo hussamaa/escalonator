@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javafx.collections.ObservableList;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
@@ -109,5 +110,41 @@ public class ChartsUtil {
 	 */
 	public Map<String,List<Integer[]>> getMapWithXIntervals(AreaChart<Number, Number> temporalDiagramChart){	
 		return getMapWithXIntervals(temporalDiagramChart, -1);
+	}
+	
+	/**
+	 * Metodo que reforma o "gráfico" agrupando
+	 * as tarefas sequenciais menores.
+	 * 
+	 * Ex: T1 tem intervalos [1-2] [2-3], este método
+	 * arruma T1 com intervalo [1-3].
+	 * 
+	 * Este método foi criado para facilitar no desenvolvimento
+	 * das técnicas para o gráfico, ficando mais simples discretizar de 1 em 1
+	 * em seguida arrumar o gráfico
+	 * 
+	 * @param temporalDiagramChart
+	 */
+	public void chartReform(AreaChart<Number, Number> temporalDiagramChart){
+		
+		ObservableList<Series<Number, Number>> data = temporalDiagramChart.getData();
+		List<Series<Number, Number>> adjustedSeries = new ArrayList<Series<Number, Number>>();
+		
+		Series<Number, Number> lastSerie = null;
+		int initialValue = -1;
+		int finalValue = -1;
+		
+		for (Series<Number, Number> serie : data) {
+			if (lastSerie == null){
+				lastSerie = serie;
+				continue;
+			}else{
+				if (lastSerie.getName().equals(serie.getName())){
+					
+				}
+			}
+		}
+		
+		
 	}
 }
