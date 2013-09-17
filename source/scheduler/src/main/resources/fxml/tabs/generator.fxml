@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 <!-- <?import br.eti.hussamaismail.scheduler.util.FormatedTableCellFactory?> -->
-<?scenebuilder-preview-i18n-resource ../../../../../../../../../Desenvolvimento/workspace/scheduler/src/main/resources/message_pt_BR.properties?>
+<?scenebuilder-preview-i18n-resource ../../message_pt_BR.properties?>
 <?scenebuilder-stylesheet ../../styles/styles.css?>
 
 <Tab fx:id="liveTab" text="Diagrama Temporal" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="br.eti.hussamaismail.scheduler.controller.GeneratorController">
@@ -30,8 +30,7 @@
               <children>
                 <Label style=" -fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="%technique" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                 <ChoiceBox fx:id="techniqueChoiceBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label style=" -fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="%preemptive" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <CheckBox fx:id="preemptiveCheckBox" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <CheckBox fx:id="preemptiveCheckBox" prefWidth="200.0" style=" -fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="Preemptível" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                 <Button alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="false" mnemonicParsing="false" onMouseClicked="#simulate" prefHeight="48.0" prefWidth="130.0" style="-fx-background-color : #88BD38" text="%simulate" textAlignment="LEFT" textFill="#5d6c50" GridPane.columnIndex="1" GridPane.rowIndex="2">
                   <font>
                     <Font size="13.0" />

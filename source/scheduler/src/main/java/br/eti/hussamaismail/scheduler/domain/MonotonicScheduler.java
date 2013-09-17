@@ -67,11 +67,11 @@ public abstract class MonotonicScheduler extends StaticScheduler {
 	}
 	
 	/**
-	 * Metodo que realiza o teste de escalonabilidade para as tarefas periodicas
-	 * adicionadas ao escalonador.
+	 * Metodo que realiza o teste de escalonabilidade 
+	 * para as tarefas periodicas adicionadas ao escalonador.
 	 * 
-	 * Este metodo por padrao o teste do RateMonotonic que consiste na formula
-	 * matematica:
+	 * Este metodo utiliza por padrao o teste do RateMonotonic 
+	 * que consiste na formula matematica:
 	 * 
 	 * P1 = SUM(C/T) P2 = N * (2^(1/N) - 1)
 	 * 

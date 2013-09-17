@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 public class MainApp extends Application {
 
     private static final Logger log = LoggerFactory.getLogger(MainApp.class);
+    public static Stage STAGE = null;
 
     public static void main(String[] args) throws Exception { 	
         launch(args);
@@ -37,9 +38,9 @@ public class MainApp extends Application {
         Scene scene = new Scene(rootNode, 1024, 768);
         scene.getStylesheets().add("/styles/styles.css");
 
+        STAGE = stage;
         stage.setTitle("Escalonator");        
         stage.setScene(scene);
-//        stage.setFullScreen(true);
         stage.setResizable(false);
         stage.show();
     }

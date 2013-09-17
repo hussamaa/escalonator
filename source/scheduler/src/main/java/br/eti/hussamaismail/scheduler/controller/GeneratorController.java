@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Dialogs;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -175,55 +176,60 @@ public class GeneratorController implements Initializable {
 		
 		Object techniqueSelected = techniqueChoiceBox.getSelectionModel().getSelectedItem();
 		techniqueSelected = techniqueSelected != null ? techniqueSelected.toString().toUpperCase().replaceAll(" ", "") : "";
+		try{
+			switch ((String)techniqueSelected){
+			
+				case "RATEMONOTONIC" : 
+					
+					RateMonotonicScheduler rateMonotonicScheduler = new RateMonotonicScheduler();
+					rateMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+					rateMonotonicScheduler.setPreemptive(preemptive);
+					simulatedChart = rateMonotonicScheduler.simulate();
+					
+				break;
+				
+				case "DEADLINEMONOTONIC" : 
+					
+					DeadlineMonotonicScheduler deadlineMonotonicScheduler = new DeadlineMonotonicScheduler();
+					deadlineMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+					deadlineMonotonicScheduler.setPreemptive(preemptive);
 		
-		switch ((String)techniqueSelected){
-		
-		case "RATEMONOTONIC" : 
-			
-			RateMonotonicScheduler rateMonotonicScheduler = new RateMonotonicScheduler();
-			rateMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
-			rateMonotonicScheduler.setPreemptive(preemptive);
-			simulatedChart = rateMonotonicScheduler.simulate();
-			
-		break;
-		
-		case "DEADLINEMONOTONIC" : 
-			
-			DeadlineMonotonicScheduler deadlineMonotonicScheduler = new DeadlineMonotonicScheduler();
-			deadlineMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
-			deadlineMonotonicScheduler.setPreemptive(preemptive);
-
-			simulatedChart = deadlineMonotonicScheduler.simulate();
-			
-		break;
-		
-		case "ROUNDROBIN" : 
-			Integer partTimeRB = Integer.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
-			RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
-			roundRobinScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
-			roundRobinScheduler.setSlotSize(partTimeRB);
-			simulatedChart = roundRobinScheduler.simulate();
-			
-		break;
-		
-		case "LEASTLAXITY" : 
-			Integer partTimeLL = Integer.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
-			LeastLaxityScheduler leastLaxityScheduler = new LeastLaxityScheduler();
-			leastLaxityScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
-			leastLaxityScheduler.setSlotSize(partTimeLL);
-			simulatedChart = leastLaxityScheduler.simulate();
-			
-		break;
-		
-		default : 
-			JOptionPane.showMessageDialog(null, "É necessário escolher uma técnica para simular");
-			log.error("É necessário escolher uma técnica para simular");
-			return; 
-			
+					simulatedChart = deadlineMonotonicScheduler.simulate();
+					
+				break;
+				
+				case "ROUNDROBIN" : 
+					Integer partTimeRB = Integer.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
+					RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
+					roundRobinScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+					roundRobinScheduler.setSlotSize(partTimeRB);
+					simulatedChart = roundRobinScheduler.simulate();
+					
+				break;
+				
+				case "LEASTLAXITY" : 
+					Integer partTimeLL = Integer.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
+					LeastLaxityScheduler leastLaxityScheduler = new LeastLaxityScheduler();
+					leastLaxityScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+					leastLaxityScheduler.setSlotSize(partTimeLL);
+					simulatedChart = leastLaxityScheduler.simulate();
+					
+				break;
+				
+				default : 
+					
+					Dialogs.showWarningDialog(MainApp.STAGE, "É necessário escolher uma técnica de escalonamento", "Não foi possível realizar a operação", "Alerta");
+					log.error("É necessário escolher uma técnica para simular");
+					return; 
+					
+			}
+		}catch(DeadlineNotSatisfiedException e){
+			Dialogs.showErrorDialog(MainApp.STAGE, "Ocorreu violação de deadline durante o processamento das tarefas", "Não foi possível escalonar com a técnica desejada",
+				    "Erro no escalonamento", e);
 		}
 		
 		if (simulatedChart == null){
-			JOptionPane.showMessageDialog(null, "Não foi possível escalonar com a técnica desejada");
+			Dialogs.showErrorDialog(MainApp.STAGE, "Ocorreu um erro não esperado durante o processamento", "Não foi possível escalonar com a técnica desejada",null);
 			log.error("Não foi possível escalonar com a técnica desejada");
 			return;
 		}
