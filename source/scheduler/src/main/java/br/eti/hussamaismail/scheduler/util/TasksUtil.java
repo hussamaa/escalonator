@@ -11,7 +11,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.Scheduler;
-import br.eti.hussamaismail.scheduler.domain.StaticScheduler;
+import br.eti.hussamaismail.scheduler.domain.DynamicScheduler;
 import br.eti.hussamaismail.scheduler.domain.Task;
 
 /**
@@ -52,10 +52,10 @@ public class TasksUtil {
 	 */
 	public void sortTasksByDeadline(Scheduler scheduler){		
 		
-		if (!(scheduler instanceof StaticScheduler))
+		if (!(scheduler instanceof DynamicScheduler))
 			return;
 		
-		StaticScheduler staticScheduler = (StaticScheduler) scheduler; 
+		DynamicScheduler staticScheduler = (DynamicScheduler) scheduler; 
 		Collections.sort(staticScheduler.getTasks(), new Comparator<PeriodicTask>() {
 			public int compare(PeriodicTask pt1, PeriodicTask pt2) {
 				return compareValues(pt1.getDeadline(), pt2.getDeadline());
@@ -71,10 +71,10 @@ public class TasksUtil {
 	 */
 	public void sortTasksByComputationTime(Scheduler scheduler){		
 		
-		if (!(scheduler instanceof StaticScheduler))
+		if (!(scheduler instanceof DynamicScheduler))
 			return;
 		
-		StaticScheduler staticScheduler = (StaticScheduler) scheduler; 
+		DynamicScheduler staticScheduler = (DynamicScheduler) scheduler; 
 		Collections.sort(staticScheduler.getTasks(), new Comparator<PeriodicTask>() {
 			public int compare(PeriodicTask pt1, PeriodicTask pt2) {
 				return compareValues(pt1.getComputationTime(), pt2.getComputationTime());
@@ -90,10 +90,10 @@ public class TasksUtil {
 	 */
 	public void sortTasksByPeriod(Scheduler scheduler){		
 		
-		if (!(scheduler instanceof StaticScheduler))
+		if (!(scheduler instanceof DynamicScheduler))
 			return;
 		
-		StaticScheduler staticScheduler = (StaticScheduler) scheduler; 
+		DynamicScheduler staticScheduler = (DynamicScheduler) scheduler; 
 		Collections.sort(staticScheduler.getTasks(), new Comparator<PeriodicTask>() {
 			public int compare(PeriodicTask pt1, PeriodicTask pt2) {
 				return compareValues(pt1.getPeriod(), pt2.getPeriod());
@@ -221,8 +221,8 @@ public class TasksUtil {
 		double tempPartSize = 0;
 		double partSize = 1;
 		
-		if (scheduler instanceof StaticScheduler){
-			StaticScheduler staticScheduler = (StaticScheduler) scheduler;
+		if (scheduler instanceof DynamicScheduler){
+			DynamicScheduler staticScheduler = (DynamicScheduler) scheduler;
 			for (PeriodicTask pTask : staticScheduler.getTasks()){
 				tempPartSize = pTask.getComputationTime() - ((int) pTask.getComputationTime());
 				if ((tempPartSize > 0) && (tempPartSize < partSize)){

@@ -4,12 +4,12 @@ import java.util.List;
 
 import br.eti.hussamaismail.scheduler.util.TasksUtil;
 
-public abstract class StaticScheduler implements Scheduler {
+public abstract class DynamicScheduler implements Scheduler {
 
 	private List<PeriodicTask> tasks;
 	private TasksUtil tasksUtil;
 
-	public StaticScheduler() {
+	public DynamicScheduler() {
 		this.tasksUtil = TasksUtil.getInstance();
 	}
 

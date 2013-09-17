@@ -35,7 +35,7 @@ import br.eti.hussamaismail.scheduler.exception.TaskNotScalableException;
  * @author Hussama Ismail
  *
  */
-public abstract class MonotonicScheduler extends StaticScheduler {
+public abstract class MonotonicScheduler extends DynamicScheduler {
 
 	private Logger log = Logger.getLogger(MonotonicScheduler.class);
 	private static final int MAX_CONVERGENCE_ATTEMPTS = 10;

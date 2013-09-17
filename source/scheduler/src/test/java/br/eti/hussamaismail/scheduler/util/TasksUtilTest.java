@@ -12,7 +12,7 @@ import org.junit.runners.JUnit4;
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
 import br.eti.hussamaismail.scheduler.domain.Scheduler;
-import br.eti.hussamaismail.scheduler.domain.StaticScheduler;
+import br.eti.hussamaismail.scheduler.domain.DynamicScheduler;
 import br.eti.hussamaismail.scheduler.util.TasksUtil;
 
 /**
@@ -33,7 +33,7 @@ public class TasksUtilTest {
 	public void configure(){
 		this.tasksUtil = TasksUtil.getInstance();
 		this.scheduler = new RateMonotonicScheduler();
-		StaticScheduler staticScheduler = (StaticScheduler) this.scheduler;
+		DynamicScheduler staticScheduler = (DynamicScheduler) this.scheduler;
 		staticScheduler.setTasks(new ArrayList<PeriodicTask>());
 		
 		PeriodicTask pt1 = new PeriodicTask();
@@ -68,7 +68,7 @@ public class TasksUtilTest {
 	@Test
 	public void testSortTasksByDeadLine(){
 		this.tasksUtil.sortTasksByDeadline(scheduler);
-		StaticScheduler staticScheduler = (StaticScheduler) this.scheduler;
+		DynamicScheduler staticScheduler = (DynamicScheduler) this.scheduler;
 		Assert.assertEquals(20, staticScheduler.getTasks().get(0).getDeadline());
 		Assert.assertEquals(50, staticScheduler.getTasks().get(staticScheduler.getTasks().size() - 1).getDeadline());
 	}
@@ -82,7 +82,7 @@ public class TasksUtilTest {
 	@Test
 	public void testSortTasksByComputationTime(){
 		this.tasksUtil.sortTasksByDeadline(scheduler);
-		StaticScheduler staticScheduler = (StaticScheduler) this.scheduler;
+		DynamicScheduler staticScheduler = (DynamicScheduler) this.scheduler;
 		Assert.assertEquals(3, staticScheduler.getTasks().get(0).getComputationTime());
 		Assert.assertEquals(6, staticScheduler.getTasks().get(staticScheduler.getTasks().size() - 1).getComputationTime());
 	}
@@ -94,7 +94,7 @@ public class TasksUtilTest {
 	 */
 	@Test
 	public void testHigherDeadlineFromPeriodicTasks(){
-		StaticScheduler staticScheduler = (StaticScheduler) this.scheduler;
+		DynamicScheduler staticScheduler = (DynamicScheduler) this.scheduler;
 		Assert.assertEquals(50, this.tasksUtil.getHigherDeadlineFromPeriodicTasks(staticScheduler.getTasks()));
 		
 	}
@@ -106,7 +106,7 @@ public class TasksUtilTest {
 	 */
 	@Test
 	public void testHigherPeriodFromPeriodicTasks(){
-		StaticScheduler staticScheduler = (StaticScheduler) this.scheduler;
+		DynamicScheduler staticScheduler = (DynamicScheduler) this.scheduler;
 		Assert.assertEquals(130, this.tasksUtil.getHigherPeriodFromPeriodicTasks(staticScheduler.getTasks()));
 		
 	}

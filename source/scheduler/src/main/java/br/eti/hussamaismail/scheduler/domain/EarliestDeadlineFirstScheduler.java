@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import javafx.scene.chart.Chart;
 import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
+import br.eti.hussamaismail.scheduler.exception.SchedulabilityConditionNotSatisfiedException;
 
 /**
  * Classe responsavel por gerar o diagrama
@@ -12,7 +13,7 @@ import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
  * @author Hussama Ismail
  *
  */
-public class EarliestDeadlineFirstScheduler extends StaticScheduler {
+public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 
 	private Logger log = Logger.getLogger(EarliestDeadlineFirstScheduler.class);
 	
@@ -46,8 +47,13 @@ public class EarliestDeadlineFirstScheduler extends StaticScheduler {
 
 	
 	@Override
-	public Chart simulate() throws DeadlineNotSatisfiedException {
-		// TODO Auto-generated method stub
+	public Chart simulate() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException {
+
+		if (this.isScalable() == false){
+			throw new SchedulabilityConditionNotSatisfiedException();
+		}
+		
+		
 		return null;
 	}
 

@@ -1,6 +1,7 @@
 package br.eti.hussamaismail.scheduler.domain;
 
 import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
+import br.eti.hussamaismail.scheduler.exception.SchedulabilityConditionNotSatisfiedException;
 import javafx.scene.chart.Chart;
 
 public interface Scheduler {
@@ -12,7 +13,8 @@ public interface Scheduler {
 	 * 
 	 * @return
 	 * @throws DeadlineNotSatisfiedException 
+	 * @throws SchedulabilityConditionNotSatisfiedException 
 	 */
-	Chart simulate() throws DeadlineNotSatisfiedException;
+	Chart simulate() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException;
 
 }

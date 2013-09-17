@@ -17,7 +17,7 @@ import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
  * @author Hussama Ismail
  *
  */
-public class RoundRobinScheduler extends StaticScheduler {
+public class RoundRobinScheduler extends DynamicScheduler {
 
 	private Integer slotSize;
 

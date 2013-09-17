@@ -32,12 +32,14 @@ import org.slf4j.LoggerFactory;
 
 import br.eti.hussamaismail.scheduler.MainApp;
 import br.eti.hussamaismail.scheduler.domain.DeadlineMonotonicScheduler;
+import br.eti.hussamaismail.scheduler.domain.EarliestDeadlineFirstScheduler;
 import br.eti.hussamaismail.scheduler.domain.LeastLaxityScheduler;
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
 import br.eti.hussamaismail.scheduler.domain.RoundRobinScheduler;
 import br.eti.hussamaismail.scheduler.domain.Task;
 import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
+import br.eti.hussamaismail.scheduler.exception.SchedulabilityConditionNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.util.EditingCell;
 import br.eti.hussamaismail.scheduler.util.TasksUtil;
 
@@ -198,6 +200,15 @@ public class GeneratorController implements Initializable {
 					
 				break;
 				
+				case "EARLIESTDEADLINEFIRST" : 
+					
+					EarliestDeadlineFirstScheduler edfScheduler = new EarliestDeadlineFirstScheduler();
+					edfScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+		
+					simulatedChart = edfScheduler.simulate();
+					
+				break;
+				
 				case "ROUNDROBIN" : 
 					Integer partTimeRB = Integer.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
 					RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
@@ -225,6 +236,9 @@ public class GeneratorController implements Initializable {
 			}
 		}catch(DeadlineNotSatisfiedException e){
 			Dialogs.showErrorDialog(MainApp.STAGE, "Ocorreu violação de deadline durante o processamento das tarefas", "Não foi possível escalonar com a técnica desejada",
+				    "Erro no escalonamento", e);
+		}catch(SchedulabilityConditionNotSatisfiedException e){
+			Dialogs.showErrorDialog(MainApp.STAGE, "O teste de escalonabilidade não foi satifeito para as tarefas informadas pelo usuário", "Não foi possível escalonar com a técnica desejada",
 				    "Erro no escalonamento", e);
 		}
 		
@@ -255,16 +269,23 @@ public class GeneratorController implements Initializable {
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("T1");
 		t1.setComputationTime(3);
-		t1.setPeriod(5);
-		t1.setDeadline(4);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
 		t1.setActivationTime(0);
 
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("T2");
-		t2.setComputationTime(1);
-		t2.setPeriod(3);
-		t2.setDeadline(2);
+		t2.setComputationTime(2);
+		t2.setPeriod(5);
+		t2.setDeadline(4);
 		t2.setActivationTime(0);
+		
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("T2");
+		t3.setComputationTime(1);
+		t3.setPeriod(10);
+		t3.setDeadline(8);
+		t3.setActivationTime(0);
 		
 // ROUND ROBIN 		
 //		PeriodicTask t1 = new PeriodicTask();
@@ -431,7 +452,7 @@ public class GeneratorController implements Initializable {
 		
 		tasks.add(t1);
 		tasks.add(t2);
-//		tasks.add(t3);
+		tasks.add(t3);
 //		tasks.add(t4);
 //		tasks.add(t5);
 

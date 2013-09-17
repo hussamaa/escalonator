@@ -24,7 +24,7 @@ import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
  * @author Hussama Ismail
  *
  */
-public class LeastLaxityScheduler extends StaticScheduler {
+public class LeastLaxityScheduler extends DynamicScheduler {
 
 	private Integer slotSize;
 
