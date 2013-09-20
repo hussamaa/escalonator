@@ -37,7 +37,7 @@ public class RoundRobinScheduler extends DynamicScheduler {
 
 		double higherValue = getTasksUtil().getHigherDeadlineFromPeriodicTasks(getTasks());
 
-		NumberAxis xAxis = new NumberAxis(0, higherValue * 2, 1);
+		NumberAxis xAxis = new NumberAxis(0, higherValue, 1);
 		NumberAxis yAxis = new NumberAxis(0, 2, 1);
 		AreaChart<Number, Number> ac = new AreaChart<Number, Number>(xAxis,
 				yAxis);

@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.exception.SchedulabilityConditionNotSatisfiedException;
+import br.eti.hussamaismail.scheduler.util.ChartsUtil;
 
 /**
  * Classe responsavel por gerar o diagrama
@@ -104,7 +105,7 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 		}
 		
 		ac.getData().addAll(chartTasks);
-//		ChartsUtil.getInstance().chartReform(ac);
+		ChartsUtil.getInstance().chartReform(ac);
 		
 		return ac;
 	}

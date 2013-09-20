@@ -5,9 +5,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import javafx.collections.ObservableList;
 import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 
@@ -126,25 +127,49 @@ public class ChartsUtil {
 	 * @param temporalDiagramChart
 	 */
 	public void chartReform(AreaChart<Number, Number> temporalDiagramChart){
-		
-		ObservableList<Series<Number, Number>> data = temporalDiagramChart.getData();
+
+		Map<String, List<Integer[]>> mapWithXIntervals = getMapWithXIntervals(temporalDiagramChart);
 		List<Series<Number, Number>> adjustedSeries = new ArrayList<Series<Number, Number>>();
 		
-		Series<Number, Number> lastSerie = null;
-		int initialValue = -1;
-		int finalValue = -1;
-		
-		for (Series<Number, Number> serie : data) {
-			if (lastSerie == null){
-				lastSerie = serie;
-				continue;
-			}else{
-				if (lastSerie.getName().equals(serie.getName())){
-					
+        Set<String> tasks = mapWithXIntervals.keySet();
+        for (String task : tasks) {
+			
+        	Series<Number, Number> adjustedTaskSerie = new XYChart.Series<Number, Number>();
+        	adjustedTaskSerie.setName(task);
+        	
+        	int inicio = -1;
+        	int fim = -1;
+        	List<Integer[]> intervals = mapWithXIntervals.get(task);
+        	
+        	for (Integer[] intervalo : intervals) {
+				if (inicio == -1){
+					inicio = intervalo[0];
+					fim = intervalo[1];
+					continue;
 				}
-			}
+				else if (inicio != -1 && fim == intervalo[0]){
+					fim = intervalo[1];
+					continue;
+				}else{
+					adjustedTaskSerie.getData().add(new XYChart.Data<Number, Number>(inicio, 0));
+					adjustedTaskSerie.getData().add(new XYChart.Data<Number, Number>(inicio, 1));
+					adjustedTaskSerie.getData().add(new XYChart.Data<Number, Number>(fim, 1));
+					adjustedTaskSerie.getData().add(new XYChart.Data<Number, Number>(fim, 0));
+
+					inicio = intervalo[0];
+					fim = intervalo[1];
+				}
+        	}
+        	            	
+        	adjustedTaskSerie.getData().add(new XYChart.Data<Number, Number>(inicio, 0));
+        	adjustedTaskSerie.getData().add(new XYChart.Data<Number, Number>(inicio, 1));
+        	adjustedTaskSerie.getData().add(new XYChart.Data<Number, Number>(fim, 1));
+        	adjustedTaskSerie.getData().add(new XYChart.Data<Number, Number>(fim, 0));
+			
+        	adjustedSeries.add(adjustedTaskSerie);
 		}
 		
-		
+        temporalDiagramChart.getData().removeAll(temporalDiagramChart.getData());
+        temporalDiagramChart.getData().addAll(adjustedSeries);		
 	}
 }
