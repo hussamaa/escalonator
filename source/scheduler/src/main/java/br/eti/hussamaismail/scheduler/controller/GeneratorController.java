@@ -14,6 +14,7 @@ import javafx.geometry.Insets;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialogs;
 import javafx.scene.control.Dialogs.DialogOptions;
 import javafx.scene.control.Label;
@@ -51,9 +52,10 @@ public class GeneratorController implements Initializable {
 	private static final Logger log = LoggerFactory.getLogger(MainApp.class);
 
 	public List<Task> tasks;
-	public static int TIME_SLOT = 1;
-	
 	private TasksUtil tasksUtil;
+	
+	public static int TIME_SLOT = 1;
+	public static Task TASK;
 	
 	@FXML private TableView<Task> tasksTable;
 	@FXML private Pane chartPanel;
@@ -160,9 +162,9 @@ public class GeneratorController implements Initializable {
 						Task task = (Task) currentRow.getItem();
 						if (task != null) {
 							if (task instanceof PeriodicTask) {
-								this.setText("Periodic");
+								this.setText("Periódica");
 							} else {
-								this.setText("Sporadic");
+								this.setText("Esporádica");
 							}
 						}
 					}
@@ -338,7 +340,60 @@ public class GeneratorController implements Initializable {
         return GeneratorController.TIME_SLOT;
 	}
 	
-	public int getValueFromCallback(String value){
-		return Integer.valueOf(value);
+	public void addTask(){
+		
+		GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(0, 10, 0, 10));
+        
+        final TextField taskName = new TextField();
+        grid.add(new Label("Nome:"), 0, 0);
+        grid.add(taskName, 1, 0);
+        
+        ObservableList<String> options = 
+		    FXCollections.observableArrayList(
+		        "Periódica",
+		        "Esporádica"
+		    );
+        
+        final ComboBox<String> taskType = new ComboBox(options);
+        taskType.setPromptText("Periódica");
+        grid.add(new Label("Tipo:"), 2, 0);
+        grid.add(taskType, 3, 0);
+
+        final TextField computationTime = new TextField();
+        grid.add(new Label("Tempo de Computação: "), 0, 1);
+        grid.add(computationTime, 1, 1);
+        
+        final TextField period = new TextField();        
+        grid.add(new Label("Período: "), 2, 1);
+        grid.add(period, 3, 1);
+        
+        final TextField deadline = new TextField();        
+        grid.add(new Label("Deadline: "), 0, 2);
+        grid.add(deadline, 1, 2);
+        
+        final TextField activationTime = new TextField();        
+        grid.add(new Label("Tempo de Ativação: "), 2, 2);
+        grid.add(activationTime, 3, 2);
+        
+        
+        Callback<Void, Void> myCallback = new Callback<Void, Void>() {
+        	@Override
+        	public Void call(Void arg0) {
+        		
+//        		if ("PERIÓDICA".equals(taskType.getValue().toUpperCase())){
+//        			GeneratorController.TASK = new PeriodicTask();
+//        		}
+        		
+//        		System.out.println(TASK);
+        		
+        		return null;
+        	}
+        };
+        
+        Dialogs.showCustomDialog(MainApp.STAGE, grid, "Adicionar Tarefa", "Entrada de Dados", DialogOptions.OK, myCallback);
+//        return GeneratorController.TIME_SLOT;
 	}
 }
