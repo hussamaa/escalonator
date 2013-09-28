@@ -10,22 +10,24 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialogs;
+import javafx.scene.control.Dialogs.DialogOptions;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
-
-import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +51,10 @@ public class GeneratorController implements Initializable {
 	private static final Logger log = LoggerFactory.getLogger(MainApp.class);
 
 	public List<Task> tasks;
+	public static int TIME_SLOT = 1;
+	
 	private TasksUtil tasksUtil;
-
+	
 	@FXML private TableView<Task> tasksTable;
 	@FXML private Pane chartPanel;
 
@@ -173,7 +177,6 @@ public class GeneratorController implements Initializable {
 
 		Chart simulatedChart = null;
 		boolean preemptive = preemptiveCheckBox.isSelected();
-		chartPanel.getChildren().clear();
 		tasksUtil.resetAllTasks(tasks);
 		
 		Object techniqueSelected = techniqueChoiceBox.getSelectionModel().getSelectedItem();
@@ -210,7 +213,7 @@ public class GeneratorController implements Initializable {
 				break;
 				
 				case "ROUNDROBIN" : 
-					Integer partTimeRB = Integer.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
+					Integer partTimeRB = getTimeSlotFromUser("Round Robin");
 					RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
 					roundRobinScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
 					roundRobinScheduler.setSlotSize(partTimeRB);
@@ -219,7 +222,7 @@ public class GeneratorController implements Initializable {
 				break;
 				
 				case "LEASTLAXITY" : 
-					Integer partTimeLL = Integer.valueOf(JOptionPane.showInputDialog("Informe o tamanho de particionamento:"));
+					Integer partTimeLL = getTimeSlotFromUser("Least Laxity");
 					LeastLaxityScheduler leastLaxityScheduler = new LeastLaxityScheduler();
 					leastLaxityScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
 					leastLaxityScheduler.setSlotSize(partTimeLL);
@@ -237,9 +240,11 @@ public class GeneratorController implements Initializable {
 		}catch(DeadlineNotSatisfiedException e){
 			Dialogs.showErrorDialog(MainApp.STAGE, "Ocorreu violação de deadline durante o processamento das tarefas", "Não foi possível escalonar com a técnica desejada",
 				    "Erro no escalonamento", e);
+			return;
 		}catch(SchedulabilityConditionNotSatisfiedException e){
 			Dialogs.showErrorDialog(MainApp.STAGE, "O teste de escalonabilidade não foi satifeito para as tarefas informadas pelo usuário", "Não foi possível escalonar com a técnica desejada",
 				    "Erro no escalonamento", e);
+			return;
 		}
 		
 		if (simulatedChart == null){
@@ -247,6 +252,8 @@ public class GeneratorController implements Initializable {
 			log.error("Não foi possível escalonar com a técnica desejada");
 			return;
 		}
+		
+		chartPanel.getChildren().clear();
 		
 		simulatedChart.setMaxWidth(chartPanel.getWidth());
 		simulatedChart.setPrefWidth(chartPanel.getWidth());
@@ -287,175 +294,51 @@ public class GeneratorController implements Initializable {
 		t3.setDeadline(8);
 		t3.setActivationTime(0);
 		
-// ROUND ROBIN 		
-//		PeriodicTask t1 = new PeriodicTask();
-//		t1.setName("A");
-//		t1.setComputationTime(25);
-//		t1.setPeriod(100);
-//		t1.setDeadline(100);
-//
-//		PeriodicTask t2 = new PeriodicTask();
-//		t2.setName("B");
-//		t2.setComputationTime(20);
-//		t2.setPeriod(80);
-//		t2.setDeadline(80);
-//
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("C");
-//		t3.setComputationTime(30);
-//		t3.setPeriod(100);
-//		t3.setDeadline(100);
-//		
-//		PeriodicTask t4 = new PeriodicTask();
-//		t4.setName("D");
-//		t4.setComputationTime(20);
-//		t4.setPeriod(80);
-//		t4.setDeadline(80);
-
-
-//		PeriodicTask t1 = new PeriodicTask();
-//		t1.setName("A");
-//		t1.setComputationTime(30);
-//		t1.setPeriod(0);
-//		t1.setDeadline(40);
-//		t1.setActivationTime(0);
-//
-//		PeriodicTask t2 = new PeriodicTask();
-//		t2.setName("B");
-//		t2.setComputationTime(10);
-//		t2.setPeriod(0);
-//		t2.setDeadline(30);
-//		t2.setActivationTime(0);
-//
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("C");
-//		t3.setComputationTime(30);
-//		t3.setPeriod(0);
-//		t3.setDeadline(100);
-//		t3.setActivationTime(30);
-//		
-//		PeriodicTask t4 = new PeriodicTask();
-//		t4.setName("D");
-//		t4.setComputationTime(40);
-//		t4.setPeriod(0);
-//		t4.setDeadline(200);
-//		t4.setActivationTime(50);
-//		
-//		PeriodicTask t5 = new PeriodicTask();
-//		t5.setName("E");
-//		t5.setComputationTime(10);
-//		t5.setPeriod(0);
-//		t5.setDeadline(90);
-//		t5.setActivationTime(70);
-		
-		
-
-//		PeriodicTask t1 = new PeriodicTask();
-//		t1.setName("A");
-//		t1.setComputationTime(1);
-//		t1.setPeriod(2);
-//		t1.setDeadline(2);
-//		t1.setActivationTime(0);
-//
-//		PeriodicTask t2 = new PeriodicTask();
-//		t2.setName("B");
-//		t2.setComputationTime(4);
-//		t2.setPeriod(6);
-//		t2.setDeadline(6);
-//		t2.setActivationTime(1);
-//
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("C");
-//		t3.setComputationTime(2);
-//		t3.setPeriod(3);
-//		t3.setDeadline(10);
-//		t3.setActivationTime(3);
-		
-
-//		PeriodicTask t1 = new PeriodicTask();
-//		t1.setName("A");
-//		t1.setComputationTime(2);
-//		t1.setPeriod(0);
-//		t1.setDeadline(7);
-//		t1.setActivationTime(0);
-//
-//		PeriodicTask t2 = new PeriodicTask();
-//		t2.setName("B");
-//		t2.setComputationTime(4);
-//		t2.setPeriod(0);
-//		t2.setDeadline(9);
-//		t2.setActivationTime(2);
-//
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("C");
-//		t3.setComputationTime(5);
-//		t3.setPeriod(0);
-//		t3.setDeadline(13);
-//		t3.setActivationTime(3);
-		
-//		PeriodicTask t1 = new PeriodicTask();
-//		t1.setName("A");
-//		t1.setComputationTime(10);
-//		t1.setPeriod(0);
-//		t1.setDeadline(33);
-//		t1.setActivationTime(0);
-//
-//		PeriodicTask t2 = new PeriodicTask();
-//		t2.setName("B");
-//		t2.setComputationTime(3);
-//		t2.setPeriod(0);
-//		t2.setDeadline(28);
-//		t2.setActivationTime(4);
-//
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("C");
-//		t3.setComputationTime(10);
-//		t3.setPeriod(0);
-//		t3.setDeadline(29);
-//		t3.setActivationTime(5);
-		
-		
-//		PeriodicTask t1 = new PeriodicTask();
-//		t1.setName("A");
-//		t1.setComputationTime(6);
-//		t1.setPeriod(2);
-//		t1.setDeadline(2);
-//		t1.setActivationTime(0);
-//
-//		PeriodicTask t2 = new PeriodicTask();
-//		t2.setName("B");
-//		t2.setComputationTime(5);
-//		t2.setPeriod(6);
-//		t2.setDeadline(6);
-//		t2.setActivationTime(1);
-//
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("C");
-//		t3.setComputationTime(2);
-//		t3.setPeriod(3);
-//		t3.setDeadline(10);
-//		t3.setActivationTime(3);
-//		
-//		PeriodicTask t4 = new PeriodicTask();
-//		t4.setName("D");
-//		t4.setComputationTime(3);
-//		t4.setPeriod(3);
-//		t4.setDeadline(10);
-//		t4.setActivationTime(3);
-//		
-//		PeriodicTask t5 = new PeriodicTask();
-//		t5.setName("E");
-//		t5.setComputationTime(7);
-//		t5.setPeriod(3);
-//		t5.setDeadline(10);
-//		t5.setActivationTime(3);
-		
 		tasks.add(t1);
 		tasks.add(t2);
 		tasks.add(t3);
-//		tasks.add(t4);
-//		tasks.add(t5);
 
 		openNewTaskDialog();
+	}
+	
+	public Integer getTimeSlotFromUser(final String escalonamento){
+		
+		GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(0, 10, 0, 10));
+        final TextField username = new TextField();
+        username.setPromptText("timeSlot");
+
+        grid.add(new Label("Informe o 'Time Slot' para o escalonamento:"), 0, 0);
+        grid.add(username, 1, 0);
+                        
+        Callback<Void, Void> myCallback = new Callback<Void, Void>() {
+        	@Override
+        	public Void call(Void arg0) {
+        		
+        		int timeSlot = 1;
+        		
+        		try{
+        			timeSlot = Integer.parseInt(username.getText());
+        			if (timeSlot <= 0){
+        				throw new NumberFormatException();
+        			}
+        		}catch(NumberFormatException ne){
+        			Dialogs.showWarningDialog(MainApp.STAGE,"Apenas números inteiros e maiores que 0 (zero) são permitidos", "Erro de Validação", "Atenção");       
+        			getTimeSlotFromUser(escalonamento);
+        		}
+        		
+        		GeneratorController.TIME_SLOT = timeSlot;
+        		return null;
+        	}
+        };
+        
+        Dialogs.showCustomDialog(MainApp.STAGE, grid, escalonamento, "Entrada de Dados", DialogOptions.OK, myCallback);
+        return GeneratorController.TIME_SLOT;
+	}
+	
+	public int getValueFromCallback(String value){
+		return Integer.valueOf(value);
 	}
 }
