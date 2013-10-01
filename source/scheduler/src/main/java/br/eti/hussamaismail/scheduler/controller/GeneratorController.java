@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.chart.Chart;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
@@ -46,7 +50,9 @@ import br.eti.hussamaismail.scheduler.exception.SchedulabilityConditionNotSatisf
 import br.eti.hussamaismail.scheduler.util.EditingCell;
 import br.eti.hussamaismail.scheduler.util.TasksUtil;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+import com.sun.prism.impl.Disposer.Record;
+
+@SuppressWarnings({ "unchecked", "rawtypes", "restriction" })
 public class GeneratorController implements Initializable {
 
 	private static final Logger log = LoggerFactory.getLogger(MainApp.class);
@@ -171,9 +177,38 @@ public class GeneratorController implements Initializable {
 				return cell;
 			}
 		});
+		
+        TableColumn col_action = new TableColumn<>("");
+        col_action.setSortable(false);
+         
+        col_action.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<Record, Boolean>, 
+                ObservableValue<Boolean>>() {
+ 
+            @Override
+            public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<Record, Boolean> p) {
+                return new SimpleBooleanProperty(p.getValue() != null);
+            }
+        });
+	 
+	        col_action.setCellFactory(
+	                new Callback<TableColumn<Record, Boolean>, TableCell<Record, Boolean>>() {
+	 
+	            @Override
+	            public TableCell<Record, Boolean> call(TableColumn<Record, Boolean> p) {
+	                return new ButtonCell();
+	            }
+	         
+	        });
+        tasksTable.getColumns().add(col_action);
 	}
 
 	public void simulate() throws DeadlineNotSatisfiedException{
+		
+		if (GeneratorController.TASKS.size() == 0){
+			Dialogs.showWarningDialog(MainApp.STAGE, "É necessário adicionar tarefas a serem escalonadas", "Não foi possível realizar a operação", "Alerta");
+			return;
+		}
 
 		Chart simulatedChart = null;
 		boolean preemptive = preemptiveCheckBox.isSelected();
@@ -272,32 +307,6 @@ public class GeneratorController implements Initializable {
 		techniqueChoiceBox.setItems(FXCollections.observableArrayList(
 				"RateMonotonic", "Deadline Monotonic",
 				"Earliest Deadline First", "Round Robin", "Least Laxity"));
-
-//		PeriodicTask t1 = new PeriodicTask();
-//		t1.setName("T1");
-//		t1.setComputationTime(3);
-//		t1.setPeriod(20);
-//		t1.setDeadline(7);
-//		t1.setActivationTime(0);
-//
-//		PeriodicTask t2 = new PeriodicTask();
-//		t2.setName("T2");
-//		t2.setComputationTime(2);
-//		t2.setPeriod(5);
-//		t2.setDeadline(4);
-//		t2.setActivationTime(0);
-//		
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("T3");
-//		t3.setComputationTime(1);
-//		t3.setPeriod(10);
-//		t3.setDeadline(8);
-//		t3.setActivationTime(0);
-//		
-//		TASKS.add(t1);
-//		TASKS.add(t2);
-//		TASKS.add(t3);
-
 		configureTable();
 	}
 	
@@ -423,4 +432,28 @@ public class GeneratorController implements Initializable {
 		}
 		return false;
 	}
+	
+	private class ButtonCell extends TableCell<Record, Boolean> {
+        final Button cellButton = new Button("X");
+         
+        ButtonCell(){             
+            cellButton.setOnAction(new EventHandler<ActionEvent>(){
+ 
+                @Override
+                public void handle(ActionEvent t) {
+                	  int selectdIndex = getTableRow().getIndex();
+                      GeneratorController.tasksTable.getItems().remove(selectdIndex);
+                      GeneratorController.TASKS.remove(selectdIndex);
+                }
+            });
+        }
+ 
+        @Override
+        protected void updateItem(Boolean t, boolean empty) {
+            super.updateItem(t, empty);
+            if(!empty){
+                setGraphic(cellButton);
+            }
+        }
+    }
 }
