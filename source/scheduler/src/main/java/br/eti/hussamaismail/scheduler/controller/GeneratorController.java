@@ -51,13 +51,13 @@ public class GeneratorController implements Initializable {
 
 	private static final Logger log = LoggerFactory.getLogger(MainApp.class);
 
-	public List<Task> tasks;
+	public static List<Task> TASKS =  new ArrayList<Task>();
 	private TasksUtil tasksUtil;
 	
 	public static int TIME_SLOT = 1;
 	public static Task TASK;
 	
-	@FXML private TableView<Task> tasksTable;
+	@FXML private static TableView<Task> tasksTable;
 	@FXML private Pane chartPanel;
 
 	@FXML private TableColumn taskNameColumn;
@@ -76,13 +76,12 @@ public class GeneratorController implements Initializable {
 	@FXML private RadioButton radioEDF;
 
 	public GeneratorController() {
-		this.tasks = new ArrayList<Task>();
 		this.tasksUtil = TasksUtil.getInstance();
 	}
 
-	public void openNewTaskDialog() {
+	public void configureTable() {
 		
-		ObservableList<Task> list = FXCollections.observableList(tasks);
+//		ObservableList<Task> list = FXCollections.observableList(TASKS);
 		
 		 Callback<TableColumn, TableCell> cellFactory = new Callback<TableColumn, TableCell>() {
 			 public TableCell call(TableColumn p) {
@@ -172,14 +171,13 @@ public class GeneratorController implements Initializable {
 				return cell;
 			}
 		});
-		this.tasksTable.setItems(list);
 	}
 
 	public void simulate() throws DeadlineNotSatisfiedException{
 
 		Chart simulatedChart = null;
 		boolean preemptive = preemptiveCheckBox.isSelected();
-		tasksUtil.resetAllTasks(tasks);
+		tasksUtil.resetAllTasks(TASKS);
 		
 		Object techniqueSelected = techniqueChoiceBox.getSelectionModel().getSelectedItem();
 		techniqueSelected = techniqueSelected != null ? techniqueSelected.toString().toUpperCase().replaceAll(" ", "") : "";
@@ -189,7 +187,7 @@ public class GeneratorController implements Initializable {
 				case "RATEMONOTONIC" : 
 					
 					RateMonotonicScheduler rateMonotonicScheduler = new RateMonotonicScheduler();
-					rateMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+					rateMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
 					rateMonotonicScheduler.setPreemptive(preemptive);
 					simulatedChart = rateMonotonicScheduler.simulate();
 					
@@ -198,7 +196,7 @@ public class GeneratorController implements Initializable {
 				case "DEADLINEMONOTONIC" : 
 					
 					DeadlineMonotonicScheduler deadlineMonotonicScheduler = new DeadlineMonotonicScheduler();
-					deadlineMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+					deadlineMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
 					deadlineMonotonicScheduler.setPreemptive(preemptive);
 		
 					simulatedChart = deadlineMonotonicScheduler.simulate();
@@ -208,7 +206,7 @@ public class GeneratorController implements Initializable {
 				case "EARLIESTDEADLINEFIRST" : 
 					
 					EarliestDeadlineFirstScheduler edfScheduler = new EarliestDeadlineFirstScheduler();
-					edfScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+					edfScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
 		
 					simulatedChart = edfScheduler.simulate();
 					
@@ -217,7 +215,7 @@ public class GeneratorController implements Initializable {
 				case "ROUNDROBIN" : 
 					Integer partTimeRB = getTimeSlotFromUser("Round Robin");
 					RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
-					roundRobinScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+					roundRobinScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
 					roundRobinScheduler.setSlotSize(partTimeRB);
 					simulatedChart = roundRobinScheduler.simulate();
 					
@@ -226,7 +224,7 @@ public class GeneratorController implements Initializable {
 				case "LEASTLAXITY" : 
 					Integer partTimeLL = getTimeSlotFromUser("Least Laxity");
 					LeastLaxityScheduler leastLaxityScheduler = new LeastLaxityScheduler();
-					leastLaxityScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(tasks));
+					leastLaxityScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
 					leastLaxityScheduler.setSlotSize(partTimeLL);
 					simulatedChart = leastLaxityScheduler.simulate();
 					
@@ -275,32 +273,32 @@ public class GeneratorController implements Initializable {
 				"RateMonotonic", "Deadline Monotonic",
 				"Earliest Deadline First", "Round Robin", "Least Laxity"));
 
-		PeriodicTask t1 = new PeriodicTask();
-		t1.setName("T1");
-		t1.setComputationTime(3);
-		t1.setPeriod(20);
-		t1.setDeadline(7);
-		t1.setActivationTime(0);
+//		PeriodicTask t1 = new PeriodicTask();
+//		t1.setName("T1");
+//		t1.setComputationTime(3);
+//		t1.setPeriod(20);
+//		t1.setDeadline(7);
+//		t1.setActivationTime(0);
+//
+//		PeriodicTask t2 = new PeriodicTask();
+//		t2.setName("T2");
+//		t2.setComputationTime(2);
+//		t2.setPeriod(5);
+//		t2.setDeadline(4);
+//		t2.setActivationTime(0);
+//		
+//		PeriodicTask t3 = new PeriodicTask();
+//		t3.setName("T3");
+//		t3.setComputationTime(1);
+//		t3.setPeriod(10);
+//		t3.setDeadline(8);
+//		t3.setActivationTime(0);
+//		
+//		TASKS.add(t1);
+//		TASKS.add(t2);
+//		TASKS.add(t3);
 
-		PeriodicTask t2 = new PeriodicTask();
-		t2.setName("T2");
-		t2.setComputationTime(2);
-		t2.setPeriod(5);
-		t2.setDeadline(4);
-		t2.setActivationTime(0);
-		
-		PeriodicTask t3 = new PeriodicTask();
-		t3.setName("T3");
-		t3.setComputationTime(1);
-		t3.setPeriod(10);
-		t3.setDeadline(8);
-		t3.setActivationTime(0);
-		
-		tasks.add(t1);
-		tasks.add(t2);
-		tasks.add(t3);
-
-		openNewTaskDialog();
+		configureTable();
 	}
 	
 	public Integer getTimeSlotFromUser(final String escalonamento){
@@ -349,7 +347,7 @@ public class GeneratorController implements Initializable {
         
         final TextField taskName = new TextField();
         grid.add(new Label("Nome:"), 0, 0);
-        grid.add(taskName, 1, 0);
+        grid.add(taskName, 1, 0); 	
         
         ObservableList<String> options = 
 		    FXCollections.observableArrayList(
@@ -359,11 +357,12 @@ public class GeneratorController implements Initializable {
         
         final ComboBox<String> taskType = new ComboBox(options);
         taskType.setPromptText("Periódica");
+        taskType.setValue("Periódica");
         grid.add(new Label("Tipo:"), 2, 0);
         grid.add(taskType, 3, 0);
 
         final TextField computationTime = new TextField();
-        grid.add(new Label("Tempo de Computação: "), 0, 1);
+        grid.add(new Label("Tempo de Computação: "), 0, 1);       
         grid.add(computationTime, 1, 1);
         
         final TextField period = new TextField();        
@@ -383,17 +382,45 @@ public class GeneratorController implements Initializable {
         	@Override
         	public Void call(Void arg0) {
         		
-//        		if ("PERIÓDICA".equals(taskType.getValue().toUpperCase())){
-//        			GeneratorController.TASK = new PeriodicTask();
-//        		}
-        		
-//        		System.out.println(TASK);
-        		
+        		try{
+	        		if ("PERIÓDICA".equals(taskType.getValue().toUpperCase())){
+	        			GeneratorController.TASK = new PeriodicTask();
+	        		}
+	        		
+	        		if (GeneratorController.TASK instanceof PeriodicTask){
+	        			PeriodicTask pTask = (PeriodicTask) GeneratorController.TASK;
+	        			
+	        			pTask.setName(taskName.getText());
+	        			if (existsTaskName(pTask.getName()) == false){
+	        			
+		        			pTask.setComputationTime(Integer.valueOf(computationTime.getText()));
+		        			pTask.setPeriod(Integer.valueOf(period.getText()));
+		        			pTask.setDeadline(Integer.valueOf(deadline.getText()));
+		        			pTask.setActivationTime(Integer.valueOf(activationTime.getText()));
+		        			
+		        			GeneratorController.TASKS.add(pTask);	        			
+		        			ObservableList<Task> observableArrayList = FXCollections.observableArrayList(GeneratorController.TASKS);	        			
+		        			GeneratorController.tasksTable.setItems(observableArrayList);
+	        			}
+	        		}
+        		}catch(NumberFormatException ne){
+        			Dialogs.showWarningDialog(MainApp.STAGE,"Apenas números inteiros e maiores que 0 (zero) são permitidos", "Erro de Validação", "Atenção");       
+        			addTask();
+        		}        		        		
         		return null;
         	}
         };
         
         Dialogs.showCustomDialog(MainApp.STAGE, grid, "Adicionar Tarefa", "Entrada de Dados", DialogOptions.OK, myCallback);
-//        return GeneratorController.TIME_SLOT;
+	}
+	
+	private boolean existsTaskName(String taskName){		
+		for(Task task : GeneratorController.TASKS){
+			if (taskName.equals(task.getName())){
+    			Dialogs.showWarningDialog(MainApp.STAGE,"Já existe uma tarefa cadastrada com o nome '"+taskName+"'", "Erro de Validação", "Atenção");
+    			return true;
+			}
+		}
+		return false;
 	}
 }
