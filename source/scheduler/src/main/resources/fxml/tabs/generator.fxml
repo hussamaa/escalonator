@@ -26,7 +26,7 @@
           <children>
             <!--                     	<Label text="DIAGRAMA TEMPORAL"/> -->
             <Pane fx:id="chartPanel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-            <GridPane fx:id="simulateControl" alignment="BASELINE_RIGHT" hgap="5.0" vgap="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">
+            <GridPane fx:id="simulateControl" alignment="BASELINE_RIGHT" hgap="5.0" vgap="10.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="15.0">
               <children>
                 <Label style=" -fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="%technique" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                 <ChoiceBox fx:id="techniqueChoiceBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -65,13 +65,13 @@
                 <PropertyValueFactory property="name" />
               </cellValueFactory>
             </TableColumn>
-            <TableColumn minWidth="100.0" prefWidth="100.0" text="%type" fx:id="taskTypeColumn">
+            <TableColumn maxWidth="5000.0" minWidth="74.0" prefWidth="74.0" text="%type" fx:id="taskTypeColumn">
               <cellValueFactory>
                 <PropertyValueFactory property="type" />
               </cellValueFactory>
               <!--                             <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory> -->
             </TableColumn>
-            <TableColumn editable="true" minWidth="200.0" prefWidth="200.0" text="%computationTime" fx:id="taskComputationTimeColumn">
+            <TableColumn editable="true" maxWidth="5000.0" minWidth="200.0" prefWidth="234.0" text="%computationTime" fx:id="taskComputationTimeColumn">
               <cellValueFactory>
                 <PropertyValueFactory property="computationTime" />
               </cellValueFactory>
@@ -87,13 +87,13 @@
               <!--                                 </FormatedTableCellFactory> -->
               <!--                             </cellFactory> -->
             </TableColumn>
-            <TableColumn minWidth="100.0" prefWidth="100.0" text="%deadline" fx:id="taskDeadlineColumn">
+            <TableColumn maxWidth="5000.0" minWidth="100.0" prefWidth="110.0" text="%deadline" fx:id="taskDeadlineColumn">
               <cellValueFactory>
                 <PropertyValueFactory property="deadline" />
               </cellValueFactory>
               <!--                             <cellFactory><FormatedTableCellFactory alignment="center"/></cellFactory> -->
             </TableColumn>
-            <TableColumn minWidth="100.0" prefWidth="100.0" text="%activation" fx:id="taskActivationTimeColumn">
+            <TableColumn maxWidth="5000.0" minWidth="100.0" prefWidth="115.0" text="%activation" fx:id="taskActivationTimeColumn">
               <cellValueFactory>
                 <PropertyValueFactory property="activationTime" />
               </cellValueFactory>

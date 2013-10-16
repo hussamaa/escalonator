@@ -38,6 +38,8 @@ public class MainApp extends Application {
         Scene scene = new Scene(rootNode, 1024, 768);
         scene.getStylesheets().add("/styles/styles.css");
 
+        System.out.println("STAGE " + STAGE);
+        
         STAGE = stage;
         stage.setTitle("Escalonator");        
         stage.setScene(scene);

@@ -44,6 +44,7 @@ import br.eti.hussamaismail.scheduler.domain.LeastLaxityScheduler;
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
 import br.eti.hussamaismail.scheduler.domain.RoundRobinScheduler;
+import br.eti.hussamaismail.scheduler.domain.SporadicTask;
 import br.eti.hussamaismail.scheduler.domain.Task;
 import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.exception.SchedulabilityConditionNotSatisfiedException;
@@ -86,9 +87,7 @@ public class GeneratorController implements Initializable {
 	}
 
 	public void configureTable() {
-		
-//		ObservableList<Task> list = FXCollections.observableList(TASKS);
-		
+			
 		 Callback<TableColumn, TableCell> cellFactory = new Callback<TableColumn, TableCell>() {
 			 public TableCell call(TableColumn p) {
 	              return new EditingCell();
@@ -205,6 +204,7 @@ public class GeneratorController implements Initializable {
 
 	public void simulate() throws DeadlineNotSatisfiedException{
 		
+		/* Verifica se existem tarefas a serem escalonadas */
 		if (GeneratorController.TASKS.size() == 0){
 			Dialogs.showWarningDialog(MainApp.STAGE, "É necessário adicionar tarefas a serem escalonadas", "Não foi possível realizar a operação", "Alerta");
 			return;
@@ -216,6 +216,13 @@ public class GeneratorController implements Initializable {
 		
 		Object techniqueSelected = techniqueChoiceBox.getSelectionModel().getSelectedItem();
 		techniqueSelected = techniqueSelected != null ? techniqueSelected.toString().toUpperCase().replaceAll(" ", "") : "";
+		
+		/* Limita o trabalho com tarefas esporadicas somente ao EDF */
+		if ((!"EARLIESTDEADLINEFIRST".equals(techniqueSelected.toString())) && existsSporadicTasks()){
+			Dialogs.showWarningDialog(MainApp.STAGE, "Apenas a tecnica 'Earliest Deadline First' suporta tarefas esporadicas", "Não foi possível realizar a operação", "Alerta");
+			return;
+		}
+		
 		try{
 			switch ((String)techniqueSelected){
 			
@@ -239,7 +246,7 @@ public class GeneratorController implements Initializable {
 				break;
 				
 				case "EARLIESTDEADLINEFIRST" : 
-					
+										
 					EarliestDeadlineFirstScheduler edfScheduler = new EarliestDeadlineFirstScheduler();
 					edfScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
 		
@@ -347,6 +354,11 @@ public class GeneratorController implements Initializable {
         return GeneratorController.TIME_SLOT;
 	}
 	
+	/**
+	 * Metodo que exibe a tela de cadastro para tarefas
+	 * periodicas e esporadicas.
+	 * 
+	 */
 	public void addTask(){
 		
 		GridPane grid = new GridPane();
@@ -395,6 +407,9 @@ public class GeneratorController implements Initializable {
 	        		if ("PERIÓDICA".equals(taskType.getValue().toUpperCase())){
 	        			GeneratorController.TASK = new PeriodicTask();
 	        		}
+	        		if ("ESPORÁDICA".equals(taskType.getValue().toUpperCase())){
+	        			GeneratorController.TASK = new SporadicTask();
+	        		}
 	        		
 	        		if (GeneratorController.TASK instanceof PeriodicTask){
 	        			PeriodicTask pTask = (PeriodicTask) GeneratorController.TASK;
@@ -412,6 +427,21 @@ public class GeneratorController implements Initializable {
 		        			GeneratorController.tasksTable.setItems(observableArrayList);
 	        			}
 	        		}
+	        		if (GeneratorController.TASK instanceof SporadicTask){
+	        			SporadicTask sTask = (SporadicTask) GeneratorController.TASK;
+	        			
+	        			sTask.setName(taskName.getText());
+	        			if (existsTaskName(sTask.getName()) == false){
+	        			
+	        				sTask.setComputationTime(Integer.valueOf(computationTime.getText()));
+	        				sTask.setActivationTime(Integer.valueOf(activationTime.getText()));
+		        			
+		        			GeneratorController.TASKS.add(sTask);	        			
+		        			ObservableList<Task> observableArrayList = FXCollections.observableArrayList(GeneratorController.TASKS);	        			
+		        			GeneratorController.tasksTable.setItems(observableArrayList);
+	        			}
+	        		}
+	        		
         		}catch(NumberFormatException ne){
         			Dialogs.showWarningDialog(MainApp.STAGE,"Apenas números inteiros e maiores que 0 (zero) são permitidos", "Erro de Validação", "Atenção");       
         			addTask();
@@ -456,4 +486,13 @@ public class GeneratorController implements Initializable {
             }
         }
     }
+	
+	private boolean existsSporadicTasks(){
+		for (Task task : GeneratorController.TASKS) {
+			if (task instanceof SporadicTask){
+				return true;
+			}			
+		}
+		return false;
+	}
 }

@@ -10,20 +10,10 @@ public class PeriodicTask extends Task implements Cloneable {
 	
 	private Logger log = LoggerFactory.getLogger(PeriodicTask.class);
 
-	private int computationTime;
 	private int period;
 	private int deadline;
 	private double responseTime;
 	private int currentProcessed;
-	private int activationTime;
-
-	public int getActivationTime() {
-		return activationTime;
-	}
-
-	public void setActivationTime(int activationTime) {
-		this.activationTime = activationTime;
-	}
 
 	public double getResponseTime() {
 		return responseTime;
@@ -31,14 +21,6 @@ public class PeriodicTask extends Task implements Cloneable {
 
 	public void setResponseTime(double responseTime) {
 		this.responseTime = responseTime;
-	}
-
-	public int getComputationTime() {
-		return computationTime;
-	}
-
-	public void setComputationTime(int computationTime) {
-		this.computationTime = computationTime;
 	}
 
 	public int getPeriod() {
@@ -63,7 +45,7 @@ public class PeriodicTask extends Task implements Cloneable {
 	}
 
 	public int getRemaining() {
-		return this.computationTime - this.currentProcessed;
+		return this.getComputationTime() - this.currentProcessed;
 	}
 
 	public void reset() {
@@ -72,7 +54,7 @@ public class PeriodicTask extends Task implements Cloneable {
 
 	@Override
 	public String toString() {
-		return "PeriodicTask [computationTime=" + computationTime + ", period="
+		return "PeriodicTask [computationTime=" + this.getComputationTime() + ", period="
 				+ period + ", deadline=" + deadline + ", responseTime="
 				+ responseTime + ", currentProcessed=" + currentProcessed
 				+ ", getName()=" + getName() + "]";
