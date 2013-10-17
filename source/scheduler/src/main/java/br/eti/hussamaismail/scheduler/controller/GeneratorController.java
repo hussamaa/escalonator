@@ -305,6 +305,8 @@ public class GeneratorController implements Initializable {
 		simulatedChart.setMaxHeight(chartPanel.getHeight() - simulateControl.getHeight());
 		simulatedChart.setMinHeight(chartPanel.getHeight() - simulateControl.getHeight());
 		
+		simulatedChart.setStyle("-fx-font-color: red;");
+		
 		chartPanel.getChildren().add(simulatedChart);
 	}
 
@@ -397,8 +399,7 @@ public class GeneratorController implements Initializable {
         final TextField activationTime = new TextField();        
         grid.add(new Label("Tempo de Ativação: "), 2, 2);
         grid.add(activationTime, 3, 2);
-        
-        
+                
         Callback<Void, Void> myCallback = new Callback<Void, Void>() {
         	@Override
         	public Void call(Void arg0) {

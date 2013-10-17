@@ -68,7 +68,7 @@
     -fx-font-size: 22px;
 }
 #MainTabs .tab:selected {
-    -fx-border-image-source: url("images/tab-selected5.png");
+    -fx-border-image-source: url("images/_tab-selected5.png");
     -fx-text-fill: #333333;
 /*    -fx-background-color: red;*/
 }
@@ -171,7 +171,7 @@
 #tasksTable{
     -fx-background-color: transparent;
     -fx-background-insets: 0;
-    -fx-padding: 10;
+    -fx-padding: 5;
     -fx-border-image-source: url("images/table-background.png"), url("images/noise.png");
     -fx-border-image-slice: 0 0 1 0 fill, 0 0 0 0 fill;
     -fx-border-image-width: 0 0 1 0, 0;
