@@ -51,7 +51,7 @@
     -fx-border-image-repeat: stretch;
 }
 #MainTabs *.tab-header-area {
-    -fx-padding: 0 10px 0 430px;
+    -fx-padding: 0 10px 0 20px;
 }
 #MainTabs .headers-region {
     -fx-effect: null;
