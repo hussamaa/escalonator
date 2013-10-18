@@ -44,6 +44,7 @@ import br.eti.hussamaismail.scheduler.domain.LeastLaxityScheduler;
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
 import br.eti.hussamaismail.scheduler.domain.RoundRobinScheduler;
+import br.eti.hussamaismail.scheduler.domain.SporadicPolicy;
 import br.eti.hussamaismail.scheduler.domain.SporadicTask;
 import br.eti.hussamaismail.scheduler.domain.Task;
 import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
@@ -75,8 +76,9 @@ public class GeneratorController implements Initializable {
 	@FXML private TableColumn taskActivationTimeColumn;
 	
 	@FXML private ChoiceBox techniqueChoiceBox;
+	@FXML private ChoiceBox sporadicPolicy;
 	@FXML private GridPane simulateControl;
-	@FXML private CheckBox preemptiveCheckBox;
+	@FXML private CheckBox preemptiveCheckBox;	
 
 	@FXML private RadioButton radioRateMonotonic;
 	@FXML private RadioButton radioDeadlineMonotonic;
@@ -107,11 +109,7 @@ public class GeneratorController implements Initializable {
 			@Override
 			public void handle(CellEditEvent<Task, Integer> t) {
 				Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
-				if (task instanceof PeriodicTask){
-					PeriodicTask pTask = (PeriodicTask) task;
-					pTask.setComputationTime(t.getNewValue());
-				}
-				
+				task.setComputationTime(t.getNewValue());
 			}
 		 });
 		
@@ -124,7 +122,6 @@ public class GeneratorController implements Initializable {
 					PeriodicTask pTask = (PeriodicTask) task;
 					pTask.setPeriod(t.getNewValue());
 				}
-				
 			}
 		 });
 		
@@ -146,11 +143,7 @@ public class GeneratorController implements Initializable {
 			@Override
 			public void handle(CellEditEvent<Task, Integer> t) {
 				Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
-				if (task instanceof PeriodicTask){
-					PeriodicTask pTask = (PeriodicTask) task;
-					pTask.setActivationTime(t.getNewValue());
-				}
-				
+				task.setActivationTime(t.getNewValue());
 			}
 		 });
 				
@@ -217,9 +210,16 @@ public class GeneratorController implements Initializable {
 		Object techniqueSelected = techniqueChoiceBox.getSelectionModel().getSelectedItem();
 		techniqueSelected = techniqueSelected != null ? techniqueSelected.toString().toUpperCase().replaceAll(" ", "") : "";
 		
+		boolean existsSporadic = existsSporadicTasks();
 		/* Limita o trabalho com tarefas esporadicas somente ao EDF */
-		if ((!"EARLIESTDEADLINEFIRST".equals(techniqueSelected.toString())) && existsSporadicTasks()){
+		if ((!"EARLIESTDEADLINEFIRST".equals(techniqueSelected.toString())) && existsSporadic){
 			Dialogs.showWarningDialog(MainApp.STAGE, "Apenas a tecnica 'Earliest Deadline First' suporta tarefas esporadicas", "Não foi possível realizar a operação", "Alerta");
+			return;
+		}
+		
+		/* Verifica se alguma politica para as tarefas esporadicas foi selecionada */
+		if (existsSporadic && (sporadicPolicy.getValue() == null)){
+			Dialogs.showWarningDialog(MainApp.STAGE, "É necessário escolher uma política de escalonamento para as tarefas esporádicas", "Não foi possível realizar a operação", "Alerta");
 			return;
 		}
 		
@@ -229,7 +229,7 @@ public class GeneratorController implements Initializable {
 				case "RATEMONOTONIC" : 
 					
 					RateMonotonicScheduler rateMonotonicScheduler = new RateMonotonicScheduler();
-					rateMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
+					rateMonotonicScheduler.setTasks(TASKS);
 					rateMonotonicScheduler.setPreemptive(preemptive);
 					simulatedChart = rateMonotonicScheduler.simulate();
 					
@@ -238,7 +238,7 @@ public class GeneratorController implements Initializable {
 				case "DEADLINEMONOTONIC" : 
 					
 					DeadlineMonotonicScheduler deadlineMonotonicScheduler = new DeadlineMonotonicScheduler();
-					deadlineMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
+					deadlineMonotonicScheduler.setTasks(TASKS);
 					deadlineMonotonicScheduler.setPreemptive(preemptive);
 		
 					simulatedChart = deadlineMonotonicScheduler.simulate();
@@ -247,9 +247,15 @@ public class GeneratorController implements Initializable {
 				
 				case "EARLIESTDEADLINEFIRST" : 
 										
+					String sporadicPolicyString = sporadicPolicy.getValue().toString().toUpperCase().replaceAll(" ", "");
 					EarliestDeadlineFirstScheduler edfScheduler = new EarliestDeadlineFirstScheduler();
-					edfScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
-		
+					edfScheduler.setTasks(TASKS);
+					
+					if (sporadicPolicyString.equals("SERVIDORBACKGROUND")){
+						edfScheduler.setSporadicPolicy(SporadicPolicy.BACKGROUND_SERVER);
+						log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
+					}
+				
 					simulatedChart = edfScheduler.simulate();
 					
 				break;
@@ -257,7 +263,7 @@ public class GeneratorController implements Initializable {
 				case "ROUNDROBIN" : 
 					Integer partTimeRB = getTimeSlotFromUser("Round Robin");
 					RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
-					roundRobinScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
+					roundRobinScheduler.setTasks(TASKS);
 					roundRobinScheduler.setSlotSize(partTimeRB);
 					simulatedChart = roundRobinScheduler.simulate();
 					
@@ -266,7 +272,7 @@ public class GeneratorController implements Initializable {
 				case "LEASTLAXITY" : 
 					Integer partTimeLL = getTimeSlotFromUser("Least Laxity");
 					LeastLaxityScheduler leastLaxityScheduler = new LeastLaxityScheduler();
-					leastLaxityScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
+					leastLaxityScheduler.setTasks(TASKS);
 					leastLaxityScheduler.setSlotSize(partTimeLL);
 					simulatedChart = leastLaxityScheduler.simulate();
 					
@@ -301,9 +307,9 @@ public class GeneratorController implements Initializable {
 		simulatedChart.setPrefWidth(chartPanel.getWidth());
 		simulatedChart.setMinWidth(chartPanel.getWidth());
 		
-		simulatedChart.setPrefHeight(chartPanel.getHeight() - simulateControl.getHeight());
-		simulatedChart.setMaxHeight(chartPanel.getHeight() - simulateControl.getHeight());
-		simulatedChart.setMinHeight(chartPanel.getHeight() - simulateControl.getHeight());
+		simulatedChart.setPrefHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+		simulatedChart.setMaxHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+		simulatedChart.setMinHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
 		
 		simulatedChart.setStyle("-fx-font-color: red;");
 		
@@ -317,6 +323,35 @@ public class GeneratorController implements Initializable {
 				"RateMonotonic", "Deadline Monotonic",
 				"Earliest Deadline First", "Round Robin", "Least Laxity"));
 		configureTable();
+		
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(2);
+		t1.setPeriod(10);
+		t1.setDeadline(10);
+		
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(3);
+		t2.setPeriod(5);
+		t2.setDeadline(5);
+		
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("SP");
+		s1.setComputationTime(1);
+		s1.setActivationTime(3);
+		
+		SporadicTask s2 = new SporadicTask();
+		s2.setName("SP2");
+		s2.setComputationTime(1);
+		s2.setActivationTime(1);
+		
+		GeneratorController.TASKS.add(t1);
+		GeneratorController.TASKS.add(t2);
+		GeneratorController.TASKS.add(s1);
+		GeneratorController.TASKS.add(s2);
+		
+		tasksTable.getItems().addAll(GeneratorController.TASKS);
 	}
 	
 	public Integer getTimeSlotFromUser(final String escalonamento){

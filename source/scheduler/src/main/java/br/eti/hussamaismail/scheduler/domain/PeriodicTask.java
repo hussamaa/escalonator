@@ -1,8 +1,5 @@
 package br.eti.hussamaismail.scheduler.domain;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +10,6 @@ public class PeriodicTask extends Task implements Cloneable {
 	private int period;
 	private int deadline;
 	private double responseTime;
-	private int currentProcessed;
 
 	public double getResponseTime() {
 		return responseTime;
@@ -39,24 +35,11 @@ public class PeriodicTask extends Task implements Cloneable {
 		this.deadline = deadline;
 	}
 
-	public void process(int processTime) {
-		this.currentProcessed = new BigDecimal(currentProcessed + processTime)
-				.setScale(2, RoundingMode.HALF_UP).intValue();
-	}
-
-	public int getRemaining() {
-		return this.getComputationTime() - this.currentProcessed;
-	}
-
-	public void reset() {
-		this.currentProcessed = 0;
-	}
-
 	@Override
 	public String toString() {
 		return "PeriodicTask [computationTime=" + this.getComputationTime() + ", period="
 				+ period + ", deadline=" + deadline + ", responseTime="
-				+ responseTime + ", currentProcessed=" + currentProcessed
+				+ responseTime + ", currentProcessed=" + this.getCurrentProcessed()
 				+ ", getName()=" + getName() + "]";
 	}
 	

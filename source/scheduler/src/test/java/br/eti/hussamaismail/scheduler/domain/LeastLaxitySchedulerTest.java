@@ -35,7 +35,7 @@ public class LeastLaxitySchedulerTest {
 	public void init() {
 		this.chartsUtil = ChartsUtil.getInstance();
 		this.scheduler = new LeastLaxityScheduler();
-		this.scheduler.setTasks(new ArrayList<PeriodicTask>());
+		this.scheduler.setTasks(new ArrayList<Task>());
 	}
 	
 	public void setTasksCase1(){

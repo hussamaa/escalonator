@@ -39,7 +39,7 @@ public class LeastLaxityScheduler extends DynamicScheduler {
 	@Override
 	public Chart simulate() throws DeadlineNotSatisfiedException {
 		
-		Map<Integer, List<PeriodicTask>> mapWithActivationTimeAndTasks = getTasksUtil().getMapWithActivationTimeAndTasks(getTasks());
+		Map<Integer, List<Task>> mapWithActivationTimeAndTasks = getTasksUtil().getMapWithActivationTimeAndTasks(getTasks());
 		int position = 0;
 		int higherValue = getTasksUtil().getHigherDeadlineFromPeriodicTasks(getTasks());
 		
@@ -48,7 +48,7 @@ public class LeastLaxityScheduler extends DynamicScheduler {
 		AreaChart<Number, Number> ac = new AreaChart<Number, Number>(xAxis,yAxis);
 		
 		List<Series<Number, Number>> chartTasks = new ArrayList<Series<Number, Number>>();
-		Set<PeriodicTask> currentTasks = new LinkedHashSet<PeriodicTask>();
+		Set<Task> currentTasks = new LinkedHashSet<Task>();
 		
 		int slotSize = 1;
 		if (this.slotSize != null){
@@ -60,7 +60,7 @@ public class LeastLaxityScheduler extends DynamicScheduler {
 		while (position <= higherValue){
 			
 			if (mapWithActivationTimeAndTasks.containsKey(position)){
-				List<PeriodicTask> pendentTasks = mapWithActivationTimeAndTasks.get(position);
+				List<Task> pendentTasks = mapWithActivationTimeAndTasks.get(position);
 				currentTasks.addAll(pendentTasks);
 			}
 			
@@ -69,7 +69,8 @@ public class LeastLaxityScheduler extends DynamicScheduler {
 			
 			PeriodicTask leastLaxity = null;
 			double laxity = Double.MAX_VALUE;
-			for (PeriodicTask pTask : currentTasks) {
+			Set<PeriodicTask> onlyPeriodicTasksFromCurrentTasks = (Set<PeriodicTask>) getTasksUtil().getOnlyPeriodicTasksFromTaskList(currentTasks);
+			for (PeriodicTask pTask : onlyPeriodicTasksFromCurrentTasks) {
 				double tempLaxity = pTask.getDeadline() - pTask.getRemaining() - position;
 				if (tempLaxity < laxity || ((tempLaxity <= laxity) && pTask.equals(previouslyLeastLaxity))){
 					laxity = tempLaxity;
@@ -100,7 +101,7 @@ public class LeastLaxityScheduler extends DynamicScheduler {
 				}
 				position = aux;
 				if (mapWithActivationTimeAndTasks.containsKey(aux)){
-					List<PeriodicTask> pendentTasks = mapWithActivationTimeAndTasks.get(aux);
+					List<Task> pendentTasks = mapWithActivationTimeAndTasks.get(aux);
 					currentTasks.addAll(pendentTasks);
 				}
 			}

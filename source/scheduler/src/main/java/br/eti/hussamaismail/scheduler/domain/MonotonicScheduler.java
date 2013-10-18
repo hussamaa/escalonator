@@ -1,6 +1,7 @@
 package br.eti.hussamaismail.scheduler.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,8 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 
 		double p1 = 0, p2;
 
-		for (PeriodicTask pt : this.getTasks()) {
+		Collection<PeriodicTask> onlyPeriodicTasksFromTasks = getTasksUtil().getOnlyPeriodicTasksFromTaskList(this.getTasks());
+		for (PeriodicTask pt : onlyPeriodicTasksFromTasks) {
 			p1 = p1 + ((double) pt.getComputationTime() / ((double)pt.getPeriod()));
 		}
 
@@ -112,8 +114,9 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 			return;
 		}
 
+		List<PeriodicTask> onlyPeriodicTasksFromTasks = (List<PeriodicTask>) getTasksUtil().getOnlyPeriodicTasksFromTaskList(this.getTasks());
 		for (int i = (this.getTasks().size() - 1); i >= 0; i--) {
-			PeriodicTask actualTask = this.getTasks().get(i);
+			PeriodicTask actualTask = onlyPeriodicTasksFromTasks.get(i);
 			log.debug("Calculando tempo máximo de resposta para tarefa: "
 					+ actualTask.getName() + " - " + actualTask);
 			double actualValue = actualTask.getComputationTime();
@@ -121,7 +124,7 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 			while (true) {
 				double accumulator = 0;
 				for (int j = 0; j < i; j++) {
-					PeriodicTask tempTask = this.getTasks().get(j);
+					PeriodicTask tempTask = onlyPeriodicTasksFromTasks.get(j);
 					accumulator =  (accumulator
 							+ Math.ceil(actualValue / tempTask.getPeriod())
 							* tempTask.getComputationTime());

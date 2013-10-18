@@ -9,11 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import br.eti.hussamaismail.scheduler.domain.DynamicScheduler;
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.RateMonotonicScheduler;
 import br.eti.hussamaismail.scheduler.domain.Scheduler;
-import br.eti.hussamaismail.scheduler.domain.DynamicScheduler;
-import br.eti.hussamaismail.scheduler.util.TasksUtil;
+import br.eti.hussamaismail.scheduler.domain.Task;
 
 /**
  * Classe referente aos testes unitarios
@@ -34,7 +34,7 @@ public class TasksUtilTest {
 		this.tasksUtil = TasksUtil.getInstance();
 		this.scheduler = new RateMonotonicScheduler();
 		DynamicScheduler staticScheduler = (DynamicScheduler) this.scheduler;
-		staticScheduler.setTasks(new ArrayList<PeriodicTask>());
+		staticScheduler.setTasks(new ArrayList<Task>());
 		
 		PeriodicTask pt1 = new PeriodicTask();
 		pt1.setName("pt1");
@@ -69,8 +69,8 @@ public class TasksUtilTest {
 	public void testSortTasksByDeadLine(){
 		this.tasksUtil.sortTasksByDeadline(scheduler);
 		DynamicScheduler staticScheduler = (DynamicScheduler) this.scheduler;
-		Assert.assertEquals(20, staticScheduler.getTasks().get(0).getDeadline());
-		Assert.assertEquals(50, staticScheduler.getTasks().get(staticScheduler.getTasks().size() - 1).getDeadline());
+		Assert.assertEquals(20, ((PeriodicTask) staticScheduler.getTasks().get(0)).getDeadline());
+		Assert.assertEquals(50, ((PeriodicTask)staticScheduler.getTasks().get(staticScheduler.getTasks().size() - 1)).getDeadline());
 	}
 	
 	/**
