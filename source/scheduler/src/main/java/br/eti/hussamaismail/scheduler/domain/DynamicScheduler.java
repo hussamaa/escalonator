@@ -6,18 +6,18 @@ import br.eti.hussamaismail.scheduler.util.TasksUtil;
 
 public abstract class DynamicScheduler implements Scheduler {
 
-	private List<PeriodicTask> tasks;
+	private List<Task> tasks;
 	private TasksUtil tasksUtil;
 
 	public DynamicScheduler() {
 		this.tasksUtil = TasksUtil.getInstance();
 	}
 
-	public List<PeriodicTask> getTasks() {
+	public List<Task> getTasks() {
 		return tasks;
 	}
 
-	public void setTasks(List<PeriodicTask> tasks) {
+	public void setTasks(List<Task> tasks) {
 		this.tasks = tasks;
 	}
 

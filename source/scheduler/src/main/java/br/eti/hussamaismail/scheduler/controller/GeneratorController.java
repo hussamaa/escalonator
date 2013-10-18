@@ -229,7 +229,7 @@ public class GeneratorController implements Initializable {
 				case "RATEMONOTONIC" : 
 					
 					RateMonotonicScheduler rateMonotonicScheduler = new RateMonotonicScheduler();
-					rateMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
+					rateMonotonicScheduler.setTasks(TASKS);
 					rateMonotonicScheduler.setPreemptive(preemptive);
 					simulatedChart = rateMonotonicScheduler.simulate();
 					
@@ -238,7 +238,7 @@ public class GeneratorController implements Initializable {
 				case "DEADLINEMONOTONIC" : 
 					
 					DeadlineMonotonicScheduler deadlineMonotonicScheduler = new DeadlineMonotonicScheduler();
-					deadlineMonotonicScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
+					deadlineMonotonicScheduler.setTasks(TASKS);
 					deadlineMonotonicScheduler.setPreemptive(preemptive);
 		
 					simulatedChart = deadlineMonotonicScheduler.simulate();
@@ -248,7 +248,7 @@ public class GeneratorController implements Initializable {
 				case "EARLIESTDEADLINEFIRST" : 
 										
 					EarliestDeadlineFirstScheduler edfScheduler = new EarliestDeadlineFirstScheduler();
-					edfScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
+					edfScheduler.setTasks(TASKS);
 		
 					simulatedChart = edfScheduler.simulate();
 					
@@ -257,7 +257,7 @@ public class GeneratorController implements Initializable {
 				case "ROUNDROBIN" : 
 					Integer partTimeRB = getTimeSlotFromUser("Round Robin");
 					RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
-					roundRobinScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
+					roundRobinScheduler.setTasks(TASKS);
 					roundRobinScheduler.setSlotSize(partTimeRB);
 					simulatedChart = roundRobinScheduler.simulate();
 					
@@ -266,7 +266,7 @@ public class GeneratorController implements Initializable {
 				case "LEASTLAXITY" : 
 					Integer partTimeLL = getTimeSlotFromUser("Least Laxity");
 					LeastLaxityScheduler leastLaxityScheduler = new LeastLaxityScheduler();
-					leastLaxityScheduler.setTasks(this.tasksUtil.getOnlyPeriodicTasksFromTaskList(TASKS));
+					leastLaxityScheduler.setTasks(TASKS);
 					leastLaxityScheduler.setSlotSize(partTimeLL);
 					simulatedChart = leastLaxityScheduler.simulate();
 					
@@ -317,6 +317,31 @@ public class GeneratorController implements Initializable {
 				"RateMonotonic", "Deadline Monotonic",
 				"Earliest Deadline First", "Round Robin", "Least Laxity"));
 		configureTable();
+		
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(2);
+		t1.setPeriod(10);
+		t1.setDeadline(10);
+		
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(3);
+		t2.setPeriod(5);
+		t2.setDeadline(5);
+		
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("SP");
+		s1.setComputationTime(3);
+		s1.setActivationTime(3);
+		
+		GeneratorController.TASKS.add(t1);
+		GeneratorController.TASKS.add(t2);
+		GeneratorController.TASKS.add(s1);
+
+		
+		tasksTable.getItems().addAll(GeneratorController.TASKS);
+//		tasksTable.getItems().add(t2);
 	}
 	
 	public Integer getTimeSlotFromUser(final String escalonamento){

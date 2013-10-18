@@ -26,12 +26,12 @@ public class RateMonotonicSchedulerTest {
 	@Before
 	public void init(){
 		this.scheduler = new RateMonotonicScheduler();
-		this.scheduler.setTasks(new ArrayList<PeriodicTask>());
+		this.scheduler.setTasks(new ArrayList<Task>());
 		this.chartsUtil = ChartsUtil.getInstance();
 	}
 	
 	public void setScalableTasks(){
-		List<PeriodicTask> tasks = new ArrayList<PeriodicTask>();
+		List<Task> tasks = new ArrayList<Task>();
 		
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setActivationTime(0);
@@ -62,7 +62,7 @@ public class RateMonotonicSchedulerTest {
 	}
 	
 	public void setScalableTasks2(){
-		List<PeriodicTask> tasks = new ArrayList<PeriodicTask>();
+		List<Task> tasks = new ArrayList<Task>();
 		
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("t1");
@@ -93,7 +93,7 @@ public class RateMonotonicSchedulerTest {
 	}
 	
 	public void setNotScalableTasks(){
-		List<PeriodicTask> tasks = new ArrayList<PeriodicTask>();
+		List<Task> tasks = new ArrayList<Task>();
 		
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("t1");
@@ -313,9 +313,9 @@ public class RateMonotonicSchedulerTest {
 	public void validateCalculateMaximumResponseTimeToTheTasks() throws TaskNotScalableException{
 		setNotScalableTasks();
 		this.scheduler.calculateMaximumResponseTimeToTheTasks();
-		Assert.assertEquals(6.0, this.scheduler.getTasks().get(0).getResponseTime());
-		Assert.assertEquals(12.0, this.scheduler.getTasks().get(1).getResponseTime());
-		Assert.assertEquals(70.0, this.scheduler.getTasks().get(2).getResponseTime());
+		Assert.assertEquals(6.0, ((PeriodicTask) this.scheduler.getTasks().get(0)).getResponseTime());
+		Assert.assertEquals(12.0, ((PeriodicTask) this.scheduler.getTasks().get(1)).getResponseTime());
+		Assert.assertEquals(70.0, ((PeriodicTask) this.scheduler.getTasks().get(2)).getResponseTime());
 	}
 	
 	@SuppressWarnings({"unchecked" })

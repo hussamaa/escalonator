@@ -1,17 +1,21 @@
 package br.eti.hussamaismail.scheduler.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import br.eti.hussamaismail.scheduler.domain.DynamicScheduler;
 import br.eti.hussamaismail.scheduler.domain.PeriodicTask;
 import br.eti.hussamaismail.scheduler.domain.Scheduler;
-import br.eti.hussamaismail.scheduler.domain.DynamicScheduler;
+import br.eti.hussamaismail.scheduler.domain.SporadicTask;
 import br.eti.hussamaismail.scheduler.domain.Task;
 
 /**
@@ -55,12 +59,19 @@ public class TasksUtil {
 		if (!(scheduler instanceof DynamicScheduler))
 			return;
 		
-		DynamicScheduler staticScheduler = (DynamicScheduler) scheduler; 
-		Collections.sort(staticScheduler.getTasks(), new Comparator<PeriodicTask>() {
+		DynamicScheduler dynamicScheduler = (DynamicScheduler) scheduler; 
+		List<PeriodicTask> onlyPeriodicTasksFromTasks = (List<PeriodicTask>) getOnlyPeriodicTasksFromTaskList(dynamicScheduler.getTasks());
+		Collections.sort(onlyPeriodicTasksFromTasks, new Comparator<PeriodicTask>() {
 			public int compare(PeriodicTask pt1, PeriodicTask pt2) {
 				return compareValues(pt1.getDeadline(), pt2.getDeadline());
 			}
 		});		
+		
+		List<SporadicTask> onlySporadicTasksFromTasks = (List<SporadicTask>) getOnlySporadicTasksFromTaskList(dynamicScheduler.getTasks());
+
+		dynamicScheduler.getTasks().clear();
+		dynamicScheduler.getTasks().addAll(onlyPeriodicTasksFromTasks);
+		dynamicScheduler.getTasks().addAll(onlySporadicTasksFromTasks);		
 	}
 	
 	/**
@@ -74,12 +85,19 @@ public class TasksUtil {
 		if (!(scheduler instanceof DynamicScheduler))
 			return;
 		
-		DynamicScheduler staticScheduler = (DynamicScheduler) scheduler; 
-		Collections.sort(staticScheduler.getTasks(), new Comparator<PeriodicTask>() {
+		DynamicScheduler dynamicScheduler = (DynamicScheduler) scheduler; 
+		List<PeriodicTask> onlyPeriodicTasksFromTasks = (List<PeriodicTask>) getOnlyPeriodicTasksFromTaskList(dynamicScheduler.getTasks());		
+		Collections.sort(onlyPeriodicTasksFromTasks, new Comparator<PeriodicTask>() {
 			public int compare(PeriodicTask pt1, PeriodicTask pt2) {
 				return compareValues(pt1.getComputationTime(), pt2.getComputationTime());
 			}
 		});		
+		
+		List<SporadicTask> onlySporadicTasksFromTasks = (List<SporadicTask>) getOnlySporadicTasksFromTaskList(dynamicScheduler.getTasks());
+
+		dynamicScheduler.getTasks().clear();
+		dynamicScheduler.getTasks().addAll(onlyPeriodicTasksFromTasks);
+		dynamicScheduler.getTasks().addAll(onlySporadicTasksFromTasks);		
 	}
 	
 	/**
@@ -93,12 +111,19 @@ public class TasksUtil {
 		if (!(scheduler instanceof DynamicScheduler))
 			return;
 		
-		DynamicScheduler staticScheduler = (DynamicScheduler) scheduler; 
-		Collections.sort(staticScheduler.getTasks(), new Comparator<PeriodicTask>() {
+		DynamicScheduler dynamicScheduler = (DynamicScheduler) scheduler; 
+		List<PeriodicTask> onlyPeriodicTasksFromTasks = (List<PeriodicTask>) getOnlyPeriodicTasksFromTaskList(dynamicScheduler.getTasks());		
+		Collections.sort(onlyPeriodicTasksFromTasks, new Comparator<PeriodicTask>() {
 			public int compare(PeriodicTask pt1, PeriodicTask pt2) {
 				return compareValues(pt1.getPeriod(), pt2.getPeriod());
 			}
 		});		
+		
+		List<SporadicTask> onlySporadicTasksFromTasks = (List<SporadicTask>) getOnlySporadicTasksFromTaskList(dynamicScheduler.getTasks());
+
+		dynamicScheduler.getTasks().clear();
+		dynamicScheduler.getTasks().addAll(onlyPeriodicTasksFromTasks);
+		dynamicScheduler.getTasks().addAll(onlySporadicTasksFromTasks);	
 	}
 
 	/**
@@ -128,9 +153,16 @@ public class TasksUtil {
 	 * @param tasks
 	 * @return
 	 */
-	public List<PeriodicTask> getOnlyPeriodicTasksFromTaskList(List<Task> tasks){
+	public Collection<PeriodicTask> getOnlyPeriodicTasksFromTaskList(Collection<Task> tasks){
 	
-		List<PeriodicTask> periodicTasks = new ArrayList<PeriodicTask>();
+		Collection<PeriodicTask> periodicTasks = null ;
+		
+		if (tasks instanceof List){
+			periodicTasks = new ArrayList<PeriodicTask>();
+		}
+		if (tasks instanceof Set){
+			periodicTasks = new HashSet<PeriodicTask>();
+		}
 		
 		for (Task task : tasks){
 			if (task instanceof PeriodicTask){
@@ -139,6 +171,33 @@ public class TasksUtil {
 		}
 		
 		return periodicTasks;
+	}
+	
+	/**
+	 * Metodo que devolve uma lista de SporadicTask
+	 * a partir de uma lista de 'Tasks'.
+	 * 
+	 * @param tasks
+	 * @return
+	 */
+	public Collection<SporadicTask> getOnlySporadicTasksFromTaskList(Collection<Task> tasks){
+	
+		Collection<SporadicTask> sporadicTasks = null ;
+		
+		if (tasks instanceof List){
+			sporadicTasks = new ArrayList<SporadicTask>();
+		}
+		if (tasks instanceof Set){
+			sporadicTasks = new HashSet<SporadicTask>();
+		}
+		
+		for (Task task : tasks){
+			if (task instanceof SporadicTask){
+				sporadicTasks.add((SporadicTask) task);
+			}
+		}
+		
+		return sporadicTasks;
 	}	
 	
 	/**
@@ -148,13 +207,16 @@ public class TasksUtil {
 	 * @param tasks
 	 * @return
 	 */
-	public int getHigherDeadlineFromPeriodicTasks(List<PeriodicTask> tasks){
+	public int getHigherDeadlineFromPeriodicTasks(List<Task> tasks){
 		
 		int higherDeadline = 0;
 		
-		for (PeriodicTask pTask : tasks) {
-			if (pTask.getDeadline() > higherDeadline){
-				higherDeadline = pTask.getDeadline();
+		for (Task task : tasks) {
+			if (task instanceof PeriodicTask){
+				PeriodicTask pTask = (PeriodicTask) task;
+				if (pTask.getDeadline() > higherDeadline){
+					higherDeadline = pTask.getDeadline();
+				}
 			}
 		}
 		
@@ -168,14 +230,17 @@ public class TasksUtil {
 	 * @param tasks
 	 * @return
 	 */
-	public int getHigherPeriodFromPeriodicTasks(List<PeriodicTask> tasks){
+	public int getHigherPeriodFromPeriodicTasks(List<Task> tasks){
 		
 		int higherPeriod = 0;
 		
-		for (PeriodicTask pTask : tasks) {
-			if (pTask.getPeriod() > higherPeriod){
-				higherPeriod = pTask.getPeriod();
-			}
+		for (Task task : tasks) {
+			if (task instanceof PeriodicTask){
+				PeriodicTask pTask = (PeriodicTask) task;
+				if (pTask.getPeriod() > higherPeriod){
+					higherPeriod = pTask.getPeriod();
+				}
+			}			
 		}
 		
 		return higherPeriod;		
@@ -223,11 +288,14 @@ public class TasksUtil {
 		
 		if (scheduler instanceof DynamicScheduler){
 			DynamicScheduler staticScheduler = (DynamicScheduler) scheduler;
-			for (PeriodicTask pTask : staticScheduler.getTasks()){
-				tempPartSize = pTask.getComputationTime() - ((int) pTask.getComputationTime());
-				if ((tempPartSize > 0) && (tempPartSize < partSize)){
-					partSize = tempPartSize;
-				}				
+			for (Task task : staticScheduler.getTasks()){
+				if (task instanceof PeriodicTask){
+					PeriodicTask pTask = (PeriodicTask) task;
+					tempPartSize = pTask.getComputationTime() - ((int) pTask.getComputationTime());
+					if ((tempPartSize > 0) && (tempPartSize < partSize)){
+						partSize = tempPartSize;
+					}
+				}
 			}
 		}
 		
@@ -255,14 +323,15 @@ public class TasksUtil {
 	 * 
 	 * @return
 	 */
-	public Map<Integer, List<PeriodicTask>> getMapWithActivationTimeAndTasks(List<PeriodicTask> tasks){
+	public Map<Integer, List<Task>> getMapWithActivationTimeAndTasks(List<Task> tasks){
 		
-		Map<Integer, List<PeriodicTask>> mapActivationTime = new HashMap<Integer, List<PeriodicTask>>();
+		Map<Integer, List<Task>> mapActivationTime = new HashMap<Integer, List<Task>>();
 		
-		for (PeriodicTask periodicTask : tasks) {
+		List<PeriodicTask> onlyPeriodicTasksFromTasks = (List<PeriodicTask>) getOnlyPeriodicTasksFromTaskList(tasks);
+		for (PeriodicTask periodicTask : onlyPeriodicTasksFromTasks) {
 			int activationTime = periodicTask.getActivationTime();
 			if (mapActivationTime.containsKey(activationTime) == false){
-				List<PeriodicTask> periodTaskList = new ArrayList<PeriodicTask>();
+				List<Task> periodTaskList = new ArrayList<Task>();
 				periodTaskList.add(periodicTask);
 				mapActivationTime.put(activationTime, periodTaskList);
 			}else{
@@ -291,12 +360,14 @@ public class TasksUtil {
 	 * 
 	 * @return
 	 */
-	public Map<Integer, List<PeriodicTask>> getMapWithPeriodsAndTasks(List<PeriodicTask> tasks){
+	public Map<Integer, List<PeriodicTask>> getMapWithPeriodsAndTasks(List<Task> tasks){
 		
 		Map<Integer, List<PeriodicTask>> mapPeriods = new HashMap<Integer,List<PeriodicTask>>();
+		
 		int higherPeriodFromPeriodicTasks = this.getHigherPeriodFromPeriodicTasks(tasks);
 		
-		for (PeriodicTask periodicTask : tasks) {
+		List<PeriodicTask> onlyPeriodicTasksFromTaskList = (List<PeriodicTask>) getOnlyPeriodicTasksFromTaskList(tasks);
+		for (PeriodicTask periodicTask : onlyPeriodicTasksFromTaskList) {
 
 			/* Cria a primeira tarefa no periodo de ativacao setado pelo usuario */
 			PeriodicTask activationTask = periodicTask.clone();
@@ -347,17 +418,18 @@ public class TasksUtil {
 	 * 
 	 * @return
 	 */
-	public Map<Integer, List<PeriodicTask>> getMapWithDeadlinesAndTasks(List<PeriodicTask> tasks){
+	public Map<Integer, List<Task>> getMapWithDeadlinesAndTasks(List<Task> tasks){
 		
-		Map<Integer, List<PeriodicTask>> mapDeadLines = new HashMap<Integer,List<PeriodicTask>>();
+		Map<Integer, List<Task>> mapDeadLines = new HashMap<Integer,List<Task>>();
 		mapDeadLines.put(0, tasks);
 		int higherDeadlineFromPeriodicTasks = this.getHigherDeadlineFromPeriodicTasks(tasks);
 		
-		for (PeriodicTask periodicTask : tasks) {
+		List<PeriodicTask> onlyPeriodicTasksFromTaskList = (List<PeriodicTask>) getOnlyPeriodicTasksFromTaskList(tasks);
+		for (PeriodicTask periodicTask : onlyPeriodicTasksFromTaskList) {
 			int deadlineAccumulator = periodicTask.getDeadline();
 			while (deadlineAccumulator <= higherDeadlineFromPeriodicTasks){
 				if (mapDeadLines.containsKey(deadlineAccumulator) == false){
-					List<PeriodicTask> deadLineTaskList = new ArrayList<PeriodicTask>();
+					List<Task> deadLineTaskList = new ArrayList<Task>();
 					PeriodicTask pTaskClone = periodicTask.clone();
 					pTaskClone.setDeadline(pTaskClone.getDeadline() + deadlineAccumulator);
 					deadLineTaskList.add(pTaskClone);

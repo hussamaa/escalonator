@@ -34,7 +34,7 @@ public class RoundRobinSchedulerTest {
 	public void init() {
 		this.chartsUtil = ChartsUtil.getInstance();
 		this.scheduler = new RoundRobinScheduler();
-		this.scheduler.setTasks(new ArrayList<PeriodicTask>());
+		this.scheduler.setTasks(new ArrayList<Task>());
 	}
 	
 	public void setTasksCase1(){

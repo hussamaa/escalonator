@@ -25,7 +25,7 @@ public class EarliestDeadlineFirstSchedulerTest {
 	@Before
 	public void init(){
 		this.scheduler = new EarliestDeadlineFirstScheduler();
-		this.scheduler.setTasks(new ArrayList<PeriodicTask>());
+		this.scheduler.setTasks(new ArrayList<Task>());
 		this.chartsUtil = ChartsUtil.getInstance();
 	}
 	

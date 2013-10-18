@@ -1,6 +1,7 @@
 package br.eti.hussamaismail.scheduler.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javafx.scene.chart.AreaChart;
@@ -48,8 +49,9 @@ public class RoundRobinScheduler extends DynamicScheduler {
 		if (this.getSlotSize() != null){
 			slotSize = this.getSlotSize();
 		}
-		
-		List<PeriodicTask> pendentTasks = new ArrayList<PeriodicTask>(getTasks());
+	
+		Collection<PeriodicTask> onlyPeriodicTasksFromTask = getTasksUtil().getOnlyPeriodicTasksFromTaskList(getTasks());
+		List<PeriodicTask> pendentTasks = new ArrayList<PeriodicTask>(onlyPeriodicTasksFromTask);
 		double index = 0;
 
 		while (!pendentTasks.isEmpty()) {

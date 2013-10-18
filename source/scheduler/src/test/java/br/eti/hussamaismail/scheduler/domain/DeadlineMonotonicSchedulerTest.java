@@ -24,7 +24,7 @@ public class DeadlineMonotonicSchedulerTest {
 	@Before
 	public void init(){
 		this.scheduler = new DeadlineMonotonicScheduler();
-		this.scheduler.setTasks(new ArrayList<PeriodicTask>());
+		this.scheduler.setTasks(new ArrayList<Task>());
 		this.chartsUtil = ChartsUtil.getInstance();
 	}
 	

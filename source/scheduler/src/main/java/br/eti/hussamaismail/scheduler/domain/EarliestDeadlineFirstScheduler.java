@@ -24,7 +24,7 @@ import br.eti.hussamaismail.scheduler.util.ChartsUtil;
  *
  */
 public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
-
+	
 	private Logger log = Logger.getLogger(EarliestDeadlineFirstScheduler.class);
 	
 	/**
@@ -46,7 +46,8 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 
 		double p1 = 0, p2 = 1;
 
-		for (PeriodicTask pt : this.getTasks()) {
+		List<PeriodicTask> onlyPeriodicTasksFromTasks = (List<PeriodicTask>) getTasksUtil().getOnlyPeriodicTasksFromTaskList(this.getTasks());
+		for (PeriodicTask pt : onlyPeriodicTasksFromTasks) {
 			p1 = p1 + ((double) pt.getComputationTime() / ((double)pt.getPeriod()));
 		}
 
