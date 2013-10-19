@@ -311,9 +311,7 @@ public class TasksUtil {
 	 */
 	public void resetAllTasks(List<Task> tasks){
 		for (Task task : tasks) {
-			if (task instanceof PeriodicTask){
-				((PeriodicTask) task).reset();
-			}
+			task.reset();
 		}
 	}
 	

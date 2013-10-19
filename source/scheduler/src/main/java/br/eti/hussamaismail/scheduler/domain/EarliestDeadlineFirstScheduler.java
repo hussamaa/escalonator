@@ -1,6 +1,7 @@
 package br.eti.hussamaismail.scheduler.domain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,9 @@ import br.eti.hussamaismail.scheduler.util.ChartsUtil;
  */
 public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 	
+
+	private SporadicPolicy sporadicPolicy;
+
 	private Logger log = Logger.getLogger(EarliestDeadlineFirstScheduler.class);
 	
 	/**
@@ -55,7 +59,6 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 
 		return p1 <= p2 ? true : false;
 	}
-
 	
 	@Override
 	public Chart simulate() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException {
@@ -66,8 +69,11 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 
 		int position = 0;
 		int higherPeriod = getTasksUtil().getHigherPeriodFromPeriodicTasks(getTasks());
-		Map<Integer, List<PeriodicTask>> mapPeriods = getTasksUtil().getMapWithPeriodsAndTasks(getTasks());			
+		Map<Integer, List<PeriodicTask>> mapPeriods = getTasksUtil().getMapWithPeriodsAndTasks(getTasks());
+		Map<Integer, List<SporadicTask>> mapSporadicTasks = getMapWithSporadicTasksAndActivations((List<SporadicTask>) getTasksUtil().getOnlySporadicTasksFromTaskList(getTasks()));
+		
 		List<PeriodicTask> pendentTasks = new ArrayList<PeriodicTask>();
+		List<SporadicTask> pendentSporadicTasks = new ArrayList<SporadicTask>();
 		
 		NumberAxis xAxis = new NumberAxis(0,higherPeriod,1);
 		NumberAxis yAxis = new NumberAxis(0,2,1);
@@ -76,9 +82,16 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 				
 		while (position < higherPeriod){
 			
+			/* Adiciona as tarefas periodicas a uma lista de tarefas pendentes */
 			if (mapPeriods.containsKey(position)){
 				pendentTasks.addAll(mapPeriods.get(position));
 			}
+			
+			/* Adiciona as tarefas esporadicas a uma lista de tarefas pendentes */
+			if (mapSporadicTasks.containsKey(position)){
+				pendentSporadicTasks.addAll(mapSporadicTasks.get(position));
+			}
+			
 			
 			if (pendentTasks.isEmpty() == false){
 				
@@ -100,6 +113,27 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 					pendentTasks.remove(earliestDeadline);
 				}
 				continue;
+			}else{
+				
+				/* Tecnica de servidor de background */
+				if (SporadicPolicy.BACKGROUND_SERVER.equals(getSporadicPolicy())){
+					if (pendentSporadicTasks.isEmpty() == false){
+						
+						SporadicTask sporadicTask = pendentSporadicTasks.get(0);
+						Series<Number, Number> currentChartTask = getTasksUtil().getChartTask(chartTasks, sporadicTask);	
+						currentChartTask.getData().add(new Data<Number, Number>(position, 0));
+						currentChartTask.getData().add(new Data<Number, Number>(position, 1));
+						position = position + 1;
+						currentChartTask.getData().add(new Data<Number, Number>(position, 1));
+						currentChartTask.getData().add(new Data<Number, Number>(position, 0));
+						sporadicTask.process(1);
+						
+						if (sporadicTask.getRemaining() == 0){
+							pendentSporadicTasks.remove(sporadicTask);
+						}
+						continue;
+					}
+				}				
 			}
 		
 			position = position + 1;			
@@ -133,5 +167,37 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 		
 		return earliestDeadlineTask;
 	}
+	
+	/**
+	 * Metodo que monta um mapa com todas as
+	 * tarefas esporadicas e seus tempos de ativacao
+ 	 *
+	 */
+	private Map<Integer, List<SporadicTask>> getMapWithSporadicTasksAndActivations(List<SporadicTask> sporadicTasks){
+		
+		Map<Integer, List<SporadicTask>> mapSporadics = new HashMap<Integer, List<SporadicTask>>();
+		
+		for (SporadicTask sporadicTask : sporadicTasks) {
+			int activationTime = sporadicTask.getActivationTime();
+			if (mapSporadics.containsKey(activationTime) == false){
+				List<SporadicTask> list = new ArrayList<SporadicTask>();
+				list.add(sporadicTask);
+				mapSporadics.put(activationTime, list);
+			}else{
+				mapSporadics.get(activationTime).add(sporadicTask);
+			}			
+		}
+		
+		return mapSporadics;
+		
+	}
+	
+	public SporadicPolicy getSporadicPolicy() {
+		return sporadicPolicy;
+	}
 
+
+	public void setSporadicPolicy(SporadicPolicy sporadicPolicy) {
+		this.sporadicPolicy = sporadicPolicy;
+	}
 }

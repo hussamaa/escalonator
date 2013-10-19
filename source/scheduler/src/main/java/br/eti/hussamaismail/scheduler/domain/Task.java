@@ -1,11 +1,22 @@
 package br.eti.hussamaismail.scheduler.domain;
 
-public class Task {
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
+/**
+ * Classe abstrata que representa uma
+ * tarefa de um sistema de tempo real.
+ * 
+ * @author Hussama Ismail
+ *
+ */
+public abstract class Task {
+
+	private String name;
 	private int activationTime;
 	private int computationTime;
-	private String name;
-	
+	private int currentProcessed;
+
 	public String getName() {
 		return name;
 	}
@@ -29,7 +40,25 @@ public class Task {
 	public void setComputationTime(int computationTime) {
 		this.computationTime = computationTime;
 	}
-	
-	
 
+	public void process(int processTime) {
+		this.currentProcessed = new BigDecimal(currentProcessed + processTime)
+				.setScale(2, RoundingMode.HALF_UP).intValue();
+	}
+
+	public int getRemaining() {
+		return this.getComputationTime() - this.currentProcessed;
+	}
+
+	public int getCurrentProcessed() {
+		return currentProcessed;
+	}
+
+	public void setCurrentProcessed(int currentProcessed) {
+		this.currentProcessed = currentProcessed;
+	}
+	
+	public void reset() {
+		this.setCurrentProcessed(0);
+	}
 }

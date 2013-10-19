@@ -156,6 +156,40 @@ public class EarliestDeadlineFirstSchedulerTest {
 		this.scheduler.getTasks().add(t2);
 		this.scheduler.getTasks().add(t3);
 	}
+	
+	public void setTasksCaseBackgroundServer(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+		
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(2);
+		t1.setPeriod(10);
+		t1.setDeadline(10);
+		
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(3);
+		t2.setPeriod(5);
+		t2.setDeadline(5);
+		
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("SP");
+		s1.setComputationTime(1);
+		s1.setActivationTime(3);
+		
+		SporadicTask s2 = new SporadicTask();
+		s2.setName("SP2");
+		s2.setComputationTime(1);
+		s2.setActivationTime(1);
+		
+		this.scheduler.setSporadicPolicy(SporadicPolicy.BACKGROUND_SERVER);
+		
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(s1);
+		this.scheduler.getTasks().add(s2);
+	}
 		
 	@Test
 	public void testCase1(){
@@ -290,5 +324,56 @@ public class EarliestDeadlineFirstSchedulerTest {
 		
 		this.setTasksCase4();
 		this.scheduler.simulate();
+	}
+	
+	@SuppressWarnings({"unchecked" })
+	@Test
+	public void testCaseBackgroundServer() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
+		
+		this.setTasksCaseBackgroundServer();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas tarefas foram criadas no mapa */
+		Assert.assertEquals(4, map.keySet().size());
+		
+		
+		/* Verifica quantas vezes a tarefa 'T1' aparece no grafico */
+		Assert.assertEquals(1, map.get("T1").size());
+		
+		/* Verifica os intevalos da tarefa T1 [3-5] */
+		Integer[] intervalT11 = map.get("T1").get(0);
+		Assert.assertEquals(Long.valueOf(3), Long.valueOf(intervalT11[0]));
+		Assert.assertEquals(Long.valueOf(5), Long.valueOf(intervalT11[1]));
+		
+		/* Verifica quantas vezes a tarefa 'T2' aparece no grafico */
+		Assert.assertEquals(2, map.get("T2").size());
+		
+		/* Verifica os intevalos da tarefa T2 [0-3] */
+		Integer[] intervalT21 = map.get("T2").get(0);
+		Assert.assertEquals(Long.valueOf(0), Long.valueOf(intervalT21[0]));
+		Assert.assertEquals(Long.valueOf(3), Long.valueOf(intervalT21[1]));
+		
+		/* Verifica os intevalos da tarefa T2 [5-8] */
+		Integer[] intervalT22 = map.get("T2").get(1);
+		Assert.assertEquals(Long.valueOf(5), Long.valueOf(intervalT22[0]));
+		Assert.assertEquals(Long.valueOf(8), Long.valueOf(intervalT22[1]));
+		
+		/* Verifica quantas vezes a tarefa 'SP' aparece no grafico */
+		Assert.assertEquals(1, map.get("SP").size());
+		
+		/* Verifica os intevalos da tarefa T3 [9-10] */
+		Integer[] intervalT31 = map.get("SP").get(0);
+		Assert.assertEquals(Long.valueOf(9), Long.valueOf(intervalT31[0]));
+		Assert.assertEquals(Long.valueOf(10), Long.valueOf(intervalT31[1]));
+		
+		/* Verifica quantas vezes a tarefa 'SP2' aparece no grafico */
+		Assert.assertEquals(1, map.get("SP2").size());
+		
+		/* Verifica os intevalos da tarefa SP2 [8-9] */
+		Integer[] intervalT41 = map.get("SP2").get(0);
+		Assert.assertEquals(Long.valueOf(8), Long.valueOf(intervalT41[0]));
+		Assert.assertEquals(Long.valueOf(9), Long.valueOf(intervalT41[1]));
+	
 	}
 }

@@ -36,7 +36,7 @@
                   </font>
                 </Button>
                 <Label style=" -fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="%sporadicTasks" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <ChoiceBox prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <ChoiceBox fx:id="sporadicPolicy" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                   <items>
                     <FXCollections fx:factory="observableArrayList">
                       <String fx:value="Servidor Background" />
