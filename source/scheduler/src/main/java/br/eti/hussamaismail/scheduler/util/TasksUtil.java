@@ -316,6 +316,26 @@ public class TasksUtil {
 	}
 	
 	/**
+	 * Metodo que retorna a Task Server
+	 * utilizada pelas politicas de tarefas
+	 * esporadicas.
+	 * 
+	 * @param tasks
+	 */
+	public PeriodicTask getTaskServerFromTasks(List<Task> tasks){
+		PeriodicTask taskServer = null;
+		
+		for (Task task : tasks) {
+			if (task instanceof PeriodicTask && task.getName().equals("TS")){
+				taskServer = (PeriodicTask) task;
+				break;
+			}
+		}
+		
+		return taskServer;
+	}
+	
+	/**
 	 * Metodo que gera um mapeamento de todas as periodic tasks
 	 * e seus tempos de ativacao no grafico.
 	 * 

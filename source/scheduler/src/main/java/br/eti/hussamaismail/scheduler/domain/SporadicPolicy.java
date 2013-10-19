@@ -2,6 +2,6 @@ package br.eti.hussamaismail.scheduler.domain;
 
 public enum SporadicPolicy {
 	
-	BACKGROUND_SERVER;
+	BACKGROUND_SERVER, POLLING_SERVER;
 
 }

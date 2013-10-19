@@ -210,7 +210,7 @@ public class GeneratorController implements Initializable {
 		Object techniqueSelected = techniqueChoiceBox.getSelectionModel().getSelectedItem();
 		techniqueSelected = techniqueSelected != null ? techniqueSelected.toString().toUpperCase().replaceAll(" ", "") : "";
 		
-		boolean existsSporadic = existsSporadicTasks();
+		boolean existsSporadic = existsSporadicTasks();	
 		/* Limita o trabalho com tarefas esporadicas somente ao EDF */
 		if ((!"EARLIESTDEADLINEFIRST".equals(techniqueSelected.toString())) && existsSporadic){
 			Dialogs.showWarningDialog(MainApp.STAGE, "Apenas a tecnica 'Earliest Deadline First' suporta tarefas esporadicas", "Não foi possível realizar a operação", "Alerta");
@@ -253,6 +253,15 @@ public class GeneratorController implements Initializable {
 					
 					if (sporadicPolicyString.equals("SERVIDORBACKGROUND")){
 						edfScheduler.setSporadicPolicy(SporadicPolicy.BACKGROUND_SERVER);
+						log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
+					}
+					
+					if (sporadicPolicyString.equals("SERVIDORPOLLING")){
+						if (!existsTaskServer()){
+							Dialogs.showWarningDialog(MainApp.STAGE, "Para utilizar essa política para as tarefas esporádicas é necessário criar uma tarefa periódica com o nome de 'TS'.", "Não foi possível realizar a operação", "Alerta");
+							return;
+						}
+						edfScheduler.setSporadicPolicy(SporadicPolicy.POLLING_SERVER);
 						log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
 					}
 				
@@ -326,37 +335,31 @@ public class GeneratorController implements Initializable {
 		
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("T1");
-		t1.setComputationTime(2);
-		t1.setPeriod(10);
-		t1.setDeadline(10);
+		t1.setComputationTime(3);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
 		
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("T2");
-		t2.setComputationTime(3);
+		t2.setComputationTime(2);
 		t2.setPeriod(5);
-		t2.setDeadline(5);
+		t2.setDeadline(4);
+		
+		PeriodicTask ts = new PeriodicTask();
+		ts.setName("TS");
+		ts.setComputationTime(1);
+		ts.setPeriod(10);
+		ts.setDeadline(8);
 		
 		SporadicTask s1 = new SporadicTask();
-		s1.setName("SP");
+		s1.setName("T3");
 		s1.setComputationTime(1);
 		s1.setActivationTime(3);
-		
-		SporadicTask s2 = new SporadicTask();
-		s2.setName("SP2");
-		s2.setComputationTime(1);
-		s2.setActivationTime(1);
-		
+				
 		GeneratorController.TASKS.add(t1);
 		GeneratorController.TASKS.add(t2);
+		GeneratorController.TASKS.add(ts);
 		GeneratorController.TASKS.add(s1);
-		GeneratorController.TASKS.add(s2);
-		
-		tasksTable.getItems().addAll(GeneratorController.TASKS);
-		
-		GeneratorController.TASKS.add(t1);
-		GeneratorController.TASKS.add(t2);
-		GeneratorController.TASKS.add(s1);
-
 		
 		tasksTable.getItems().addAll(GeneratorController.TASKS);
 	}
@@ -534,6 +537,15 @@ public class GeneratorController implements Initializable {
 		for (Task task : GeneratorController.TASKS) {
 			if (task instanceof SporadicTask){
 				return true;
+			}			
+		}
+		return false;
+	}
+	
+	private boolean existsTaskServer(){
+		for (Task task : GeneratorController.TASKS) {
+			if (task instanceof PeriodicTask && task.getName().equals("TS")){
+				return true;				
 			}			
 		}
 		return false;

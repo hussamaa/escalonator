@@ -58,6 +58,12 @@
             </GridPane>
             <VBox spacing="5.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0">
               <children>
+                <Label onMouseClicked="#addTask" style="-fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="Verificar Capacidade do Servidor">
+                  <graphic>
+                    <Circle fill="#fffdcc" radius="6.0" />
+                  </graphic>
+                </Label>
+                <Separator orientation="VERTICAL" prefHeight="68.0" visible="false" />
                 <Label onMouseClicked="#addTask" style="-fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="Adicionar Tarefa">
                   <graphic>
                     <Circle fill="#22bad9" radius="6.0" />
