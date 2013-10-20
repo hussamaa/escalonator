@@ -190,6 +190,48 @@ public class EarliestDeadlineFirstSchedulerTest {
 		this.scheduler.getTasks().add(s1);
 		this.scheduler.getTasks().add(s2);
 	}
+	
+	public void setTasksCasePollingServer(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+		
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(3);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
+		
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(2);
+		t2.setPeriod(5);
+		t2.setDeadline(4);
+		
+		PeriodicTask ts = new PeriodicTask();
+		ts.setName("TS");
+		ts.setComputationTime(1);
+		ts.setPeriod(10);
+		ts.setDeadline(8);
+		
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("T3");
+		s1.setComputationTime(1);
+		s1.setActivationTime(3);
+		
+		SporadicTask s2 = new SporadicTask();
+		s2.setName("T4");
+		s2.setComputationTime(1);
+		s2.setActivationTime(11);
+		
+		this.scheduler.setSporadicPolicy(SporadicPolicy.POLLING_SERVER);
+		
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(ts);
+
+		this.scheduler.getTasks().add(s1);
+		this.scheduler.getTasks().add(s2);
+	}
 		
 	@Test
 	public void testCase1(){
@@ -373,7 +415,67 @@ public class EarliestDeadlineFirstSchedulerTest {
 		/* Verifica os intevalos da tarefa SP2 [8-9] */
 		Integer[] intervalT41 = map.get("SP2").get(0);
 		Assert.assertEquals(Long.valueOf(8), Long.valueOf(intervalT41[0]));
-		Assert.assertEquals(Long.valueOf(9), Long.valueOf(intervalT41[1]));
+		Assert.assertEquals(Long.valueOf(9), Long.valueOf(intervalT41[1]));	
+	}
+	
+	@SuppressWarnings({"unchecked" })
+	@Test
+	public void testCasePollingServer() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
+		
+		this.setTasksCasePollingServer();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas tarefas foram criadas no mapa */
+		Assert.assertEquals(4, map.keySet().size());
+		
+		
+		/* Verifica quantas vezes a tarefa 'T1' aparece no grafico */
+		Assert.assertEquals(1, map.get("T1").size());
+		
+		/* Verifica os intevalos da tarefa T1 [2-5] */
+		Integer[] intervalT11 = map.get("T1").get(0);
+		Assert.assertEquals(Long.valueOf(2), Long.valueOf(intervalT11[0]));
+		Assert.assertEquals(Long.valueOf(5), Long.valueOf(intervalT11[1]));
+		
+		/* Verifica quantas vezes a tarefa 'T2' aparece no grafico */
+		Assert.assertEquals(4, map.get("T2").size());
+		
+		/* Verifica os intevalos da tarefa T2 [0-2] */
+		Integer[] intervalT21 = map.get("T2").get(0);
+		Assert.assertEquals(Long.valueOf(0), Long.valueOf(intervalT21[0]));
+		Assert.assertEquals(Long.valueOf(2), Long.valueOf(intervalT21[1]));
+		
+		/* Verifica os intevalos da tarefa T2 [6-8] */
+		Integer[] intervalT22 = map.get("T2").get(1);
+		Assert.assertEquals(Long.valueOf(6), Long.valueOf(intervalT22[0]));
+		Assert.assertEquals(Long.valueOf(8), Long.valueOf(intervalT22[1]));
+		
+		/* Verifica os intevalos da tarefa T2 [10-12] */
+		Integer[] intervalT32 = map.get("T2").get(2);
+		Assert.assertEquals(Long.valueOf(10), Long.valueOf(intervalT32[0]));
+		Assert.assertEquals(Long.valueOf(12), Long.valueOf(intervalT32[1]));
+
+		/* Verifica os intevalos da tarefa T2 [15-17] */
+		Integer[] intervalT42 = map.get("T2").get(3);
+		Assert.assertEquals(Long.valueOf(15), Long.valueOf(intervalT42[0]));
+		Assert.assertEquals(Long.valueOf(17), Long.valueOf(intervalT42[1]));
+		
+		/* Verifica quantas vezes a tarefa 'T3' aparece no grafico */
+		Assert.assertEquals(1, map.get("T3").size());
+		
+		/* Verifica os intevalos da tarefa T3 [5-6] */
+		Integer[] intervalT31 = map.get("T3").get(0);
+		Assert.assertEquals(Long.valueOf(5), Long.valueOf(intervalT31[0]));
+		Assert.assertEquals(Long.valueOf(6), Long.valueOf(intervalT31[1]));
+		
+		/* Verifica quantas vezes a tarefa 'T4' aparece no grafico */
+		Assert.assertEquals(1, map.get("T4").size());
+		
+		/* Verifica os intevalos da tarefa T4 [12-13] */
+		Integer[] intervalT41 = map.get("T4").get(0);
+		Assert.assertEquals(Long.valueOf(12), Long.valueOf(intervalT41[0]));
+		Assert.assertEquals(Long.valueOf(13), Long.valueOf(intervalT41[1]));
 	
 	}
 }
