@@ -90,11 +90,12 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 		
 		/* Inicia o grafico da capacidade do servidor */
 		List<Series<Number, Number>> chartServerCapacity = null;
+		AreaChart<Number, Number> serverCapacityAC = null;
 		if (SporadicPolicy.POLLING_SERVER.equals(getSporadicPolicy())){
 			PeriodicTask taskServer = getTasksUtil().getTaskServerFromTasks(getTasks());	
 			NumberAxis xAxisSC = new NumberAxis(0, higherPeriod, 1);
-			NumberAxis yAxisSC = new NumberAxis(0, taskServer.getComputationTime(), 1);
-			this.serverCapacity = new AreaChart<Number, Number>(xAxisSC, yAxisSC);
+			NumberAxis yAxisSC = new NumberAxis(0, taskServer.getComputationTime() + 1, 1);
+			serverCapacityAC = new AreaChart<Number, Number>(xAxisSC, yAxisSC);
 			chartServerCapacity = new ArrayList<Series<Number, Number>>();
 		}
 
@@ -111,13 +112,71 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 			}
 
 			if (pendentTasks.isEmpty() == false) {
-
+				
 				PeriodicTask earliestDeadline = getEarliestDeadline(
 						pendentTasks, position);
 
 				if (earliestDeadline.getDeadline() <= position) {
 					throw new DeadlineNotSatisfiedException(earliestDeadline);
 				}
+				
+				/* Escalonamento da tarefa server */
+				if (earliestDeadline.getName().equals("TS") && SporadicPolicy.POLLING_SERVER.equals(getSporadicPolicy())){
+					
+					/* Verifica se existem tarefas esporadicas pendentes de processamento */
+					/* Senao o servidor perde sua capacidade */
+					if (pendentSporadicTasks.isEmpty() == false){
+
+						SporadicTask sporadicTask = pendentSporadicTasks.get(0);
+						sporadicTask.process(1);
+						
+						Series<Number, Number> currentChartTask = getTasksUtil()
+								.getChartTask(chartTasks, sporadicTask);
+						currentChartTask.getData().add(
+								new Data<Number, Number>(position, 0));
+						currentChartTask.getData().add(
+								new Data<Number, Number>(position, 1));
+						
+						Series<Number, Number> currentServerCapacity = getTasksUtil()
+								.getChartTask(chartServerCapacity, earliestDeadline);		
+						currentServerCapacity.getData().add(
+								new Data<Number, Number>(position, 0));
+						currentServerCapacity.getData().add(
+								new Data<Number, Number>(position, earliestDeadline.getRemaining()));
+						
+						position = position + 1;
+						earliestDeadline.process(1);
+
+						currentServerCapacity.getData().add(
+								new Data<Number, Number>(position, earliestDeadline.getRemaining()));						
+						
+						currentChartTask.getData().add(
+								new Data<Number, Number>(position, 1));
+						currentChartTask.getData().add(
+								new Data<Number, Number>(position, 0));
+							
+						if (sporadicTask.getRemaining() == 0) {
+							pendentSporadicTasks.remove(sporadicTask);
+						}
+						
+						if (earliestDeadline.getRemaining() == 0) {
+							pendentTasks.remove(earliestDeadline);
+						}
+						
+					}else{
+						/* Servidor Perde a sua capacidade por nao haver tarefas 
+						 * esporadicas para execucao */
+						pendentTasks.remove(earliestDeadline);
+						Series<Number, Number> currentServerCapacity = getTasksUtil()
+								.getChartTask(chartServerCapacity, earliestDeadline);
+						currentServerCapacity.getData().add(
+								new Data<Number, Number>(position, 0));
+					}
+					
+					continue;
+				}
+				
+				/* Escalonamento das tarefas normais */				
 				earliestDeadline.process(1);
 
 				Series<Number, Number> currentChartTask = getTasksUtil()
@@ -168,8 +227,13 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 			position = position + 1;
 		}
 
-		ac.getData().addAll(chartTasks);
+		ac.getData().addAll(chartTasks);		
 		ChartsUtil.getInstance().chartReform(ac);
+		
+		if (serverCapacityAC != null){
+			serverCapacityAC.getData().addAll(chartServerCapacity);
+			this.serverCapacity = serverCapacityAC;
+		}
 
 		return ac;
 	}

@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -32,6 +33,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import org.slf4j.Logger;
@@ -60,10 +62,11 @@ public class GeneratorController implements Initializable {
 	private static final Logger log = LoggerFactory.getLogger(MainApp.class);
 
 	public static List<Task> TASKS =  new ArrayList<Task>();
-	private TasksUtil tasksUtil;
-	
 	public static int TIME_SLOT = 1;
 	public static Task TASK;
+	
+	private TasksUtil tasksUtil;
+	private Chart serverCapacity;
 	
 	@FXML private static TableView<Task> tasksTable;
 	@FXML private Pane chartPanel;
@@ -204,6 +207,7 @@ public class GeneratorController implements Initializable {
 		}
 
 		Chart simulatedChart = null;
+		this.serverCapacity = null;
 		boolean preemptive = preemptiveCheckBox.isSelected();
 		tasksUtil.resetAllTasks(TASKS);
 		
@@ -266,6 +270,7 @@ public class GeneratorController implements Initializable {
 					}
 				
 					simulatedChart = edfScheduler.simulate();
+					this.serverCapacity = edfScheduler.getServerCapacity();
 					
 				break;
 				
@@ -355,11 +360,17 @@ public class GeneratorController implements Initializable {
 		s1.setName("T3");
 		s1.setComputationTime(1);
 		s1.setActivationTime(3);
+		
+		SporadicTask s2 = new SporadicTask();
+		s2.setName("T4");
+		s2.setComputationTime(1);
+		s2.setActivationTime(11);
 				
 		GeneratorController.TASKS.add(t1);
 		GeneratorController.TASKS.add(t2);
 		GeneratorController.TASKS.add(ts);
 		GeneratorController.TASKS.add(s1);
+		GeneratorController.TASKS.add(s2);
 		
 		tasksTable.getItems().addAll(GeneratorController.TASKS);
 	}
@@ -497,6 +508,21 @@ public class GeneratorController implements Initializable {
         };
         
         Dialogs.showCustomDialog(MainApp.STAGE, grid, "Adicionar Tarefa", "Entrada de Dados", DialogOptions.OK, myCallback);
+	}
+	
+	public void showServerCapacity(){
+		
+		if (this.serverCapacity == null){
+			Dialogs.showWarningDialog(MainApp.STAGE, "Não existe nenhum gráfico de capacidade de servidor disponível.", "Não foi possível realizar a operação", "Alerta");
+			return;
+		}else{
+			Stage stage = new Stage();
+			stage.setTitle("Capacidade do Servidor");
+    		Scene scene  = new Scene(this.serverCapacity,800,600);
+            stage.setScene(scene);
+            stage.show();
+		}
+		
 	}
 	
 	private boolean existsTaskName(String taskName){		
