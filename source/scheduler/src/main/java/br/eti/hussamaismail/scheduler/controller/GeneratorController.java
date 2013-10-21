@@ -375,13 +375,19 @@ public class GeneratorController implements Initializable {
 		SporadicTask s2 = new SporadicTask();
 		s2.setName("T4");
 		s2.setComputationTime(1);
-		s2.setActivationTime(11);
+		s2.setActivationTime(6);
+		
+		SporadicTask s3 = new SporadicTask();
+		s3.setName("T4");
+		s3.setComputationTime(1);
+		s3.setActivationTime(10);
 				
 		GeneratorController.TASKS.add(t1);
 		GeneratorController.TASKS.add(t2);
 		GeneratorController.TASKS.add(ts);
 		GeneratorController.TASKS.add(s1);
 		GeneratorController.TASKS.add(s2);
+		GeneratorController.TASKS.add(s3);
 		
 		tasksTable.getItems().addAll(GeneratorController.TASKS);
 	}

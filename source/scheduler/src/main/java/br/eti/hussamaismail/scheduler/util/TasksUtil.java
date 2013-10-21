@@ -463,4 +463,22 @@ public class TasksUtil {
 		
 		return mapDeadLines;
 	}
+	
+	/**
+	 * Metodo que verifica se existe uma tarefa 
+	 * dentro de uma lista de tarefas a partir do seu
+	 * nome.
+	 * 
+	 * @param taskName
+	 * @param taskList
+	 * @return
+	 */
+	public boolean existTaskInTaskList(String taskName, List<Task> taskList){
+		for (Task task : taskList) {
+			if(task.getName().equals(taskName)){
+				return true;
+			}
+		}
+		return false;
+	}
 }

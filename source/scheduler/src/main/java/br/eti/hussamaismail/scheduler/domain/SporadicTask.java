@@ -7,7 +7,7 @@ public class SporadicTask extends Task {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + getActivationTime();
-		result = prime * result + getComputationTime();
+		result = prime * result + getActivationTime();
 		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		return result;
 	}
@@ -32,5 +32,5 @@ public class SporadicTask extends Task {
 			return false;
 		return true;
 	}
-		
+	
 }
