@@ -30,6 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.axis Text{
+    -fx-fill: #e1fdff;
+}
+
 #Window {
     -fx-padding: 0;
     -fx-background-color: radial-gradient(center 70% 5%, radius 60%, #767a7b,#2b2f32);     

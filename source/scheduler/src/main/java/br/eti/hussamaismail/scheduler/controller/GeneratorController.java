@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -66,7 +67,8 @@ public class GeneratorController implements Initializable {
 	public static Task TASK;
 	
 	private TasksUtil tasksUtil;
-	private Chart serverCapacity;
+	private AreaChart<Number, Number> serverCapacity;
+	private Stage stageServerCapacity;
 	
 	@FXML private static TableView<Task> tasksTable;
 	@FXML private Pane chartPanel;
@@ -268,9 +270,18 @@ public class GeneratorController implements Initializable {
 						edfScheduler.setSporadicPolicy(SporadicPolicy.POLLING_SERVER);
 						log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
 					}
+					
+					if (sporadicPolicyString.equals("SERVIDORSPORADIC")){
+						if (!existsTaskServer()){
+							Dialogs.showWarningDialog(MainApp.STAGE, "Para utilizar essa política para as tarefas esporádicas é necessário criar uma tarefa periódica com o nome de 'TS'.", "Não foi possível realizar a operação", "Alerta");
+							return;
+						}
+						edfScheduler.setSporadicPolicy(SporadicPolicy.SPORADIC_SERVER);
+						log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
+					}
 				
 					simulatedChart = edfScheduler.simulate();
-					this.serverCapacity = edfScheduler.getServerCapacity();
+					this.serverCapacity = (AreaChart<Number, Number>) edfScheduler.getServerCapacity();
 					
 				break;
 				
@@ -352,7 +363,7 @@ public class GeneratorController implements Initializable {
 		
 		PeriodicTask ts = new PeriodicTask();
 		ts.setName("TS");
-		ts.setComputationTime(1);
+		ts.setComputationTime(2);
 		ts.setPeriod(10);
 		ts.setDeadline(8);
 		
@@ -516,13 +527,18 @@ public class GeneratorController implements Initializable {
 			Dialogs.showWarningDialog(MainApp.STAGE, "Não existe nenhum gráfico de capacidade de servidor disponível.", "Não foi possível realizar a operação", "Alerta");
 			return;
 		}else{
-			Stage stage = new Stage();
-			stage.setTitle("Capacidade do Servidor");
-    		Scene scene  = new Scene(this.serverCapacity,800,600);
-            stage.setScene(scene);
-            stage.show();
-		}
-		
+			
+			AreaChart<Number, Number> temp = new AreaChart<Number, Number>(
+					this.serverCapacity.getXAxis(), 
+					this.serverCapacity.getYAxis(), 
+					this.serverCapacity.getData());
+					
+			this.stageServerCapacity = new Stage();					
+			this.stageServerCapacity.setTitle("Capacidade do Servidor");
+			Scene scene  = new Scene(temp,800,600);
+	        this.stageServerCapacity.setScene(scene);			
+            this.stageServerCapacity.show();
+		}		
 	}
 	
 	private boolean existsTaskName(String taskName){		

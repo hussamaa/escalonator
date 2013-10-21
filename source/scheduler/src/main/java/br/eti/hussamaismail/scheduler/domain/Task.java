@@ -61,4 +61,5 @@ public abstract class Task {
 	public void reset() {
 		this.setCurrentProcessed(0);
 	}
+
 }
