@@ -389,43 +389,55 @@ public class GeneratorController implements Initializable {
 		
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("T1");
-		t1.setComputationTime(3);
-		t1.setPeriod(20);
+		t1.setComputationTime(1);
+		t1.setPeriod(7);
 		t1.setDeadline(7);
-		
+		t1.setActivationTime(0);
+
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("T2");
 		t2.setComputationTime(2);
-		t2.setPeriod(5);
-		t2.setDeadline(4);
+		t2.setPeriod(9);
+		t2.setDeadline(9);
+		t2.setActivationTime(0);
 		
-		PeriodicTask ts = new PeriodicTask();
-		ts.setName("TS");
-		ts.setComputationTime(2);
-		ts.setPeriod(10);
-		ts.setDeadline(8);
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("T3");
+		t3.setComputationTime(3);
+		t3.setPeriod(11);
+		t3.setDeadline(11);
+		t3.setActivationTime(0);
+		
+		PeriodicTask t4 = new PeriodicTask();
+		t4.setName("T4");
+		t4.setComputationTime(4);
+		t4.setPeriod(13);
+		t4.setDeadline(13);
+		t4.setActivationTime(0);
+		
+//		PeriodicTask ts = new PeriodicTask();
+//		ts.setName("TS");
+//		ts.setComputationTime(2);
+//		ts.setPeriod(10);
+//		ts.setDeadline(8);
 		
 		SporadicTask s1 = new SporadicTask();
-		s1.setName("T3");
+		s1.setName("S1");
 		s1.setComputationTime(1);
 		s1.setActivationTime(3);
 		
-		SporadicTask s2 = new SporadicTask();
-		s2.setName("T4");
-		s2.setComputationTime(1);
-		s2.setActivationTime(6);
-		
-//		SporadicTask s3 = new SporadicTask();
-//		s3.setName("T4");
-//		s3.setComputationTime(1);
-//		s3.setActivationTime(10);
+//		SporadicTask s2 = new SporadicTask();
+//		s2.setName("T4");
+//		s2.setComputationTime(1);
+//		s2.setActivationTime(6);	
 				
 		GeneratorController.TASKS.add(t1);
 		GeneratorController.TASKS.add(t2);
-		GeneratorController.TASKS.add(ts);
+		GeneratorController.TASKS.add(t3);
+		GeneratorController.TASKS.add(t4);
+
 		GeneratorController.TASKS.add(s1);
-		GeneratorController.TASKS.add(s2);
-//		GeneratorController.STASKS.add(s3);
+//		GeneratorController.TASKS.add(s2);
 		
 		tasksTable.getItems().addAll(GeneratorController.TASKS);
 	}

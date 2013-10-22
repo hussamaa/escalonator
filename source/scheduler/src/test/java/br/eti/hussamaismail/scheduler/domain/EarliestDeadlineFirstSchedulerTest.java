@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import br.eti.hussamaismail.scheduler.controller.GeneratorController;
 import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.exception.SchedulabilityConditionNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.util.ChartsUtil;
@@ -191,6 +192,90 @@ public class EarliestDeadlineFirstSchedulerTest {
 		this.scheduler.getTasks().add(s2);
 	}
 	
+	public void setTasksCaseBackgroundServer2(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+	
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(3);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
+		t1.setActivationTime(0);
+	
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(2);
+		t2.setPeriod(5);
+		t2.setDeadline(4);
+		t2.setActivationTime(0);
+		
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("T3");
+		t3.setComputationTime(1);
+		t3.setPeriod(10);
+		t3.setDeadline(8);
+		t3.setActivationTime(0);
+				
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("T4");
+		s1.setComputationTime(1);
+		s1.setActivationTime(3);
+		
+		this.scheduler.setSporadicPolicy(SporadicPolicy.BACKGROUND_SERVER);
+	
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(t3);
+		this.scheduler.getTasks().add(s1);
+	}
+	
+	public void setTasksCaseBackgroundServer3(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+	
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(1);
+		t1.setPeriod(7);
+		t1.setDeadline(7);
+		t1.setActivationTime(0);
+	
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(2);
+		t2.setPeriod(9);
+		t2.setDeadline(9);
+		t2.setActivationTime(0);
+		
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("T3");
+		t3.setComputationTime(3);
+		t3.setPeriod(11);
+		t3.setDeadline(11);
+		t3.setActivationTime(0);
+		
+		PeriodicTask t4 = new PeriodicTask();
+		t4.setName("T4");
+		t4.setComputationTime(4);
+		t4.setPeriod(13);
+		t4.setDeadline(13);
+		t4.setActivationTime(0);
+		
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("S1");
+		s1.setComputationTime(1);
+		s1.setActivationTime(3);
+				
+		this.scheduler.setSporadicPolicy(SporadicPolicy.BACKGROUND_SERVER);
+	
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(t3);
+		this.scheduler.getTasks().add(t4);
+		this.scheduler.getTasks().add(s1);
+	}
+		
 	public void setTasksCasePollingServer(){
 		
 		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
@@ -224,6 +309,48 @@ public class EarliestDeadlineFirstSchedulerTest {
 		s2.setActivationTime(11);
 		
 		this.scheduler.setSporadicPolicy(SporadicPolicy.POLLING_SERVER);
+		
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(ts);
+
+		this.scheduler.getTasks().add(s1);
+		this.scheduler.getTasks().add(s2);
+	}
+	
+	public void setTasksCaseSporadicServer(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+		
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(3);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
+		
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(2);
+		t2.setPeriod(5);
+		t2.setDeadline(4);
+		
+		PeriodicTask ts = new PeriodicTask();
+		ts.setName("TS");
+		ts.setComputationTime(2);
+		ts.setPeriod(10);
+		ts.setDeadline(8);
+		
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("T3");
+		s1.setComputationTime(1);
+		s1.setActivationTime(3);
+		
+		SporadicTask s2 = new SporadicTask();
+		s2.setName("T4");
+		s2.setComputationTime(1);
+		s2.setActivationTime(6);
+		
+		this.scheduler.setSporadicPolicy(SporadicPolicy.SPORADIC_SERVER);
 		
 		this.scheduler.getTasks().add(t1);
 		this.scheduler.getTasks().add(t2);
@@ -420,6 +547,35 @@ public class EarliestDeadlineFirstSchedulerTest {
 	
 	@SuppressWarnings({"unchecked" })
 	@Test
+	public void testCaseBackgroundServer2() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
+		
+		this.setTasksCaseBackgroundServer2();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas vezes a tarefa 'T4' aparece no grafico */
+		Assert.assertEquals(1, map.get("T4").size());
+		
+		/* Verifica os intevalos da tarefa T4 [8-9] */
+		Integer[] intervalT3 = map.get("T4").get(0);
+		Assert.assertEquals(Long.valueOf(8), Long.valueOf(intervalT3[0]));
+		Assert.assertEquals(Long.valueOf(9), Long.valueOf(intervalT3[1]));		
+	}
+	
+	@SuppressWarnings({"unchecked" })
+	@Test
+	public void testCaseBackgroundServer3() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
+		
+		this.setTasksCaseBackgroundServer3();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas vezes a tarefa 'S1' aparece no grafico */
+		Assert.assertNull(map.get("S1"));	
+	}
+	
+	@SuppressWarnings({"unchecked" })
+	@Test
 	public void testCasePollingServer() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
 		
 		this.setTasksCasePollingServer();
@@ -478,4 +634,32 @@ public class EarliestDeadlineFirstSchedulerTest {
 		Assert.assertEquals(Long.valueOf(13), Long.valueOf(intervalT41[1]));
 	
 	}
+	
+	@SuppressWarnings({"unchecked" })
+	@Test
+	public void testCaseSporadicServer() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
+		
+		this.setTasksCaseSporadicServer();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas vezes a tarefa 'T3' aparece no grafico */
+		Assert.assertEquals(1, map.get("T3").size());
+		
+		/* Verifica os intevalos da tarefa T3 [3-4] */
+		Integer[] intervalT3 = map.get("T3").get(0);
+		Assert.assertEquals(Long.valueOf(3), Long.valueOf(intervalT3[0]));
+		Assert.assertEquals(Long.valueOf(4), Long.valueOf(intervalT3[1]));
+		
+		/* Verifica quantas vezes a tarefa 'T4' aparece no grafico */
+		Assert.assertEquals(1, map.get("T4").size());
+		
+		/* Verifica os intevalos da tarefa T4 [6-7] */
+		Integer[] intervalT4 = map.get("T4").get(0);
+		Assert.assertEquals(Long.valueOf(6), Long.valueOf(intervalT4[0]));
+		Assert.assertEquals(Long.valueOf(7), Long.valueOf(intervalT4[1]));
+				
+	}
+	
+	
 }
