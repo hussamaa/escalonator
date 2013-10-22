@@ -315,7 +315,7 @@ public class GeneratorController implements Initializable {
 					
 			}
 		}catch(DeadlineNotSatisfiedException e){
-			Dialogs.showErrorDialog(MainApp.STAGE, "Ocorreu violação de deadline durante o processamento das tarefas", "Não foi possível escalonar com a técnica desejada",
+			Dialogs.showErrorDialog(MainApp.STAGE, "Ocorreu violação de deadline durante o processamento das tarefas\n\nCausa: "+e.getMessage(), "Não foi possível escalonar com a técnica desejada",
 				    "Erro no escalonamento", e);
 			return;
 		}catch(SchedulabilityConditionNotSatisfiedException e){

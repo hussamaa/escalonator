@@ -11,7 +11,12 @@ public class DeadlineNotSatisfiedException extends Exception {
 	private Logger log = LoggerFactory.getLogger(DeadlineNotSatisfiedException.class);
 
 	public DeadlineNotSatisfiedException(Task task) {
-		super();
-		log.error("DeadLine not satisfied to task '"+task.getName()+"' - " + task);
+		super("Deadline não satisfeito para a tarefa: '"+task.getName()+"'");
+		log.error("Deadline não satisfeito para a tarefa: '"+task.getName()+"'");
+	}	
+	
+	public DeadlineNotSatisfiedException(Task task, Integer position) {
+		super("Deadline não satisfeito para a tarefa: '"+task.getName()+"' no instante de tempo: " + position);
+		log.error("Deadline não satisfeito para a tarefa: '"+task.getName()+"' no instante de tempo: " + position);
 	}	
 }

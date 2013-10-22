@@ -114,8 +114,7 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 			}
 		}
 		
-		List<Integer> rechargerList = new ArrayList<Integer>();
-		
+		Map<Integer,Integer> rechargerMap = new HashMap<Integer,Integer>();		
 		while (position < higherPeriod) {
 
 			/* Adiciona as tarefas periodicas a uma lista de tarefas pendentes */
@@ -143,10 +142,10 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 					continue;
 				}
 				
-				if (rechargerList.contains(position)){
+				if (rechargerMap.containsKey(position)){
 					Series<Number, Number> currentServerCapacity = getTasksUtil().getChartTask(chartServerCapacity, taskServer);		
 					currentServerCapacity.getData().add(new Data<Number, Number>(position, actualServerCapacity));
-					actualServerCapacity = actualServerCapacity + 1;
+					actualServerCapacity = actualServerCapacity + rechargerMap.get(position);
 					currentServerCapacity.getData().add(new Data<Number, Number>(position, actualServerCapacity));
 				}
 					
@@ -155,8 +154,6 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 					if (actualServerCapacity >= sporadicTask.getRemaining()){
 				
 						int nextChargePosition = position + taskServer.getPeriod();
-						/* Adiciona no mapa o instante em que sera recarregado e para qual valor o server sera restaurado */
-						rechargerList.add(nextChargePosition);
 						
 						Series<Number, Number> currentServerCapacity = getTasksUtil().getChartTask(chartServerCapacity, taskServer);		
 						Series<Number, Number> currentChartTask = getTasksUtil().getChartTask(chartTasks, sporadicTask);
@@ -165,10 +162,13 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 						currentChartTask.getData().add(new Data<Number, Number>(position, 1));
 						
 						currentServerCapacity.getData().add(new Data<Number, Number>(position, actualServerCapacity));						
-						
-						position = position + 1;
-						sporadicTask.process(1);
-						actualServerCapacity = actualServerCapacity - 1;
+											
+						int taskRemaining = sporadicTask.getRemaining();
+						position = position + taskRemaining;
+						sporadicTask.process(taskRemaining);
+						actualServerCapacity = actualServerCapacity - taskRemaining;								
+						/* Adiciona no mapa o instante em que sera recarregado e para qual valor o server sera restaurado */
+						rechargerMap.put(nextChargePosition, taskRemaining);
 						
 						currentChartTask.getData().add(new Data<Number, Number>(position, 1));
 						currentChartTask.getData().add(new Data<Number, Number>(position, 0));
@@ -190,7 +190,7 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 						pendentTasks, position);
 
 				if (earliestDeadline.getDeadline() <= position) {
-					throw new DeadlineNotSatisfiedException(earliestDeadline);
+					throw new DeadlineNotSatisfiedException(earliestDeadline, position);
 				}
 				
 				/* Escalonamento da tarefa server */
