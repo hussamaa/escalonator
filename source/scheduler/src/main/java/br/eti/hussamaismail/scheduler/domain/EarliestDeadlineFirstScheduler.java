@@ -151,7 +151,7 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 					
 				if (pendentSporadicTasks.isEmpty() == false){			
 					SporadicTask sporadicTask = pendentSporadicTasks.get(0);
-					if (actualServerCapacity >= sporadicTask.getRemaining()){
+					if (actualServerCapacity > 0){
 				
 						int nextChargePosition = position + taskServer.getPeriod();
 						
@@ -162,13 +162,22 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 						currentChartTask.getData().add(new Data<Number, Number>(position, 1));
 						
 						currentServerCapacity.getData().add(new Data<Number, Number>(position, actualServerCapacity));						
-											
-						int taskRemaining = sporadicTask.getRemaining();
-						position = position + taskRemaining;
-						sporadicTask.process(taskRemaining);
-						actualServerCapacity = actualServerCapacity - taskRemaining;								
-						/* Adiciona no mapa o instante em que sera recarregado e para qual valor o server sera restaurado */
-						rechargerMap.put(nextChargePosition, taskRemaining);
+						
+						if (actualServerCapacity > sporadicTask.getRemaining()){
+							int taskRemaining = sporadicTask.getRemaining();
+							position = position + taskRemaining;
+							sporadicTask.process(taskRemaining);
+							actualServerCapacity = actualServerCapacity - taskRemaining;		
+							/* Adiciona no mapa o instante em que sera recarregado e para qual valor o server sera restaurado */
+							rechargerMap.put(nextChargePosition, taskRemaining);
+						}else{
+							int atualCapacity = actualServerCapacity;
+							position = position + atualCapacity;
+							sporadicTask.process(atualCapacity);
+							actualServerCapacity = actualServerCapacity - atualCapacity;	
+							/* Adiciona no mapa o instante em que sera recarregado e para qual valor o server sera restaurado */
+							rechargerMap.put(nextChargePosition, atualCapacity);
+						}
 						
 						currentChartTask.getData().add(new Data<Number, Number>(position, 1));
 						currentChartTask.getData().add(new Data<Number, Number>(position, 0));
