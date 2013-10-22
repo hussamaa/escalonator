@@ -14,6 +14,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.Chart;
@@ -22,6 +24,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialogs;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Dialogs.DialogOptions;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -34,6 +37,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -224,7 +228,7 @@ public class GeneratorController implements Initializable {
 		}
 		
 		/* Verifica se alguma politica para as tarefas esporadicas foi selecionada */
-		if (existsSporadic && (sporadicPolicy.getValue() == null)){
+		if (existsSporadic && (sporadicPolicy.getValue() == null || sporadicPolicy.getValue().toString().length() == 0)){
 			Dialogs.showWarningDialog(MainApp.STAGE, "É necessário escolher uma política de escalonamento para as tarefas esporádicas", "Não foi possível realizar a operação", "Alerta");
 			return;
 		}
@@ -328,17 +332,39 @@ public class GeneratorController implements Initializable {
 		
 		chartPanel.getChildren().clear();
 		
-		simulatedChart.setMaxWidth(chartPanel.getWidth());
-		simulatedChart.setPrefWidth(chartPanel.getWidth());
-		simulatedChart.setMinWidth(chartPanel.getWidth());
+		Separator separator = new Separator();
+		separator.setVisible(false);
+		separator.setOrientation(Orientation.VERTICAL);
+		separator.setMinHeight(15);
 		
-		simulatedChart.setPrefHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
-		simulatedChart.setMaxHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
-		simulatedChart.setMinHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+		Label lbDiagramaTemporal = new Label();
+		lbDiagramaTemporal.setText("  Diagrama Temporal");
+		lbDiagramaTemporal.setStyle("-fx-text-fill: #e1fdff; -fx-font-weight: bold;");
+
+		VBox vBox = new VBox();
+		vBox.setPrefHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+		vBox.setMaxHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+		vBox.setMinHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+		vBox.setMaxWidth(chartPanel.getWidth());
+		vBox.setPrefWidth(chartPanel.getWidth());
+		vBox.setMinWidth(chartPanel.getWidth());
+
+		vBox.getChildren().add(separator);
+		vBox.getChildren().add(lbDiagramaTemporal);
+		vBox.getChildren().add(simulatedChart);	
 		
-		simulatedChart.setStyle("-fx-font-color: red;");
+		if (serverCapacity != null){
+			Label lbServerCapacity = new Label();
+			lbServerCapacity.setText("  Capacidade do Servidor");
+			lbServerCapacity.setStyle("-fx-text-fill: #e1fdff; -fx-font-weight: bold;");
+			vBox.getChildren().add(lbServerCapacity);
+
+			this.serverCapacity.legendSideProperty().set(Side.RIGHT);
+			simulatedChart.legendSideProperty().set(Side.RIGHT);
+			vBox.getChildren().add(this.serverCapacity);			
+		}
 		
-		chartPanel.getChildren().add(simulatedChart);
+		chartPanel.getChildren().add(vBox);
 	}
 
 	@Override
@@ -377,17 +403,17 @@ public class GeneratorController implements Initializable {
 		s2.setComputationTime(1);
 		s2.setActivationTime(6);
 		
-		SporadicTask s3 = new SporadicTask();
-		s3.setName("T4");
-		s3.setComputationTime(1);
-		s3.setActivationTime(10);
+//		SporadicTask s3 = new SporadicTask();
+//		s3.setName("T4");
+//		s3.setComputationTime(1);
+//		s3.setActivationTime(10);
 				
 		GeneratorController.TASKS.add(t1);
 		GeneratorController.TASKS.add(t2);
 		GeneratorController.TASKS.add(ts);
 		GeneratorController.TASKS.add(s1);
 		GeneratorController.TASKS.add(s2);
-		GeneratorController.TASKS.add(s3);
+//		GeneratorController.STASKS.add(s3);
 		
 		tasksTable.getItems().addAll(GeneratorController.TASKS);
 	}

@@ -39,6 +39,7 @@
                 <ChoiceBox fx:id="sporadicPolicy" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                   <items>
                     <FXCollections fx:factory="observableArrayList">
+                      <String fx:value="" />
                       <String fx:value="Servidor Background" />
                       <String fx:value="Servidor Polling" />
                       <String fx:value="Servidor Sporadic" />
@@ -58,11 +59,7 @@
             </GridPane>
             <VBox spacing="5.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0">
               <children>
-                <Label onMouseClicked="#showServerCapacity" style="-fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="Verificar Capacidade do Servidor">
-                  <graphic>
-                    <Circle fill="#fffdcc" radius="6.0" />
-                  </graphic>
-                </Label>
+                <Label onMouseClicked="#showServerCapacity" style="-fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="" />
                 <Separator orientation="VERTICAL" prefHeight="68.0" visible="false" />
                 <Label onMouseClicked="#addTask" style="-fx-text-fill: #e1fdff; -fx-font-weight: bold;" text="Adicionar Tarefa">
                   <graphic>
