@@ -43,7 +43,7 @@ public class MainApp extends Application {
         STAGE = stage;
         stage.setTitle("Escalonator");        
         stage.setScene(scene);
-        stage.setResizable(false);
+        stage.setResizable(false);        
         stage.show();
     }
 }

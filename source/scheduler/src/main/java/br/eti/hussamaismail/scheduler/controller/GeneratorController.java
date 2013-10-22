@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,10 +25,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialogs;
-import javafx.scene.control.Separator;
 import javafx.scene.control.Dialogs.DialogOptions;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
@@ -69,6 +70,7 @@ public class GeneratorController implements Initializable {
 	public static List<Task> TASKS =  new ArrayList<Task>();
 	public static int TIME_SLOT = 1;
 	public static Task TASK;
+	private static VBox VBOX;
 	
 	private TasksUtil tasksUtil;
 	private AreaChart<Number, Number> serverCapacity;
@@ -341,30 +343,40 @@ public class GeneratorController implements Initializable {
 		lbDiagramaTemporal.setText("  Diagrama Temporal");
 		lbDiagramaTemporal.setStyle("-fx-text-fill: #e1fdff; -fx-font-weight: bold;");
 
-		VBox vBox = new VBox();
-		vBox.setPrefHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
-		vBox.setMaxHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
-		vBox.setMinHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
-		vBox.setMaxWidth(chartPanel.getWidth());
-		vBox.setPrefWidth(chartPanel.getWidth());
-		vBox.setMinWidth(chartPanel.getWidth());
-
-		vBox.getChildren().add(separator);
-		vBox.getChildren().add(lbDiagramaTemporal);
-		vBox.getChildren().add(simulatedChart);	
+		VBOX = new VBox();
+		VBOX.setPrefHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+		VBOX.setMaxHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+		VBOX.setMinHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+		VBOX.setMaxWidth(chartPanel.getWidth());
+		VBOX.setPrefWidth(chartPanel.getWidth());
+		VBOX.setMinWidth(chartPanel.getWidth());
+		
+		System.out.println("antes: " + chartPanel.getWidth());
+		
+		MainApp.STAGE.widthProperty().addListener(new ChangeListener<Number>() {
+			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {		
+				VBOX.setMaxWidth(newSceneWidth.doubleValue());
+				VBOX.setPrefWidth(newSceneWidth.doubleValue());
+				VBOX.setMinWidth(newSceneWidth.doubleValue());
+			}
+		});
+	
+		VBOX.getChildren().add(separator);
+		VBOX.getChildren().add(lbDiagramaTemporal);
+		VBOX.getChildren().add(simulatedChart);	
 		
 		if (serverCapacity != null){
 			Label lbServerCapacity = new Label();
 			lbServerCapacity.setText("  Capacidade do Servidor");
 			lbServerCapacity.setStyle("-fx-text-fill: #e1fdff; -fx-font-weight: bold;");
-			vBox.getChildren().add(lbServerCapacity);
+			VBOX.getChildren().add(lbServerCapacity);
 
 			this.serverCapacity.legendSideProperty().set(Side.RIGHT);
 			simulatedChart.legendSideProperty().set(Side.RIGHT);
-			vBox.getChildren().add(this.serverCapacity);			
+			VBOX.getChildren().add(this.serverCapacity);			
 		}
 		
-		chartPanel.getChildren().add(vBox);
+		chartPanel.getChildren().add(VBOX);
 	}
 
 	@Override
