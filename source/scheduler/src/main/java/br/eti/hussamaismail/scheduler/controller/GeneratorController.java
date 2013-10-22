@@ -259,16 +259,16 @@ public class GeneratorController implements Initializable {
 				
 				case "EARLIESTDEADLINEFIRST" : 
 										
-					String sporadicPolicyString = sporadicPolicy.getValue().toString().toUpperCase().replaceAll(" ", "");
+					String sporadicPolicyString = sporadicPolicy.getValue() != null ? sporadicPolicy.getValue().toString().toUpperCase().replaceAll(" ", "") : null;
 					EarliestDeadlineFirstScheduler edfScheduler = new EarliestDeadlineFirstScheduler();
 					edfScheduler.setTasks(TASKS);
 					
-					if (sporadicPolicyString.equals("SERVIDORBACKGROUND")){
+					if ("SERVIDORBACKGROUND".equals(sporadicPolicyString)){
 						edfScheduler.setSporadicPolicy(SporadicPolicy.BACKGROUND_SERVER);
 						log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
 					}
 					
-					if (sporadicPolicyString.equals("SERVIDORPOLLING")){
+					if ("SERVIDORPOLLING".equals(sporadicPolicyString)){
 						if (!existsTaskServer()){
 							Dialogs.showWarningDialog(MainApp.STAGE, "Para utilizar essa política para as tarefas esporádicas é necessário criar uma tarefa periódica com o nome de 'TS'.", "Não foi possível realizar a operação", "Alerta");
 							return;
@@ -277,7 +277,7 @@ public class GeneratorController implements Initializable {
 						log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
 					}
 					
-					if (sporadicPolicyString.equals("SERVIDORSPORADIC")){
+					if ("SERVIDORSPORADIC".equals(sporadicPolicyString)){
 						if (!existsTaskServer()){
 							Dialogs.showWarningDialog(MainApp.STAGE, "Para utilizar essa política para as tarefas esporádicas é necessário criar uma tarefa periódica com o nome de 'TS'.", "Não foi possível realizar a operação", "Alerta");
 							return;
