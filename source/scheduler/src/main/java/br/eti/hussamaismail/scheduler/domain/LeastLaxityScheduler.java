@@ -39,6 +39,7 @@ public class LeastLaxityScheduler extends DynamicScheduler {
 	@Override
 	public Chart simulate() throws DeadlineNotSatisfiedException {
 		
+		ViolatedDeadlineEntity violatedDeadlineEntity = null;
 		Map<Integer, List<Task>> mapWithActivationTimeAndTasks = getTasksUtil().getMapWithActivationTimeAndTasks(getTasks());
 		int position = 0;
 		int higherValue = getTasksUtil().getHigherDeadlineFromPeriodicTasks(getTasks());
@@ -91,7 +92,10 @@ public class LeastLaxityScheduler extends DynamicScheduler {
 					chartTask.getData().add(new Data<Number, Number>(aux, 1));
 					if (firstTime == false){
 						if (leastLaxity.getDeadline() < aux){
-							throw new DeadlineNotSatisfiedException(leastLaxity);
+							violatedDeadlineEntity = new ViolatedDeadlineEntity();
+							violatedDeadlineEntity.setPosition(position);
+							violatedDeadlineEntity.setTask(leastLaxity);
+							break;					
 						}
 						leastLaxity.process(1);
 					}
@@ -105,15 +109,26 @@ public class LeastLaxityScheduler extends DynamicScheduler {
 					currentTasks.addAll(pendentTasks);
 				}
 			}
+			
 			chartTask.getData().add(new Data<Number, Number>(position, 0));
 			
 			if (leastLaxity.getRemaining() == 0){
 				currentTasks.remove(leastLaxity);
 			}
 			
+			if (violatedDeadlineEntity != null){
+				break;
+			}
+			
 		}
 
 		ac.getData().addAll(chartTasks);
+		
+		if (violatedDeadlineEntity != null){
+			violatedDeadlineEntity.setGeneratedChart(ac);
+			throw new DeadlineNotSatisfiedException(violatedDeadlineEntity);
+		}
+		
 		return ac;
 	}
 }

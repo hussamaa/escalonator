@@ -319,7 +319,13 @@ public class GeneratorController implements Initializable {
 		}catch(DeadlineNotSatisfiedException e){
 			Dialogs.showErrorDialog(MainApp.STAGE, "Ocorreu violação de deadline durante o processamento das tarefas\n\nCausa: "+e.getMessage(), "Não foi possível escalonar com a técnica desejada",
 				    "Erro no escalonamento", e);
-			return;
+			
+			if (e.getViolatedDeadlineEntity() == null){
+				return;
+			}
+			
+			simulatedChart = e.getViolatedDeadlineEntity().getGeneratedChart();			
+		
 		}catch(SchedulabilityConditionNotSatisfiedException e){
 			Dialogs.showErrorDialog(MainApp.STAGE, "O teste de escalonabilidade não foi satifeito para as tarefas informadas pelo usuário", "Não foi possível escalonar com a técnica desejada",
 				    "Erro no escalonamento", e);
@@ -397,6 +403,32 @@ public class GeneratorController implements Initializable {
 		
 //ss
 	
+//		PeriodicTask t1 = new PeriodicTask();
+//		t1.setName("T1");
+//		t1.setComputationTime(5);
+//		t1.setPeriod(20);
+//		t1.setDeadline(7);
+//		t1.setActivationTime(0);
+//
+//		PeriodicTask t2 = new PeriodicTask();
+//		t2.setName("T2");
+//		t2.setComputationTime(2);
+//		t2.setPeriod(5);
+//		t2.setDeadline(4);
+//		t2.setActivationTime(0);
+//		
+//		PeriodicTask t3 = new PeriodicTask();
+//		t3.setName("T3");
+//		t3.setComputationTime(1);
+//		t3.setPeriod(10);
+//		t3.setDeadline(8);
+//		t3.setActivationTime(0);
+//		
+//		SporadicTask s2 = new SporadicTask();
+//		s2.setName("T4");
+//		s2.setComputationTime(1);
+//		s2.setActivationTime(10);	
+		
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("T1");
 		t1.setComputationTime(5);
@@ -417,11 +449,6 @@ public class GeneratorController implements Initializable {
 		t3.setPeriod(10);
 		t3.setDeadline(8);
 		t3.setActivationTime(0);
-		
-		SporadicTask s2 = new SporadicTask();
-		s2.setName("T4");
-		s2.setComputationTime(1);
-		s2.setActivationTime(10);	
 				
 		GeneratorController.TASKS.add(t1);
 		GeneratorController.TASKS.add(t2);
@@ -429,7 +456,7 @@ public class GeneratorController implements Initializable {
 //		GeneratorController.TASKS.add(t4);
 
 //	ss	GeneratorController.TASKS.add(s1);
-		GeneratorController.TASKS.add(s2);
+//		GeneratorController.TASKS.add(s2);
 		
 		tasksTable.getItems().addAll(GeneratorController.TASKS);
 	}

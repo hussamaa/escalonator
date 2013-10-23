@@ -156,6 +156,8 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 	 */
 	public AreaChart<Number,Number> generateMonotonicChart(Map<Integer, List<PeriodicTask>> mapTaskEvent, int higherValue) throws DeadlineNotSatisfiedException{
 		
+		ViolatedDeadlineEntity violatedDeadlineEntity = null;
+		
 		NumberAxis xAxis = new NumberAxis(0,higherValue,1);
 		NumberAxis yAxis = new NumberAxis(0,2,1);
 		AreaChart<Number,Number> ac = new AreaChart<Number,Number>(xAxis, yAxis);
@@ -190,10 +192,12 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 						break;
 					}
 					if (position >= pTask.getDeadline()){
-						throw new DeadlineNotSatisfiedException(pTask);
+						violatedDeadlineEntity = new ViolatedDeadlineEntity();
+						violatedDeadlineEntity.setPosition(position);
+						violatedDeadlineEntity.setTask(pTask);
+						break;
 					}
-					
-					
+										
 					if (initialized == true){
 						if (mapTaskEvent.containsKey(position) && (isPreemptive() == true)){
 							chartTask.getData().add(new Data<Number, Number>(position, 1));
@@ -205,7 +209,10 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 									break;
 								}
 								if (position >= pTask2.getDeadline()){
-									throw new DeadlineNotSatisfiedException(pTask2);
+									violatedDeadlineEntity = new ViolatedDeadlineEntity();
+									violatedDeadlineEntity.setPosition(position);
+									violatedDeadlineEntity.setTask(pTask2);
+									break;
 								}
 								
 								Series<Number, Number> chartTask2 = getTasksUtil().getChartTask(chartTasks, pTask2);	
@@ -218,6 +225,11 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 								chartTask2.getData().add(new Data<Number, Number>(position, 1));
 								chartTask2.getData().add(new Data<Number, Number>(position, 0));
 							}
+							
+							if (violatedDeadlineEntity != null){
+								break;
+							}
+							
 							chartTask.getData().add(new Data<Number, Number>(position, 0));
 							chartTask.getData().add(new Data<Number, Number>(position, 1));
 						}else if (mapTaskEvent.containsKey(position) && (isPreemptive() == false)){
@@ -229,8 +241,13 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 					pTask.process(1);
 					position = position + 1;
 				}
+							
 				chartTask.getData().add(new Data<Number, Number>(position, 1));
-				chartTask.getData().add(new Data<Number, Number>(position, 0));		
+				chartTask.getData().add(new Data<Number, Number>(position, 0));	
+				
+				if (violatedDeadlineEntity != null){
+					break;
+				}
 				
 				if (nonPreemptivePendentTasks.size() > 0){
 					List<PeriodicTask> resultantList = getResultantList(nonPreemptivePendentTasks);
@@ -240,7 +257,10 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 							break;
 						}
 						if (position >= pTask2.getDeadline()){
-							throw new DeadlineNotSatisfiedException(pTask2);
+							violatedDeadlineEntity = new ViolatedDeadlineEntity();
+							violatedDeadlineEntity.setPosition(position);
+							violatedDeadlineEntity.setTask(pTask2);
+							break;
 						}
 						
 						Series<Number, Number> chartTask2 = getTasksUtil().getChartTask(chartTasks, pTask2);	
@@ -253,12 +273,28 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 						chartTask2.getData().add(new Data<Number, Number>(position, 1));
 						chartTask2.getData().add(new Data<Number, Number>(position, 0));
 					}
+					
+					if (violatedDeadlineEntity != null){
+						break;
+					}	
 				}
 				
 			}
+			
+			if (violatedDeadlineEntity != null){
+				break;
+			}	
+			
 			pendentTasks.removeAll(pendentTasks);
+								
 		}	
 		ac.getData().addAll(chartTasks);
+		
+		if (violatedDeadlineEntity != null){
+			violatedDeadlineEntity.setGeneratedChart(ac);
+			throw new DeadlineNotSatisfiedException(violatedDeadlineEntity);
+		}
+		
 		return ac;
 	}
 	

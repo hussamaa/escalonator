@@ -36,6 +36,7 @@ public class RoundRobinScheduler extends DynamicScheduler {
 	@Override
 	public Chart simulate() throws DeadlineNotSatisfiedException {
 
+		ViolatedDeadlineEntity violatedDeadlineEntity = null;
 		double higherValue = getTasksUtil().getHigherDeadlineFromPeriodicTasks(getTasks());
 
 		NumberAxis xAxis = new NumberAxis(0, higherValue, 1);
@@ -52,7 +53,7 @@ public class RoundRobinScheduler extends DynamicScheduler {
 	
 		Collection<PeriodicTask> onlyPeriodicTasksFromTask = getTasksUtil().getOnlyPeriodicTasksFromTaskList(getTasks());
 		List<PeriodicTask> pendentTasks = new ArrayList<PeriodicTask>(onlyPeriodicTasksFromTask);
-		double index = 0;
+		int index = 0;
 
 		while (!pendentTasks.isEmpty()) {
 			int qtd = pendentTasks.size();
@@ -64,7 +65,10 @@ public class RoundRobinScheduler extends DynamicScheduler {
 				chartTask.getData().add(new Data<Number, Number>(index, 1));
 				
 				if (index > pTask.getDeadline()){
-					throw new DeadlineNotSatisfiedException(pTask);
+					violatedDeadlineEntity = new ViolatedDeadlineEntity();
+					violatedDeadlineEntity.setPosition(index);
+					violatedDeadlineEntity.setTask(pTask);
+					break;
 				}
 				
 				if (pTask.getRemaining() >= slotSize) {
@@ -84,9 +88,19 @@ public class RoundRobinScheduler extends DynamicScheduler {
 					i--;
 				}
 			}
+			
+			if (violatedDeadlineEntity != null){
+				break;
+			}
 		}
 
 		ac.getData().addAll(chartTasks);
+		
+		if (violatedDeadlineEntity != null){
+			violatedDeadlineEntity.setGeneratedChart(ac);
+			throw new DeadlineNotSatisfiedException(violatedDeadlineEntity);
+		}
+		
 		return ac;
 	}
 }

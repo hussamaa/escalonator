@@ -67,6 +67,8 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 	public Chart simulate() throws DeadlineNotSatisfiedException,
 			SchedulabilityConditionNotSatisfiedException {
 
+		ViolatedDeadlineEntity violatedDeadlineEntity = null;
+		
 		if (this.isScalable() == false) {
 			throw new SchedulabilityConditionNotSatisfiedException();
 		}
@@ -198,8 +200,12 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 				PeriodicTask earliestDeadline = getEarliestDeadline(
 						pendentTasks, position);
 
+				/* Violacao de deadline */
 				if (earliestDeadline.getDeadline() <= position) {
-					throw new DeadlineNotSatisfiedException(earliestDeadline, position);
+					violatedDeadlineEntity = new ViolatedDeadlineEntity();
+					violatedDeadlineEntity.setPosition(position);
+					violatedDeadlineEntity.setTask(earliestDeadline);
+					break;
 				}
 				
 				/* Escalonamento da tarefa server */
@@ -324,6 +330,11 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 		if (serverCapacityAC != null){
 			serverCapacityAC.getData().addAll(chartServerCapacity);
 			this.serverCapacity = serverCapacityAC;
+		}
+		
+		if (violatedDeadlineEntity != null){
+			violatedDeadlineEntity.setGeneratedChart(ac);
+			throw new DeadlineNotSatisfiedException(violatedDeadlineEntity);
 		}
 
 		return ac;
