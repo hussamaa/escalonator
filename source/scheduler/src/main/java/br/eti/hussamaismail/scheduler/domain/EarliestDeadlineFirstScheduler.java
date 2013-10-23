@@ -258,6 +258,10 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 						/* Servidor Perde a sua capacidade por nao haver tarefas 
 						 * esporadicas para execucao */
 						pendentTasks.remove(earliestDeadline);
+						if (mapPeriods.get(position) != null){
+							mapPeriods.get(position).remove(earliestDeadline);
+						}
+						
 						Series<Number, Number> currentServerCapacity = getTasksUtil()
 								.getChartTask(chartServerCapacity, earliestDeadline);
 						currentServerCapacity.getData().add(

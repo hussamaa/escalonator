@@ -424,18 +424,18 @@ public class GeneratorController implements Initializable {
 //		t3.setDeadline(8);
 //		t3.setActivationTime(0);
 //		
-//		SporadicTask s2 = new SporadicTask();
-//		s2.setName("T4");
-//		s2.setComputationTime(1);
-//		s2.setActivationTime(10);	
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("T4");
+		s1.setComputationTime(1);
+		s1.setActivationTime(0);	
 		
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("T1");
-		t1.setComputationTime(5);
+		t1.setComputationTime(3);
 		t1.setPeriod(20);
 		t1.setDeadline(7);
 		t1.setActivationTime(0);
-
+	
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("T2");
 		t2.setComputationTime(2);
@@ -444,7 +444,7 @@ public class GeneratorController implements Initializable {
 		t2.setActivationTime(0);
 		
 		PeriodicTask t3 = new PeriodicTask();
-		t3.setName("T3");
+		t3.setName("TS");
 		t3.setComputationTime(1);
 		t3.setPeriod(10);
 		t3.setDeadline(8);
@@ -453,10 +453,7 @@ public class GeneratorController implements Initializable {
 		GeneratorController.TASKS.add(t1);
 		GeneratorController.TASKS.add(t2);
 		GeneratorController.TASKS.add(t3);
-//		GeneratorController.TASKS.add(t4);
-
-//	ss	GeneratorController.TASKS.add(s1);
-//		GeneratorController.TASKS.add(s2);
+		GeneratorController.TASKS.add(s1);
 		
 		tasksTable.getItems().addAll(GeneratorController.TASKS);
 	}

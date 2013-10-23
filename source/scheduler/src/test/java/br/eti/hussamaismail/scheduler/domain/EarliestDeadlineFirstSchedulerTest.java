@@ -382,6 +382,157 @@ public class EarliestDeadlineFirstSchedulerTest {
 		this.scheduler.getTasks().add(s2);
 	}
 	
+	public void setTasksCasePollingServer2(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+	
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("T4");
+		s1.setComputationTime(1);
+		s1.setActivationTime(0);	
+		
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(3);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
+		t1.setActivationTime(0);
+	
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(2);
+		t2.setPeriod(5);
+		t2.setDeadline(4);
+		t2.setActivationTime(0);
+		
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("TS");
+		t3.setComputationTime(1);
+		t3.setPeriod(10);
+		t3.setDeadline(8);
+		t3.setActivationTime(0);
+		
+		this.scheduler.setSporadicPolicy(SporadicPolicy.POLLING_SERVER);
+	
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(t3);
+		this.scheduler.getTasks().add(s1);
+	}
+	
+	public void setTasksCasePollingServer3(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+	
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("T4");
+		s1.setComputationTime(1);
+		s1.setActivationTime(0);	
+		
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(3);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
+		t1.setActivationTime(0);
+	
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(2);
+		t2.setPeriod(5);
+		t2.setDeadline(4);
+		t2.setActivationTime(0);
+		
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("TS");
+		t3.setComputationTime(1);
+		t3.setPeriod(5);
+		t3.setDeadline(5);
+		t3.setActivationTime(0);
+		
+		this.scheduler.setSporadicPolicy(SporadicPolicy.POLLING_SERVER);
+	
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(t3);
+		this.scheduler.getTasks().add(s1);
+	}
+	
+	public void setTasksCasePollingServer4(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+	
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("T4");
+		s1.setComputationTime(1);
+		s1.setActivationTime(0);	
+		
+		SporadicTask s2 = new SporadicTask();
+		s2.setName("T5");
+		s2.setComputationTime(1);
+		s2.setActivationTime(1);	
+		
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(3);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
+		t1.setActivationTime(0);
+	
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(2);
+		t2.setPeriod(5);
+		t2.setDeadline(4);
+		t2.setActivationTime(0);
+		
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("TS");
+		t3.setComputationTime(2);
+		t3.setPeriod(5);
+		t3.setDeadline(5);
+		t3.setActivationTime(0);
+		
+		this.scheduler.setSporadicPolicy(SporadicPolicy.POLLING_SERVER);
+	
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(t3);
+		this.scheduler.getTasks().add(s1);
+		this.scheduler.getTasks().add(s2);
+	}
+	
+	public void setTasksCasePollingServer5(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+	
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("T2");
+		s1.setComputationTime(1);
+		s1.setActivationTime(0);	
+		
+
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(3);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
+		t1.setActivationTime(0);
+			
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("TS");
+		t3.setComputationTime(1);
+		t3.setPeriod(10);
+		t3.setDeadline(8);
+		t3.setActivationTime(0);
+		
+		this.scheduler.setSporadicPolicy(SporadicPolicy.POLLING_SERVER);
+	
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t3);
+		this.scheduler.getTasks().add(s1);
+	}
+	
 	public void setTasksCaseSporadicServer(){
 		
 		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
@@ -637,7 +788,6 @@ public class EarliestDeadlineFirstSchedulerTest {
 		/* Verifica quantas vezes a tarefa 'S1' aparece no grafico */
 		Assert.assertNull(map.get("S1"));	
 	}
-	
 
 	@SuppressWarnings({"unchecked" })
 	@Test
@@ -726,6 +876,84 @@ public class EarliestDeadlineFirstSchedulerTest {
 	
 	@SuppressWarnings({"unchecked" })
 	@Test
+	public void testCasePollingServer2() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
+		
+		this.setTasksCasePollingServer2();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas vezes a tarefa 'T4' aparece no grafico */
+		Assert.assertEquals(1, map.get("T4").size());
+		
+		/* Verifica os intevalos da tarefa T4 [5-6] */
+		Integer[] intervalT3 = map.get("T4").get(0);
+		Assert.assertEquals(Long.valueOf(5), Long.valueOf(intervalT3[0]));
+		Assert.assertEquals(Long.valueOf(6), Long.valueOf(intervalT3[1]));
+	}
+	
+	@SuppressWarnings({"unchecked" })
+	@Test
+	public void testCasePollingServer3() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
+		
+		this.setTasksCasePollingServer3();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas vezes a tarefa 'T4' aparece no grafico */
+		Assert.assertEquals(1, map.get("T4").size());
+		
+		/* Verifica os intevalos da tarefa T4 [2-3] */
+		Integer[] intervalT3 = map.get("T4").get(0);
+		Assert.assertEquals(Long.valueOf(2), Long.valueOf(intervalT3[0]));
+		Assert.assertEquals(Long.valueOf(3), Long.valueOf(intervalT3[1]));
+	}
+	
+
+	@SuppressWarnings({"unchecked" })
+	@Test
+	public void testCasePollingServer4() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
+		
+		this.setTasksCasePollingServer4();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas vezes a tarefa 'T4' aparece no grafico */
+		Assert.assertEquals(1, map.get("T4").size());
+		
+		/* Verifica os intevalos da tarefa T4 [2-3] */
+		Integer[] intervalT3 = map.get("T4").get(0);
+		Assert.assertEquals(Long.valueOf(2), Long.valueOf(intervalT3[0]));
+		Assert.assertEquals(Long.valueOf(3), Long.valueOf(intervalT3[1]));
+		
+		/* Verifica quantas vezes a tarefa 'T5' aparece no grafico */
+		Assert.assertEquals(1, map.get("T5").size());
+		
+		/* Verifica os intevalos da tarefa T5 [3-4] */
+		Integer[] intervalT4 = map.get("T5").get(0);
+		Assert.assertEquals(Long.valueOf(3), Long.valueOf(intervalT4[0]));
+		Assert.assertEquals(Long.valueOf(4), Long.valueOf(intervalT4[1]));
+	}
+	
+	@SuppressWarnings({"unchecked" })
+	@Test
+	public void testCasePollingServer5() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
+		
+		this.setTasksCasePollingServer5();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas vezes a tarefa 'T2' aparece no grafico */
+		Assert.assertEquals(1, map.get("T2").size());
+		
+		/* Verifica os intevalos da tarefa T4 [3-4] */
+		Integer[] intervalT3 = map.get("T2").get(0);
+		Assert.assertEquals(Long.valueOf(3), Long.valueOf(intervalT3[0]));
+		Assert.assertEquals(Long.valueOf(4), Long.valueOf(intervalT3[1]));
+		
+	}
+	
+	@SuppressWarnings({"unchecked" })
+	@Test
 	public void testCaseSporadicServer() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
 		
 		this.setTasksCaseSporadicServer();
@@ -749,6 +977,5 @@ public class EarliestDeadlineFirstSchedulerTest {
 		Assert.assertEquals(Long.valueOf(7), Long.valueOf(intervalT4[1]));
 				
 	}
-	
-	
+
 }
