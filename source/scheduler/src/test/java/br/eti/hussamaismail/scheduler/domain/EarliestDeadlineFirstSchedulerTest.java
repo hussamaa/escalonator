@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import br.eti.hussamaismail.scheduler.controller.GeneratorController;
 import br.eti.hussamaismail.scheduler.exception.DeadlineNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.exception.SchedulabilityConditionNotSatisfiedException;
 import br.eti.hussamaismail.scheduler.util.ChartsUtil;
@@ -274,6 +273,71 @@ public class EarliestDeadlineFirstSchedulerTest {
 		this.scheduler.getTasks().add(t3);
 		this.scheduler.getTasks().add(t4);
 		this.scheduler.getTasks().add(s1);
+	}
+	
+	public void setTasksCaseBackgroundServer4(){
+		
+		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+		
+		PeriodicTask t1 = new PeriodicTask();		
+		t1.setName("T1");
+		t1.setComputationTime(3);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
+		t1.setActivationTime(0);
+	
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(2);
+		t2.setPeriod(5);
+		t2.setDeadline(4);
+		t2.setActivationTime(0);
+		
+		SporadicTask s2 = new SporadicTask();
+		s2.setName("S2");
+		s2.setComputationTime(1);
+		s2.setActivationTime(10);	
+		
+		this.scheduler.setSporadicPolicy(SporadicPolicy.BACKGROUND_SERVER);
+		
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(s2);
+	}
+	
+	public void setTasksCaseBackgroundServer5(){
+		PeriodicTask t1 = new PeriodicTask();
+		t1.setName("T1");
+		t1.setComputationTime(5);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
+		t1.setActivationTime(0);
+	
+		PeriodicTask t2 = new PeriodicTask();
+		t2.setName("T2");
+		t2.setComputationTime(2);
+		t2.setPeriod(5);
+		t2.setDeadline(4);
+		t2.setActivationTime(0);
+		
+		PeriodicTask t3 = new PeriodicTask();
+		t3.setName("T3");
+		t3.setComputationTime(1);
+		t3.setPeriod(10);
+		t3.setDeadline(8);
+		t3.setActivationTime(0);
+		
+		SporadicTask s2 = new SporadicTask();
+		s2.setName("T4");
+		s2.setComputationTime(1);
+		s2.setActivationTime(10);	
+		
+		this.scheduler.setSporadicPolicy(SporadicPolicy.BACKGROUND_SERVER);
+		
+		this.scheduler.getTasks().add(t1);
+		this.scheduler.getTasks().add(t2);
+		this.scheduler.getTasks().add(t3);
+		this.scheduler.getTasks().add(s2);
 	}
 		
 	public void setTasksCasePollingServer(){
@@ -572,6 +636,31 @@ public class EarliestDeadlineFirstSchedulerTest {
 		
 		/* Verifica quantas vezes a tarefa 'S1' aparece no grafico */
 		Assert.assertNull(map.get("S1"));	
+	}
+	
+
+	@SuppressWarnings({"unchecked" })
+	@Test
+	public void testCaseBackgroundServer4() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
+		
+		this.setTasksCaseBackgroundServer4();
+		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
+		Map<String, List<Integer[]>> map = chartsUtil.getMapWithXIntervals(temporalDiagram);
+		
+		/* Verifica quantas vezes a tarefa 'S2' aparece no grafico */
+		Assert.assertEquals(1, map.get("S2").size());
+		
+		/* Verifica os intevalos da tarefa S2 [12-13] */
+		Integer[] intervalT3 = map.get("S2").get(0);
+		Assert.assertEquals(Long.valueOf(12), Long.valueOf(intervalT3[0]));
+		Assert.assertEquals(Long.valueOf(13), Long.valueOf(intervalT3[1]));		
+	}
+	
+	@Test(expected=DeadlineNotSatisfiedException.class)
+	public void testCaseBackgroundServer5() throws DeadlineNotSatisfiedException, SchedulabilityConditionNotSatisfiedException{
+		
+		this.setTasksCaseBackgroundServer5();
+		this.scheduler.simulate();
 	}
 	
 	@SuppressWarnings({"unchecked" })
