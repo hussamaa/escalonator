@@ -104,10 +104,11 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 	 * no escalonador estatico
 	 * 
 	 * @throws TaskNotScalableException
+	 * @throws DeadlineNotSatisfiedException 
 	 * 
 	 */
 	public void calculateMaximumResponseTimeToTheTasks()
-			throws TaskNotScalableException {
+			throws TaskNotScalableException, DeadlineNotSatisfiedException {
 
 		if ((this.getTasks() == null) && (this.getTasks().isEmpty())) {
 			log.debug("Não existem tarefas adicionadas ao escalonador");
@@ -140,6 +141,13 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 					throw new TaskNotScalableException(actualTask);
 				}
 			}
+			
+			if (actualValue > actualTask.getDeadline()){
+				log.debug("O Tempo máximo de resposta da tarefa '"
+						+ actualTask.getName() + "' é: " + actualValue + " e é maior que o deadline " + actualTask.getDeadline());
+				throw new DeadlineNotSatisfiedException(actualTask);
+			}
+			
 			log.debug("O Tempo máximo de resposta da tarefa '"
 					+ actualTask.getName() + "' é: " + actualValue);
 			actualTask.setResponseTime(actualValue);

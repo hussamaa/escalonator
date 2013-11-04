@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.scene.chart.AreaChart;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -310,7 +309,7 @@ public class RateMonotonicSchedulerTest {
 	}
 	
 	@Test
-	public void validateCalculateMaximumResponseTimeToTheTasks() throws TaskNotScalableException{
+	public void validateCalculateMaximumResponseTimeToTheTasks() throws TaskNotScalableException, DeadlineNotSatisfiedException{
 		setNotScalableTasks();
 		this.scheduler.calculateMaximumResponseTimeToTheTasks();
 		Assert.assertEquals(6.0, ((PeriodicTask) this.scheduler.getTasks().get(0)).getResponseTime());
@@ -320,7 +319,7 @@ public class RateMonotonicSchedulerTest {
 	
 	@SuppressWarnings({"unchecked" })
 	@Test
-	public void testCase1() throws DeadlineNotSatisfiedException{
+	public void testCase1() throws DeadlineNotSatisfiedException, TaskNotScalableException{
 		
 		this.setTasksCase1();
 		AreaChart<Number,Number> temporalDiagram = (AreaChart<Number,Number>) this.scheduler.simulate();
@@ -328,7 +327,6 @@ public class RateMonotonicSchedulerTest {
 		
 		/* Verifica quantas tarefas foram criadas no mapa */
 		Assert.assertEquals(3, map.keySet().size());
-		
 		
 		/* Verifica quantas vezes a tarefa 'T1' aparece no grafico */
 		Assert.assertEquals(2, map.get("T1").size());
@@ -533,7 +531,7 @@ public class RateMonotonicSchedulerTest {
 	}
 	
 	@SuppressWarnings({"unchecked" })
-	@Test
+	@Test(expected=DeadlineNotSatisfiedException.class)
 	public void testCase6() throws DeadlineNotSatisfiedException{
 		
 		this.setTasksCase6();

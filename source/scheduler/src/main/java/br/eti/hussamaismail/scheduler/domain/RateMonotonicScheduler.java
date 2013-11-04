@@ -23,10 +23,12 @@ public class RateMonotonicScheduler extends MonotonicScheduler {
 	/**
 	 * Modifica o comportamento ordendando as classes
 	 * por periodo de forma crescente
+	 * @throws DeadlineNotSatisfiedException 
+	 * @throws TaskNotScalableException 
 	 */
 	@Override
 	public void calculateMaximumResponseTimeToTheTasks()
-			throws TaskNotScalableException {	
+			throws DeadlineNotSatisfiedException, TaskNotScalableException {	
 		this.getTasksUtil().sortTasksByPeriod(this);
 		super.calculateMaximumResponseTimeToTheTasks();
 	}
@@ -35,6 +37,7 @@ public class RateMonotonicScheduler extends MonotonicScheduler {
 	 * Gera o diagrama temporal utilizando o maior
 	 * periodo como referencia para o grafico e também 
 	 * menor período com prioridade.
+	 * @throws TaskNotScalableException 
 	 */
 	@Override
 	public Chart simulate() throws DeadlineNotSatisfiedException {

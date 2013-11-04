@@ -23,10 +23,11 @@ public class DeadlineMonotonicScheduler extends MonotonicScheduler {
 	/**
 	 * Modifica o comportamento ordendando as classes
 	 * por deadline de forma crescente
+	 * @throws DeadlineNotSatisfiedException 
 	 */
 	@Override
 	public void calculateMaximumResponseTimeToTheTasks()
-			throws TaskNotScalableException {	
+			throws TaskNotScalableException, DeadlineNotSatisfiedException {	
 		this.getTasksUtil().sortTasksByDeadline(this);
 		super.calculateMaximumResponseTimeToTheTasks();
 	}
@@ -35,6 +36,7 @@ public class DeadlineMonotonicScheduler extends MonotonicScheduler {
 	 * Gera o diagrama temporal utilizando o maior
 	 * deadline como referencia para o grafico e também 
 	 * menor deadline com prioridade.
+	 * @throws TaskNotScalableException 
 	 */
 	@Override
 	public Chart simulate() throws DeadlineNotSatisfiedException {
