@@ -50,8 +50,8 @@ public class RoundRobinSchedulerTest {
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("B");
 		t2.setComputationTime(20);
-		t2.setPeriod(80);
-		t2.setDeadline(80);
+		t2.setPeriod(100);
+		t2.setDeadline(100);
 
 		PeriodicTask t3 = new PeriodicTask();
 		t3.setName("C");
@@ -62,8 +62,8 @@ public class RoundRobinSchedulerTest {
 		PeriodicTask t4 = new PeriodicTask();
 		t4.setName("D");
 		t4.setComputationTime(20);
-		t4.setPeriod(80);
-		t4.setDeadline(80);
+		t4.setPeriod(100);
+		t4.setDeadline(100);
 		
 		this.scheduler.setSlotSize(10);
 		
@@ -80,35 +80,35 @@ public class RoundRobinSchedulerTest {
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("A");
 		t1.setComputationTime(6);
-		t1.setPeriod(0);
+		t1.setPeriod(100);
 		t1.setDeadline(100);
 		t1.setActivationTime(0);
 
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("B");
 		t2.setComputationTime(5);
-		t2.setPeriod(0);
+		t2.setPeriod(100);
 		t2.setDeadline(100);
 		t2.setActivationTime(0);
 
 		PeriodicTask t3 = new PeriodicTask();
 		t3.setName("C");
 		t3.setComputationTime(2);
-		t3.setPeriod(0);
+		t3.setPeriod(100);
 		t3.setDeadline(100);
 		t3.setActivationTime(0);
 		
 		PeriodicTask t4 = new PeriodicTask();
 		t4.setName("D");
 		t4.setComputationTime(3);
-		t4.setPeriod(0);
+		t4.setPeriod(100);
 		t4.setDeadline(100);
 		t4.setActivationTime(0);
 		
 		PeriodicTask t5 = new PeriodicTask();
 		t5.setName("E");
 		t5.setComputationTime(7);
-		t5.setPeriod(0);
+		t5.setPeriod(100);
 		t5.setDeadline(100);
 		t5.setActivationTime(0);
 		
@@ -128,21 +128,21 @@ public class RoundRobinSchedulerTest {
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("A");
 		t1.setComputationTime(20);
-		t1.setPeriod(0);
+		t1.setPeriod(100);
 		t1.setDeadline(100);
 		t1.setActivationTime(0);
 
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("B");
 		t2.setComputationTime(7);
-		t2.setPeriod(0);
+		t2.setPeriod(100);
 		t2.setDeadline(100);
 		t2.setActivationTime(0);
 
 		PeriodicTask t3 = new PeriodicTask();
 		t3.setName("C");
 		t3.setComputationTime(3);
-		t3.setPeriod(0);
+		t3.setPeriod(100);
 		t3.setDeadline(100);
 		t3.setActivationTime(0);
 		
@@ -159,21 +159,21 @@ public class RoundRobinSchedulerTest {
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("A");
 		t1.setComputationTime(20);
-		t1.setPeriod(0);
+		t1.setPeriod(100);
 		t1.setDeadline(100);
 		t1.setActivationTime(0);
 
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("B");
 		t2.setComputationTime(7);
-		t2.setPeriod(0);
+		t2.setPeriod(100);
 		t2.setDeadline(12);
 		t2.setActivationTime(0);
 
 		PeriodicTask t3 = new PeriodicTask();
 		t3.setName("C");
 		t3.setComputationTime(3);
-		t3.setPeriod(0);
+		t3.setPeriod(100);
 		t3.setDeadline(100);
 		t3.setActivationTime(0);
 		
@@ -191,14 +191,14 @@ public class RoundRobinSchedulerTest {
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("A");
 		t1.setComputationTime(3);
-		t1.setPeriod(0);
+		t1.setPeriod(100);
 		t1.setDeadline(10);
 		t1.setActivationTime(0);
 
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("B");
 		t2.setComputationTime(4);
-		t2.setPeriod(0);
+		t2.setPeriod(100);
 		t2.setDeadline(20);
 		t2.setActivationTime(0);
 
