@@ -348,12 +348,14 @@ public class TasksUtil {
 		List<PeriodicTask> onlyPeriodicTasksFromTasks = (List<PeriodicTask>) getOnlyPeriodicTasksFromTaskList(tasks);
 		for (PeriodicTask periodicTask : onlyPeriodicTasksFromTasks) {
 			int activationTime = periodicTask.getActivationTime();
+			PeriodicTask clone = periodicTask.clone();
+			clone.setDeadline(periodicTask.getDeadline() + activationTime);
 			if (mapActivationTime.containsKey(activationTime) == false){
 				List<Task> periodTaskList = new ArrayList<Task>();
-				periodTaskList.add(periodicTask);
+				periodTaskList.add(clone);
 				mapActivationTime.put(activationTime, periodTaskList);
 			}else{
-				mapActivationTime.get(activationTime).add(periodicTask);
+				mapActivationTime.get(activationTime).add(clone);
 			}
 		}
 		

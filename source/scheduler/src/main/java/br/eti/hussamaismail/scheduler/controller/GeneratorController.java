@@ -429,30 +429,52 @@ public class GeneratorController implements Initializable {
 //		s1.setComputationTime(1);
 //		s1.setActivationTime(0);	
 //		
+//		PeriodicTask t1 = new PeriodicTask();
+//		t1.setName("T1");
+//		t1.setComputationTime(3);
+//		t1.setPeriod(20);
+//		t1.setDeadline(20);
+//		t1.setActivationTime(0);
+//	
+//		PeriodicTask t2 = new PeriodicTask();
+//		t2.setName("T2");
+//		t2.setComputationTime(2);
+//		t2.setPeriod(5);
+//		t2.setDeadline(5);
+//		t2.setActivationTime(0);
+//		
+//		PeriodicTask t3 = new PeriodicTask();
+//		t3.setName("T3");
+//		t3.setComputationTime(2);
+//		t3.setPeriod(10);
+//		t3.setDeadline(10);
+//		t3.setActivationTime(0);
+//				
 		PeriodicTask t1 = new PeriodicTask();
-		t1.setName("T1");
-		t1.setComputationTime(3);
-		t1.setPeriod(20);
-		t1.setDeadline(20);
+		t1.setName("A");
+		t1.setComputationTime(10);
+		t1.setPeriod(1000);
+		t1.setDeadline(33);
 		t1.setActivationTime(0);
-	
+
 		PeriodicTask t2 = new PeriodicTask();
-		t2.setName("T2");
-		t2.setComputationTime(2);
-		t2.setPeriod(5);
-		t2.setDeadline(5);
-		t2.setActivationTime(0);
-		
+		t2.setName("B");
+		t2.setComputationTime(3);
+		t2.setPeriod(1000);
+		t2.setDeadline(28);
+		t2.setActivationTime(4);
+
 		PeriodicTask t3 = new PeriodicTask();
-		t3.setName("T3");
-		t3.setComputationTime(2);
-		t3.setPeriod(10);
-		t3.setDeadline(10);
-		t3.setActivationTime(0);
-				
+		t3.setName("C");
+		t3.setComputationTime(10);
+		t3.setPeriod(1000);
+		t3.setDeadline(29);
+		t3.setActivationTime(1);
+		
 		GeneratorController.TASKS.add(t1);
 		GeneratorController.TASKS.add(t2);
 		GeneratorController.TASKS.add(t3);
+
 //		sGeneratorController.TASKS.add(s1);
 		
 		tasksTable.getItems().addAll(GeneratorController.TASKS);
