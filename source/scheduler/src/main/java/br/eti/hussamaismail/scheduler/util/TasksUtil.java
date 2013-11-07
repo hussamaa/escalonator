@@ -49,6 +49,34 @@ public class TasksUtil {
 	}
 	
 	/**
+	 * Metodo que ordena a lista de tarefas  
+	 * usando como base o deadline
+	 * 
+	 * @param periodicTasks
+	 */
+	public void sortTasksByDeadline(List<PeriodicTask> periodicTasks){				
+		Collections.sort(periodicTasks, new Comparator<PeriodicTask>() {
+			public int compare(PeriodicTask pt1, PeriodicTask pt2) {
+				
+				int compareValues = compareValues(pt1.getDeadline(), pt2.getDeadline());
+				
+				if (compareValues != 0){
+					return compareValues;
+				}else{
+					/* criterio de desempate para tarefas com mesmo deadline */
+					if(pt1.getActivationTime() > pt2.getActivationTime()){
+						return -1;
+					}else if(pt1.getActivationTime() < pt2.getActivationTime()){
+						return 1;						
+					}else{
+						return 0;
+					}
+				}
+			}
+		});		
+	}
+	
+	/**
 	 * Metodo que ordena a lista de tarefas de um  
 	 * scheduler com base no seu deadline
 	 * 
@@ -406,10 +434,12 @@ public class TasksUtil {
 				PeriodicTask pTaskClone = periodicTask.clone();
 				if (mapPeriods.containsKey(periodAccumulator) == false){
 					List<PeriodicTask> periodTaskList = new ArrayList<PeriodicTask>();
+					pTaskClone.setActivationTime(periodAccumulator);
 					pTaskClone.setDeadline(pTaskClone.getDeadline() + periodAccumulator);
 					periodTaskList.add(pTaskClone);
 					mapPeriods.put(periodAccumulator, periodTaskList);
 				}else{
+					pTaskClone.setActivationTime(periodAccumulator);
 					pTaskClone.setDeadline(pTaskClone.getDeadline() + periodAccumulator);
 					mapPeriods.get(periodAccumulator).add(pTaskClone);
 				}

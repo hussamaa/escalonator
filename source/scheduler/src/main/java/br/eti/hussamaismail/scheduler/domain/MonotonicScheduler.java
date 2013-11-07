@@ -184,12 +184,31 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 			if (pendentTasks.isEmpty()){
 				position = position + 1;
 				continue;
+			}else{
+				if (this instanceof DeadlineMonotonicScheduler){
+					getTasksUtil().sortTasksByDeadline(pendentTasks);
+				}
 			}
 			
 			boolean initialized = false;
-			Iterator<PeriodicTask> pendentTasksIterator = pendentTasks.iterator();
-			while (pendentTasksIterator.hasNext()){
-				PeriodicTask pTask = pendentTasksIterator.next();
+			while (pendentTasks.size() > 0){
+			
+				PeriodicTask pTask = pendentTasks.get(0);
+				
+				if ((isPreemptive() == false) && (pTask.getCurrentProcessed() == 0) && (mapTaskEvent.containsKey(position))){
+					if (this instanceof DeadlineMonotonicScheduler){
+						
+						for (PeriodicTask periodicTask : mapTaskEvent.get(position)) {
+							if (pendentTasks.contains(periodicTask) == false){
+								pendentTasks.add(periodicTask);
+							}
+						}
+				
+						getTasksUtil().sortTasksByDeadline(pendentTasks);
+						pTask = pendentTasks.get(0);						
+					}					
+				}
+				
 				Series<Number, Number> chartTask = getTasksUtil().getChartTask(chartTasks, pTask);	
 				chartTask.getData().add(new Data<Number, Number>(position, 0));
 				chartTask.getData().add(new Data<Number, Number>(position, 1));
@@ -211,6 +230,11 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 							chartTask.getData().add(new Data<Number, Number>(position, 1));
 							chartTask.getData().add(new Data<Number, Number>(position, 0));
 							List<PeriodicTask> priorityTasks = mapTaskEvent.get(position);
+							
+							if (this instanceof DeadlineMonotonicScheduler){
+								getTasksUtil().sortTasksByDeadline(priorityTasks);
+							}
+							
 							for (PeriodicTask pTask2 : priorityTasks) {
 								
 								if (position > higherValue){
@@ -241,13 +265,24 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 							chartTask.getData().add(new Data<Number, Number>(position, 0));
 							chartTask.getData().add(new Data<Number, Number>(position, 1));
 						}else if (mapTaskEvent.containsKey(position) && (isPreemptive() == false)){
-							nonPreemptivePendentTasks.add(mapTaskEvent.get(position));
+							List<PeriodicTask> list = mapTaskEvent.get(position);
+							List<PeriodicTask> validPreemptiveList = new ArrayList<PeriodicTask>();
+							for (PeriodicTask periodicTask : list) {
+								if (pendentTasks.contains(periodicTask) == false){
+									validPreemptiveList.add(periodicTask);
+								}
+							}
+							nonPreemptivePendentTasks.add(validPreemptiveList);							
 						}
 
 					}
 					initialized = true;
 					pTask.process(1);
 					position = position + 1;
+					
+					if (pTask.getRemaining() == 0){
+						pendentTasks.remove(pTask);
+					}
 				}
 							
 				chartTask.getData().add(new Data<Number, Number>(position, 1));
@@ -292,9 +327,6 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 			if (violatedDeadlineEntity != null){
 				break;
 			}	
-			
-			pendentTasks.removeAll(pendentTasks);
-								
 		}	
 		ac.getData().addAll(chartTasks);
 		
@@ -321,6 +353,8 @@ public abstract class MonotonicScheduler extends DynamicScheduler {
 			List<PeriodicTask> next = iterator.next();
 			resultantList.addAll(next);
 		}
+		
+		getTasksUtil().sortTasksByDeadline(resultantList);
 		
 		return resultantList;
 	}

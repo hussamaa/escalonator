@@ -451,25 +451,22 @@ public class GeneratorController implements Initializable {
 //		t3.setActivationTime(0);
 //				
 		PeriodicTask t1 = new PeriodicTask();
-		t1.setName("A");
-		t1.setComputationTime(10);
-		t1.setPeriod(1000);
-		t1.setDeadline(33);
-		t1.setActivationTime(0);
+		t1.setName("T1");
+		t1.setComputationTime(3);
+		t1.setPeriod(20);
+		t1.setDeadline(7);
 
 		PeriodicTask t2 = new PeriodicTask();
-		t2.setName("B");
-		t2.setComputationTime(3);
-		t2.setPeriod(1000);
-		t2.setDeadline(28);
-		t2.setActivationTime(4);
+		t2.setName("T2");
+		t2.setComputationTime(2);
+		t2.setPeriod(5);
+		t2.setDeadline(4);
 
 		PeriodicTask t3 = new PeriodicTask();
-		t3.setName("C");
-		t3.setComputationTime(10);
-		t3.setPeriod(1000);
-		t3.setDeadline(29);
-		t3.setActivationTime(1);
+		t3.setName("T3");
+		t3.setComputationTime(2);
+		t3.setPeriod(10);
+		t3.setDeadline(9);
 		
 		GeneratorController.TASKS.add(t1);
 		GeneratorController.TASKS.add(t2);

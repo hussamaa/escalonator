@@ -198,10 +198,10 @@ public class DeadlineMonotonicSchedulerTest {
 		Assert.assertEquals(Long.valueOf(0), Long.valueOf(intervalT21[0]));
 		Assert.assertEquals(Long.valueOf(2), Long.valueOf(intervalT21[1]));
 		
-		/* Verifica os intevalos da tarefa T2 [7-9] */
+		/* Verifica os intevalos da tarefa T2 [5-7] */
 		Integer[] intervalT22 = map.get("T2").get(1);
-		Assert.assertEquals(Long.valueOf(7), Long.valueOf(intervalT22[0]));
-		Assert.assertEquals(Long.valueOf(9), Long.valueOf(intervalT22[1]));
+		Assert.assertEquals(Long.valueOf(5), Long.valueOf(intervalT22[0]));
+		Assert.assertEquals(Long.valueOf(7), Long.valueOf(intervalT22[1]));
 		
 		/* Verifica os intevalos da tarefa T2 [10-12] */
 		Integer[] intervalT23 = map.get("T2").get(2);
@@ -217,10 +217,10 @@ public class DeadlineMonotonicSchedulerTest {
 		/* Verifica quantas vezes a tarefa 'T3' aparece no grafico */
 		Assert.assertEquals(2, map.get("T3").size());
 		
-		/* Verifica os intevalos da tarefa T3 [5-7] */
+		/* Verifica os intevalos da tarefa T3 [7-9] */
 		Integer[] intervalT31 = map.get("T3").get(0);
-		Assert.assertEquals(Long.valueOf(5), Long.valueOf(intervalT31[0]));
-		Assert.assertEquals(Long.valueOf(7), Long.valueOf(intervalT31[1]));
+		Assert.assertEquals(Long.valueOf(7), Long.valueOf(intervalT31[0]));
+		Assert.assertEquals(Long.valueOf(9), Long.valueOf(intervalT31[1]));
 		
 		/* Verifica os intevalos da tarefa T3 [12-14] */
 		Integer[] intervalT32 = map.get("T3").get(1);
