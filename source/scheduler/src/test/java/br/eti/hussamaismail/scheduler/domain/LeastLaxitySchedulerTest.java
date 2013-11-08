@@ -184,7 +184,7 @@ public class LeastLaxitySchedulerTest {
 	
 	public void setTasksCase5(){
 		
-		this.scheduler.getTasks().removeAll(this.scheduler.getTasks());
+		this.scheduler.getTasks().clear();
 		
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("A");

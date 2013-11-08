@@ -121,7 +121,13 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 
 			/* Adiciona as tarefas periodicas a uma lista de tarefas pendentes */
 			if (mapPeriods.containsKey(position)) {
-				pendentTasks.addAll(mapPeriods.get(position));
+//				pendentTasks.addAll(mapPeriods.get(position));
+				for (PeriodicTask task : mapPeriods.get(position)){
+					if (!(SporadicPolicy.SPORADIC_SERVER.equals(getSporadicPolicy()) && task.getName().equals("TS"))){
+						pendentTasks.add(task);
+					}
+				}
+				
 			}
 
 			/* Adiciona as tarefas esporadicas a uma lista de tarefas pendentes */
@@ -199,6 +205,11 @@ public class EarliestDeadlineFirstScheduler extends DynamicScheduler {
 				
 				PeriodicTask earliestDeadline = getEarliestDeadline(
 						pendentTasks, position);
+				
+				if((SporadicPolicy.SPORADIC_SERVER.equals(getSporadicPolicy())) && (earliestDeadline.getName().equals("TS"))){
+					pendentTasks.remove(earliestDeadline);
+					continue;
+				}
 
 				/* Violacao de deadline */
 				if (earliestDeadline.getDeadline() <= position) {

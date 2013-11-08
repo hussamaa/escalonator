@@ -394,15 +394,15 @@ public class GeneratorController implements Initializable {
 		configureTable();
 //	xs
 
-		
+//		
 //		PeriodicTask ts = new PeriodicTask();
 //		ts.setName("TS");
 //		ts.setComputationTime(2);
 //		ts.setPeriod(10);
 //		ts.setDeadline(8);
-		
-//ss
-	
+//		
+////ss
+//	
 //		PeriodicTask t1 = new PeriodicTask();
 //		t1.setName("T1");
 //		t1.setComputationTime(5);
@@ -410,12 +410,12 @@ public class GeneratorController implements Initializable {
 //		t1.setDeadline(7);
 //		t1.setActivationTime(0);
 //
-//		PeriodicTask t2 = new PeriodicTask();
-//		t2.setName("T2");
-//		t2.setComputationTime(2);
-//		t2.setPeriod(5);
-//		t2.setDeadline(4);
-//		t2.setActivationTime(0);
+////		PeriodicTask t2 = new PeriodicTask();
+////		t2.setName("T2");
+////		t2.setComputationTime(2);
+////		t2.setPeriod(5);
+////		t2.setDeadline(4);
+////		t2.setActivationTime(0);
 //		
 //		PeriodicTask t3 = new PeriodicTask();
 //		t3.setName("T3");
@@ -425,7 +425,7 @@ public class GeneratorController implements Initializable {
 //		t3.setActivationTime(0);
 //		
 //		SporadicTask s1 = new SporadicTask();
-//		s1.setName("T1");
+//		s1.setName("S1");
 //		s1.setComputationTime(1);
 //		s1.setActivationTime(0);	
 //		
@@ -450,29 +450,71 @@ public class GeneratorController implements Initializable {
 //		t3.setDeadline(10);
 //		t3.setActivationTime(0);
 //				
+//		PeriodicTask t1 = new PeriodicTask();
+//		t1.setName("T1");
+//		t1.setComputationTime(3);
+//		t1.setPeriod(20);
+//		t1.setDeadline(7);
+//
+//		PeriodicTask t2 = new PeriodicTask();
+//		t2.setName("T2");
+//		t2.setComputationTime(2);
+//		t2.setPeriod(5);
+//		t2.setDeadline(4);
+//
+//		PeriodicTask t3 = new PeriodicTask();
+//		t3.setName("T3");
+//		t3.setComputationTime(2);
+//		t3.setPeriod(10);
+//		t3.setDeadline(9);
+		
 		PeriodicTask t1 = new PeriodicTask();
 		t1.setName("T1");
 		t1.setComputationTime(3);
 		t1.setPeriod(20);
 		t1.setDeadline(7);
-
+		
 		PeriodicTask t2 = new PeriodicTask();
 		t2.setName("T2");
 		t2.setComputationTime(2);
-		t2.setPeriod(5);
-		t2.setDeadline(4);
-
-		PeriodicTask t3 = new PeriodicTask();
-		t3.setName("T3");
-		t3.setComputationTime(2);
-		t3.setPeriod(10);
-		t3.setDeadline(9);
+		t2.setPeriod(8);
+		t2.setDeadline(7);
+		
+//		PeriodicTask t3 = new PeriodicTask();
+//		t3.setName("T3");
+//		t3.setComputationTime(1);
+//		t3.setPeriod(10);
+//		t3.setDeadline(8);
+		
+		PeriodicTask ts = new PeriodicTask();
+		ts.setName("TS");
+		ts.setComputationTime(2);
+		ts.setPeriod(10);
+		ts.setDeadline(8);
+		
+		SporadicTask s1 = new SporadicTask();
+		s1.setName("S1");
+		s1.setComputationTime(1);
+		s1.setActivationTime(0);
+		
+//		this.scheduler.setSporadicPolicy(SporadicPolicy.SPORADIC_SERVER);
+//		
+//		this.scheduler.getTasks().add(t1);
+//		this.scheduler.getTasks().add(t2);
+//		this.scheduler.getTasks().add(t3);
+//		this.scheduler.getTasks().add(ts);
+//		
+//		this.scheduler.getTasks().add(s1);
+		
 		
 		GeneratorController.TASKS.add(t1);
 		GeneratorController.TASKS.add(t2);
-		GeneratorController.TASKS.add(t3);
+//		GeneratorController.TASKS.add(t3);
 
-//		sGeneratorController.TASKS.add(s1);
+		GeneratorController.TASKS.add(ts);
+
+		
+		GeneratorController.TASKS.add(s1);
 		
 		tasksTable.getItems().addAll(GeneratorController.TASKS);
 	}
