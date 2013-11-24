@@ -1,0 +1,19 @@
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.collections.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.image.*?>
+
+<TabPane id="MainTabs" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml">
+    <tabs>
+        <fx:include source="/fxml/tabs/generator.fxml"/>
+    </tabs>
+</TabPane>
