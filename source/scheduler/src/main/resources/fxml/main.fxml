@@ -14,6 +14,6 @@
 
 <TabPane id="MainTabs" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml">
     <tabs>
-        <fx:include source="/fxml/tabs/generator.fxml"/>
+        <fx:include source="/home/hussamaismail/Repositorios/escalonator/source/scheduler/src/main/resources/fxml/tabs/generator.fxml"/>
     </tabs>
 </TabPane>

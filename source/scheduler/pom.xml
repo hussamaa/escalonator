@@ -6,7 +6,6 @@
 	<artifactId>scheduler</artifactId>
 	<name>scheduler</name>
 	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
 	<organization>
 		<name>Hussama Ismail</name>
 	</organization>
@@ -15,7 +14,7 @@
 		<java.version>1.7</java.version>
 	</properties>
 	<build>
-		<finalName>scheduler</finalName>
+		<finalName>escalonator</finalName>
 		<plugins>
 			<plugin>
 				<groupId>com.zenjava</groupId>
@@ -82,4 +81,5 @@
 			<systemPath>${basedir}/lib/javafx-dialogs-0.0.3.jar</systemPath>
 		</dependency>
 	</dependencies>
+	<version>0.1</version>
 </project>

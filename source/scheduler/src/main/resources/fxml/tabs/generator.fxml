@@ -18,7 +18,9 @@
 <?scenebuilder-preview-i18n-resource ../../message_pt_BR.properties?>
 <?scenebuilder-stylesheet ../../styles/styles.css?>
 
-<Tab fx:id="liveTab" text="" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="br.eti.hussamaismail.scheduler.controller.GeneratorController">
+<TabPane id="MainTabs" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml" fx:controller="br.eti.hussamaismail.scheduler.controller.GeneratorController">
+    <tabs>
+<Tab fx:id="liveTab" text="" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" >
   <content>
     <SplitPane fx:id="liveView" minHeight="768.0" minWidth="1024.0" orientation="VERTICAL" style="-fx-padding: 0; -fx-background-color: radial-gradient(center 70% 5%, radius 60%, #767a7b,#2b2f32); -fx-background-image: url(&quot;/styles/images/noise.png&quot;) , url(&quot;title.png&quot;); -fx-background-repeat: repeat, no-repeat; -fx-background-position: left top, left 19px top 15px ;">
       <items>
@@ -111,3 +113,5 @@
     </SplitPane>
   </content>
 </Tab>
+</tabs>
+</TabPane>

@@ -1,3 +1,19 @@
+/*
+This file is part of Escalonator.
+
+Escalonator is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Escalonator is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Escalonator. If not, see <http://www.gnu.org/licenses/>.
+*/
 package br.eti.hussamaismail.scheduler.controller;
 
 import java.net.URL;
@@ -62,130 +78,130 @@ import br.eti.hussamaismail.scheduler.util.TasksUtil;
 
 import com.sun.prism.impl.Disposer.Record;
 
-@SuppressWarnings({ "unchecked", "rawtypes", "restriction" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GeneratorController implements Initializable {
 
-	private static final Logger log = LoggerFactory.getLogger(MainApp.class);
+        private static final Logger log = LoggerFactory.getLogger(MainApp.class);
 
-	public static List<Task> TASKS =  new ArrayList<Task>();
-	public static int TIME_SLOT = 1;
-	public static Task TASK;
-	private static VBox VBOX;
-	
-	private TasksUtil tasksUtil;
-	private AreaChart<Number, Number> serverCapacity;
-	private Stage stageServerCapacity;
-	
-	@FXML private static TableView<Task> tasksTable;
-	@FXML private Pane chartPanel;
+        public static List<Task> TASKS = new ArrayList<Task>();
+        public static int TIME_SLOT = 1;
+        public static Task TASK;
+        private static VBox VBOX;
+        
+        private TasksUtil tasksUtil;
+        private AreaChart<Number, Number> serverCapacity;
+        private Stage stageServerCapacity;
+        
+        @FXML private static TableView<Task> tasksTable;
+        @FXML private Pane chartPanel;
 
-	@FXML private TableColumn taskNameColumn;
-	@FXML private TableColumn taskComputationTimeColumn;
-	@FXML private TableColumn taskPeriodColumn;
-	@FXML private TableColumn taskDeadlineColumn;
-	@FXML private TableColumn taskTypeColumn;
-	@FXML private TableColumn taskActivationTimeColumn;
-	
-	@FXML private ChoiceBox techniqueChoiceBox;
-	@FXML private ChoiceBox sporadicPolicy;
-	@FXML private GridPane simulateControl;
-	@FXML private CheckBox preemptiveCheckBox;	
+        @FXML private TableColumn taskNameColumn;
+        @FXML private TableColumn taskComputationTimeColumn;
+        @FXML private TableColumn taskPeriodColumn;
+        @FXML private TableColumn taskDeadlineColumn;
+        @FXML private TableColumn taskTypeColumn;
+        @FXML private TableColumn taskActivationTimeColumn;
+        
+        @FXML private ChoiceBox techniqueChoiceBox;
+        @FXML private ChoiceBox sporadicPolicy;
+        @FXML private GridPane simulateControl;
+        @FXML private CheckBox preemptiveCheckBox;        
 
-	@FXML private RadioButton radioRateMonotonic;
-	@FXML private RadioButton radioDeadlineMonotonic;
-	@FXML private RadioButton radioEDF;
+        @FXML private RadioButton radioRateMonotonic;
+        @FXML private RadioButton radioDeadlineMonotonic;
+        @FXML private RadioButton radioEDF;
 
-	public GeneratorController() {
-		this.tasksUtil = TasksUtil.getInstance();
-	}
+        public GeneratorController() {
+                this.tasksUtil = TasksUtil.getInstance();
+        }
 
-	public void configureTable() {
-			
-		 Callback<TableColumn, TableCell> cellFactory = new Callback<TableColumn, TableCell>() {
-			 public TableCell call(TableColumn p) {
-	              return new EditingCell();
-	         }
-	     };
-		
-		taskNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-		taskNameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,String>>() {
-			@Override
-			public void handle(CellEditEvent<Task, String> t) {
-				t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
-			}
-		 });
-		
-		taskComputationTimeColumn.setCellFactory(cellFactory);
-		taskComputationTimeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
-			@Override
-			public void handle(CellEditEvent<Task, Integer> t) {
-				Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
-				task.setComputationTime(t.getNewValue());
-			}
-		 });
-		
-		taskPeriodColumn.setCellFactory(cellFactory);
-		taskPeriodColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
-			@Override
-			public void handle(CellEditEvent<Task, Integer> t) {
-				Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
-				if (task instanceof PeriodicTask){
-					PeriodicTask pTask = (PeriodicTask) task;
-					pTask.setPeriod(t.getNewValue());
-				}
-			}
-		 });
-		
-		taskDeadlineColumn.setCellFactory(cellFactory);
-		taskDeadlineColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
-			@Override
-			public void handle(CellEditEvent<Task, Integer> t) {
-				Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
-				if (task instanceof PeriodicTask){
-					PeriodicTask pTask = (PeriodicTask) task;
-					pTask.setDeadline(t.getNewValue());
-				}
-				
-			}
-		 });
-		
-		taskActivationTimeColumn.setCellFactory(cellFactory);
-		taskActivationTimeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
-			@Override
-			public void handle(CellEditEvent<Task, Integer> t) {
-				Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
-				task.setActivationTime(t.getNewValue());
-			}
-		 });
-				
-		taskTypeColumn.setCellFactory(new Callback<TableColumn<Task, String>, TableCell<Task, String>>() {
-			public TableCell<Task, String> call(
-					TableColumn<Task, String> arg0) {
-				TableCell cell = new TableCell<Task, Object>() {
-					@Override
-					protected void updateItem(Object arg0, boolean arg1) {
-						super.updateItem(arg0, arg1);
+        public void configureTable() {
+                        
+                 Callback<TableColumn, TableCell> cellFactory = new Callback<TableColumn, TableCell>() {
+                         public TableCell call(TableColumn p) {
+         return new EditingCell();
+         }
+         };
+                
+                taskNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+                taskNameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,String>>() {
+                        @Override
+                        public void handle(CellEditEvent<Task, String> t) {
+                                t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
+                        }
+                 });
+                
+                taskComputationTimeColumn.setCellFactory(cellFactory);
+                taskComputationTimeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
+                        @Override
+                        public void handle(CellEditEvent<Task, Integer> t) {
+                                Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
+                                task.setComputationTime(t.getNewValue());
+                        }
+                 });
+                
+                taskPeriodColumn.setCellFactory(cellFactory);
+                taskPeriodColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
+                        @Override
+                        public void handle(CellEditEvent<Task, Integer> t) {
+                                Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
+                                if (task instanceof PeriodicTask){
+                                        PeriodicTask pTask = (PeriodicTask) task;
+                                        pTask.setPeriod(t.getNewValue());
+                                }
+                        }
+                 });
+                
+                taskDeadlineColumn.setCellFactory(cellFactory);
+                taskDeadlineColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
+                        @Override
+                        public void handle(CellEditEvent<Task, Integer> t) {
+                                Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
+                                if (task instanceof PeriodicTask){
+                                        PeriodicTask pTask = (PeriodicTask) task;
+                                        pTask.setDeadline(t.getNewValue());
+                                }
+                                
+                        }
+                 });
+                
+                taskActivationTimeColumn.setCellFactory(cellFactory);
+                taskActivationTimeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Task,Integer>>() {
+                        @Override
+                        public void handle(CellEditEvent<Task, Integer> t) {
+                                Task task = t.getTableView().getItems().get(t.getTablePosition().getRow());
+                                task.setActivationTime(t.getNewValue());
+                        }
+                 });
+                                
+                taskTypeColumn.setCellFactory(new Callback<TableColumn<Task, String>, TableCell<Task, String>>() {
+                        public TableCell<Task, String> call(
+                                        TableColumn<Task, String> arg0) {
+                                TableCell cell = new TableCell<Task, Object>() {
+                                        @Override
+                                        protected void updateItem(Object arg0, boolean arg1) {
+                                                super.updateItem(arg0, arg1);
 
-						TableRow currentRow = getTableRow();
-						Task task = (Task) currentRow.getItem();
-						if (task != null) {
-							if (task instanceof PeriodicTask) {
-								this.setText("Periódica");
-							} else {
-								this.setText("Esporádica");
-							}
-						}
-					}
-				};
-				return cell;
-			}
-		});
-		
+                                                TableRow currentRow = getTableRow();
+                                                Task task = (Task) currentRow.getItem();
+                                                if (task != null) {
+                                                        if (task instanceof PeriodicTask) {
+                                                                this.setText("Periódica");
+                                                        } else {
+                                                                this.setText("Esporádica");
+                                                        }
+                                                }
+                                        }
+                                };
+                                return cell;
+                        }
+                });
+                
         TableColumn col_action = new TableColumn<>("");
         col_action.setSortable(false);
          
         col_action.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<Record, Boolean>, 
+                new Callback<TableColumn.CellDataFeatures<Record, Boolean>,
                 ObservableValue<Boolean>>() {
  
             @Override
@@ -193,335 +209,210 @@ public class GeneratorController implements Initializable {
                 return new SimpleBooleanProperty(p.getValue() != null);
             }
         });
-	 
-	        col_action.setCellFactory(
-	                new Callback<TableColumn<Record, Boolean>, TableCell<Record, Boolean>>() {
-	 
-	            @Override
-	            public TableCell<Record, Boolean> call(TableColumn<Record, Boolean> p) {
-	                return new ButtonCell();
-	            }
-	         
-	        });
+        
+         col_action.setCellFactory(
+         new Callback<TableColumn<Record, Boolean>, TableCell<Record, Boolean>>() {
+        
+         @Override
+         public TableCell<Record, Boolean> call(TableColumn<Record, Boolean> p) {
+         return new ButtonCell();
+         }
+        
+         });
         tasksTable.getColumns().add(col_action);
-	}
+        }
 
-	public void simulate() throws DeadlineNotSatisfiedException{
-		
-		/* Verifica se existem tarefas a serem escalonadas */
-		if (GeneratorController.TASKS.size() == 0){
-			Dialogs.showWarningDialog(MainApp.STAGE, "É necessário adicionar tarefas a serem escalonadas", "Não foi possível realizar a operação", "Alerta");
-			return;
-		}
+        public void simulate() throws DeadlineNotSatisfiedException{
+                
+                /* Verifica se existem tarefas a serem escalonadas */
+                if (GeneratorController.TASKS.size() == 0){
+                        Dialogs.showWarningDialog(MainApp.STAGE, "É necessário adicionar tarefas a serem escalonadas", "Não foi possível realizar a operação", "Alerta");
+                        return;
+                }
 
-		Chart simulatedChart = null;
-		this.serverCapacity = null;
-		boolean preemptive = preemptiveCheckBox.isSelected();
-		tasksUtil.resetAllTasks(TASKS);
-		
-		Object techniqueSelected = techniqueChoiceBox.getSelectionModel().getSelectedItem();
-		techniqueSelected = techniqueSelected != null ? techniqueSelected.toString().toUpperCase().replaceAll(" ", "") : "";
-		
-		boolean existsSporadic = existsSporadicTasks();	
-		/* Limita o trabalho com tarefas esporadicas somente ao EDF */
-		if ((!"EARLIESTDEADLINEFIRST".equals(techniqueSelected.toString())) && existsSporadic){
-			Dialogs.showWarningDialog(MainApp.STAGE, "Apenas a tecnica 'Earliest Deadline First' suporta tarefas esporadicas", "Não foi possível realizar a operação", "Alerta");
-			return;
-		}
-		
-		/* Verifica se alguma politica para as tarefas esporadicas foi selecionada */
-		if (existsSporadic && (sporadicPolicy.getValue() == null || sporadicPolicy.getValue().toString().length() == 0)){
-			Dialogs.showWarningDialog(MainApp.STAGE, "É necessário escolher uma política de escalonamento para as tarefas esporádicas", "Não foi possível realizar a operação", "Alerta");
-			return;
-		}
-		
-		try{
-			switch ((String)techniqueSelected){
-			
-				case "RATEMONOTONIC" : 
-					
-					RateMonotonicScheduler rateMonotonicScheduler = new RateMonotonicScheduler();
-					rateMonotonicScheduler.setTasks(TASKS);
-					rateMonotonicScheduler.setPreemptive(preemptive);
-					simulatedChart = rateMonotonicScheduler.simulate();
-					
-				break;
-				
-				case "DEADLINEMONOTONIC" : 
-					
-					DeadlineMonotonicScheduler deadlineMonotonicScheduler = new DeadlineMonotonicScheduler();
-					deadlineMonotonicScheduler.setTasks(TASKS);
-					deadlineMonotonicScheduler.setPreemptive(preemptive);
-		
-					simulatedChart = deadlineMonotonicScheduler.simulate();
-					
-				break;
-				
-				case "EARLIESTDEADLINEFIRST" : 
-										
-					String sporadicPolicyString = sporadicPolicy.getValue() != null ? sporadicPolicy.getValue().toString().toUpperCase().replaceAll(" ", "") : null;
-					EarliestDeadlineFirstScheduler edfScheduler = new EarliestDeadlineFirstScheduler();
-					edfScheduler.setTasks(TASKS);
-					
-					if ("SERVIDORBACKGROUND".equals(sporadicPolicyString)){
-						edfScheduler.setSporadicPolicy(SporadicPolicy.BACKGROUND_SERVER);
-						log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
-					}
-					
-					if ("SERVIDORPOLLING".equals(sporadicPolicyString)){
-						if (!existsTaskServer()){
-							Dialogs.showWarningDialog(MainApp.STAGE, "Para utilizar essa política para as tarefas esporádicas é necessário criar uma tarefa periódica com o nome de 'TS'.", "Não foi possível realizar a operação", "Alerta");
-							return;
-						}
-						edfScheduler.setSporadicPolicy(SporadicPolicy.POLLING_SERVER);
-						log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
-					}
-					
-					if ("SERVIDORSPORADIC".equals(sporadicPolicyString)){
-						if (!existsTaskServer()){
-							Dialogs.showWarningDialog(MainApp.STAGE, "Para utilizar essa política para as tarefas esporádicas é necessário criar uma tarefa periódica com o nome de 'TS'.", "Não foi possível realizar a operação", "Alerta");
-							return;
-						}
-						edfScheduler.setSporadicPolicy(SporadicPolicy.SPORADIC_SERVER);
-						log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
-					}
-				
-					simulatedChart = edfScheduler.simulate();
-					this.serverCapacity = (AreaChart<Number, Number>) edfScheduler.getServerCapacity();
-					
-				break;
-				
-				case "ROUNDROBIN" : 
-					Integer partTimeRB = getTimeSlotFromUser("Round Robin");
-					RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
-					roundRobinScheduler.setTasks(TASKS);
-					roundRobinScheduler.setSlotSize(partTimeRB);
-					simulatedChart = roundRobinScheduler.simulate();
-					
-				break;
-				
-				case "LEASTLAXITY" : 
-					Integer partTimeLL = getTimeSlotFromUser("Least Laxity");
-					LeastLaxityScheduler leastLaxityScheduler = new LeastLaxityScheduler();
-					leastLaxityScheduler.setTasks(TASKS);
-					leastLaxityScheduler.setSlotSize(partTimeLL);
-					simulatedChart = leastLaxityScheduler.simulate();
-					
-				break;
-				
-				default : 
-					
-					Dialogs.showWarningDialog(MainApp.STAGE, "É necessário escolher uma técnica de escalonamento", "Não foi possível realizar a operação", "Alerta");
-					log.error("É necessário escolher uma técnica para simular");
-					return; 
-					
-			}
-		}catch(DeadlineNotSatisfiedException e){
-			Dialogs.showErrorDialog(MainApp.STAGE, "Ocorreu violação de deadline durante o processamento das tarefas\n\nCausa: "+e.getMessage(), "Não foi possível escalonar com a técnica desejada",
-				    "Erro no escalonamento", e);
-			
-			if (e.getViolatedDeadlineEntity() == null){
-				return;
-			}
-			
-			simulatedChart = e.getViolatedDeadlineEntity().getGeneratedChart();			
-		
-		}catch(SchedulabilityConditionNotSatisfiedException e){
-			Dialogs.showErrorDialog(MainApp.STAGE, "O teste de escalonabilidade não foi satifeito para as tarefas informadas pelo usuário", "Não foi possível escalonar com a técnica desejada",
-				    "Erro no escalonamento", e);
-			return;
-		}
-		
-		if (simulatedChart == null){
-			Dialogs.showErrorDialog(MainApp.STAGE, "Ocorreu um erro não esperado durante o processamento", "Não foi possível escalonar com a técnica desejada",null);
-			log.error("Não foi possível escalonar com a técnica desejada");
-			return;
-		}
-		
-		chartPanel.getChildren().clear();
-		
-		Separator separator = new Separator();
-		separator.setVisible(false);
-		separator.setOrientation(Orientation.VERTICAL);
-		separator.setMinHeight(15);
-		
-		Label lbDiagramaTemporal = new Label();
-		lbDiagramaTemporal.setText("  Diagrama Temporal");
-		lbDiagramaTemporal.setStyle("-fx-text-fill: #e1fdff; -fx-font-weight: bold;");
+                Chart simulatedChart = null;
+                this.serverCapacity = null;
+                boolean preemptive = preemptiveCheckBox.isSelected();
+                tasksUtil.resetAllTasks(TASKS);
+                
+                Object techniqueSelected = techniqueChoiceBox.getSelectionModel().getSelectedItem();
+                techniqueSelected = techniqueSelected != null ? techniqueSelected.toString().toUpperCase().replaceAll(" ", "") : "";
+                
+                boolean existsSporadic = existsSporadicTasks();        
+                /* Limita o trabalho com tarefas esporadicas somente ao EDF */
+                if ((!"EARLIESTDEADLINEFIRST".equals(techniqueSelected.toString())) && existsSporadic){
+                        Dialogs.showWarningDialog(MainApp.STAGE, "Apenas a tecnica 'Earliest Deadline First' suporta tarefas esporadicas", "Não foi possível realizar a operação", "Alerta");
+                        return;
+                }
+                
+                /* Verifica se alguma politica para as tarefas esporadicas foi selecionada */
+                if (existsSporadic && (sporadicPolicy.getValue() == null || sporadicPolicy.getValue().toString().length() == 0)){
+                        Dialogs.showWarningDialog(MainApp.STAGE, "É necessário escolher uma política de escalonamento para as tarefas esporádicas", "Não foi possível realizar a operação", "Alerta");
+                        return;
+                }
+                
+                try{
+                        switch ((String)techniqueSelected){
+                        
+                                case "RATEMONOTONIC" :
+                                        
+                                        RateMonotonicScheduler rateMonotonicScheduler = new RateMonotonicScheduler();
+                                        rateMonotonicScheduler.setTasks(TASKS);
+                                        rateMonotonicScheduler.setPreemptive(preemptive);
+                                        simulatedChart = rateMonotonicScheduler.simulate();
+                                        
+                                break;
+                                
+                                case "DEADLINEMONOTONIC" :
+                                        
+                                        DeadlineMonotonicScheduler deadlineMonotonicScheduler = new DeadlineMonotonicScheduler();
+                                        deadlineMonotonicScheduler.setTasks(TASKS);
+                                        deadlineMonotonicScheduler.setPreemptive(preemptive);
+                
+                                        simulatedChart = deadlineMonotonicScheduler.simulate();
+                                        
+                                break;
+                                
+                                case "EARLIESTDEADLINEFIRST" :
+                                                                                
+                                        String sporadicPolicyString = sporadicPolicy.getValue() != null ? sporadicPolicy.getValue().toString().toUpperCase().replaceAll(" ", "") : null;
+                                        EarliestDeadlineFirstScheduler edfScheduler = new EarliestDeadlineFirstScheduler();
+                                        edfScheduler.setTasks(TASKS);
+                                        
+                                        if ("SERVIDORBACKGROUND".equals(sporadicPolicyString)){
+                                                edfScheduler.setSporadicPolicy(SporadicPolicy.BACKGROUND_SERVER);
+                                                log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
+                                        }
+                                        
+                                        if ("SERVIDORPOLLING".equals(sporadicPolicyString)){
+                                                if (!existsTaskServer()){
+                                                        Dialogs.showWarningDialog(MainApp.STAGE, "Para utilizar essa política para as tarefas esporádicas é necessário criar uma tarefa periódica com o nome de 'TS'.", "Não foi possível realizar a operação", "Alerta");
+                                                        return;
+                                                }
+                                                edfScheduler.setSporadicPolicy(SporadicPolicy.POLLING_SERVER);
+                                                log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
+                                        }
+                                        
+                                        if ("SERVIDORSPORADIC".equals(sporadicPolicyString)){
+                                                if (!existsTaskServer()){
+                                                        Dialogs.showWarningDialog(MainApp.STAGE, "Para utilizar essa política para as tarefas esporádicas é necessário criar uma tarefa periódica com o nome de 'TS'.", "Não foi possível realizar a operação", "Alerta");
+                                                        return;
+                                                }
+                                                edfScheduler.setSporadicPolicy(SporadicPolicy.SPORADIC_SERVER);
+                                                log.debug("Politica Background: " + edfScheduler.getSporadicPolicy());
+                                        }
+                                
+                                        simulatedChart = edfScheduler.simulate();
+                                        this.serverCapacity = (AreaChart<Number, Number>) edfScheduler.getServerCapacity();
+                                        
+                                break;
+                                
+                                case "ROUNDROBIN" :
+                                        Integer partTimeRB = getTimeSlotFromUser("Round Robin");
+                                        RoundRobinScheduler roundRobinScheduler = new RoundRobinScheduler();
+                                        roundRobinScheduler.setTasks(TASKS);
+                                        roundRobinScheduler.setSlotSize(partTimeRB);
+                                        simulatedChart = roundRobinScheduler.simulate();
+                                        
+                                break;
+                                
+                                case "LEASTLAXITY" :
+                                        Integer partTimeLL = getTimeSlotFromUser("Least Laxity");
+                                        LeastLaxityScheduler leastLaxityScheduler = new LeastLaxityScheduler();
+                                        leastLaxityScheduler.setTasks(TASKS);
+                                        leastLaxityScheduler.setSlotSize(partTimeLL);
+                                        simulatedChart = leastLaxityScheduler.simulate();
+                                        
+                                break;
+                                
+                                default :
+                                        
+                                        Dialogs.showWarningDialog(MainApp.STAGE, "É necessário escolher uma técnica de escalonamento", "Não foi possível realizar a operação", "Alerta");
+                                        log.error("É necessário escolher uma técnica para simular");
+                                        return;
+                                        
+                        }
+                }catch(DeadlineNotSatisfiedException e){
+                        Dialogs.showErrorDialog(MainApp.STAGE, "Ocorreu violação de deadline durante o processamento das tarefas\n\nCausa: "+e.getMessage(), "Não foi possível escalonar com a técnica desejada",
+                                 "Erro no escalonamento", e);
+                        
+                        if (e.getViolatedDeadlineEntity() == null){
+                                return;
+                        }
+                        
+                        simulatedChart = e.getViolatedDeadlineEntity().getGeneratedChart();                        
+                
+                }catch(SchedulabilityConditionNotSatisfiedException e){
+                        Dialogs.showErrorDialog(MainApp.STAGE, "O teste de escalonabilidade não foi satifeito para as tarefas informadas pelo usuário", "Não foi possível escalonar com a técnica desejada",
+                                 "Erro no escalonamento", e);
+                        return;
+                }
+                
+                if (simulatedChart == null){
+                        Dialogs.showErrorDialog(MainApp.STAGE, "Ocorreu um erro não esperado durante o processamento", "Não foi possível escalonar com a técnica desejada",null);
+                        log.error("Não foi possível escalonar com a técnica desejada");
+                        return;
+                }
+                
+                chartPanel.getChildren().clear();
+                
+                Separator separator = new Separator();
+                separator.setVisible(false);
+                separator.setOrientation(Orientation.VERTICAL);
+                separator.setMinHeight(15);
+                
+                Label lbDiagramaTemporal = new Label();
+                lbDiagramaTemporal.setText(" Diagrama Temporal");
+                lbDiagramaTemporal.setStyle("-fx-text-fill: #e1fdff; -fx-font-weight: bold;");
 
-		VBOX = new VBox();
-		VBOX.setPrefHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
-		VBOX.setMaxHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
-		VBOX.setMinHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
-		VBOX.setMaxWidth(chartPanel.getWidth());
-		VBOX.setPrefWidth(chartPanel.getWidth());
-		VBOX.setMinWidth(chartPanel.getWidth());
-		
-		System.out.println("antes: " + chartPanel.getWidth());
-		
-		MainApp.STAGE.widthProperty().addListener(new ChangeListener<Number>() {
-			@Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {		
-				VBOX.setMaxWidth(newSceneWidth.doubleValue());
-				VBOX.setPrefWidth(newSceneWidth.doubleValue());
-				VBOX.setMinWidth(newSceneWidth.doubleValue());
-			}
-		});
-	
-		VBOX.getChildren().add(separator);
-		VBOX.getChildren().add(lbDiagramaTemporal);
-		VBOX.getChildren().add(simulatedChart);	
-		
-		if (serverCapacity != null){
-			Label lbServerCapacity = new Label();
-			lbServerCapacity.setText("  Capacidade do Servidor");
-			lbServerCapacity.setStyle("-fx-text-fill: #e1fdff; -fx-font-weight: bold;");
-			VBOX.getChildren().add(lbServerCapacity);
+                VBOX = new VBox();
+                VBOX.setPrefHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+                VBOX.setMaxHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+                VBOX.setMinHeight(chartPanel.getHeight() - simulateControl.getHeight() - 20);
+                VBOX.setMaxWidth(chartPanel.getWidth());
+                VBOX.setPrefWidth(chartPanel.getWidth());
+                VBOX.setMinWidth(chartPanel.getWidth());
+                
+                System.out.println("antes: " + chartPanel.getWidth());
+                
+                MainApp.STAGE.widthProperty().addListener(new ChangeListener<Number>() {
+                        @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {                
+                                VBOX.setMaxWidth(newSceneWidth.doubleValue());
+                                VBOX.setPrefWidth(newSceneWidth.doubleValue());
+                                VBOX.setMinWidth(newSceneWidth.doubleValue());
+                        }
+                });
+        
+                VBOX.getChildren().add(separator);
+                VBOX.getChildren().add(lbDiagramaTemporal);
+                VBOX.getChildren().add(simulatedChart);        
+                
+                if (serverCapacity != null){
+                        Label lbServerCapacity = new Label();
+                        lbServerCapacity.setText(" Capacidade do Servidor");
+                        lbServerCapacity.setStyle("-fx-text-fill: #e1fdff; -fx-font-weight: bold;");
+                        VBOX.getChildren().add(lbServerCapacity);
 
-			this.serverCapacity.legendSideProperty().set(Side.RIGHT);
-			simulatedChart.legendSideProperty().set(Side.RIGHT);
-			VBOX.getChildren().add(this.serverCapacity);			
-		}
-		
-		chartPanel.getChildren().add(VBOX);
-	}
+                        this.serverCapacity.legendSideProperty().set(Side.RIGHT);
+                        simulatedChart.legendSideProperty().set(Side.RIGHT);
+                        VBOX.getChildren().add(this.serverCapacity);                        
+                }
+                
+                chartPanel.getChildren().add(VBOX);
+        }
 
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
+        @Override
+        public void initialize(URL arg0, ResourceBundle arg1) {
 
-		techniqueChoiceBox.setItems(FXCollections.observableArrayList(
-				"RateMonotonic", "Deadline Monotonic",
-				"Earliest Deadline First", "Round Robin", "Least Laxity"));
-		configureTable();
-//	xs
-
-//		
-//		PeriodicTask ts = new PeriodicTask();
-//		ts.setName("TS");
-//		ts.setComputationTime(2);
-//		ts.setPeriod(10);
-//		ts.setDeadline(8);
-//		
-////ss
-//	
-//		PeriodicTask t1 = new PeriodicTask();
-//		t1.setName("T1");
-//		t1.setComputationTime(5);
-//		t1.setPeriod(20);
-//		t1.setDeadline(7);
-//		t1.setActivationTime(0);
-//
-////		PeriodicTask t2 = new PeriodicTask();
-////		t2.setName("T2");
-////		t2.setComputationTime(2);
-////		t2.setPeriod(5);
-////		t2.setDeadline(4);
-////		t2.setActivationTime(0);
-//		
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("T3");
-//		t3.setComputationTime(1);
-//		t3.setPeriod(10);
-//		t3.setDeadline(8);
-//		t3.setActivationTime(0);
-//		
-//		SporadicTask s1 = new SporadicTask();
-//		s1.setName("S1");
-//		s1.setComputationTime(1);
-//		s1.setActivationTime(0);	
-//		
-//		PeriodicTask t1 = new PeriodicTask();
-//		t1.setName("T1");
-//		t1.setComputationTime(3);
-//		t1.setPeriod(20);
-//		t1.setDeadline(20);
-//		t1.setActivationTime(0);
-//	
-//		PeriodicTask t2 = new PeriodicTask();
-//		t2.setName("T2");
-//		t2.setComputationTime(2);
-//		t2.setPeriod(5);
-//		t2.setDeadline(5);
-//		t2.setActivationTime(0);
-//		
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("T3");
-//		t3.setComputationTime(2);
-//		t3.setPeriod(10);
-//		t3.setDeadline(10);
-//		t3.setActivationTime(0);
-//				
-//		PeriodicTask t1 = new PeriodicTask();
-//		t1.setName("T1");
-//		t1.setComputationTime(3);
-//		t1.setPeriod(20);
-//		t1.setDeadline(7);
-//
-//		PeriodicTask t2 = new PeriodicTask();
-//		t2.setName("T2");
-//		t2.setComputationTime(2);
-//		t2.setPeriod(5);
-//		t2.setDeadline(4);
-//
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("T3");
-//		t3.setComputationTime(2);
-//		t3.setPeriod(10);
-//		t3.setDeadline(9);
-		
-		PeriodicTask t1 = new PeriodicTask();
-		t1.setName("T1");
-		t1.setComputationTime(3);
-		t1.setPeriod(20);
-		t1.setDeadline(7);
-		
-		PeriodicTask t2 = new PeriodicTask();
-		t2.setName("T2");
-		t2.setComputationTime(2);
-		t2.setPeriod(8);
-		t2.setDeadline(7);
-		
-//		PeriodicTask t3 = new PeriodicTask();
-//		t3.setName("T3");
-//		t3.setComputationTime(1);
-//		t3.setPeriod(10);
-//		t3.setDeadline(8);
-		
-		PeriodicTask ts = new PeriodicTask();
-		ts.setName("TS");
-		ts.setComputationTime(2);
-		ts.setPeriod(10);
-		ts.setDeadline(8);
-		
-		SporadicTask s1 = new SporadicTask();
-		s1.setName("S1");
-		s1.setComputationTime(1);
-		s1.setActivationTime(0);
-		
-//		this.scheduler.setSporadicPolicy(SporadicPolicy.SPORADIC_SERVER);
-//		
-//		this.scheduler.getTasks().add(t1);
-//		this.scheduler.getTasks().add(t2);
-//		this.scheduler.getTasks().add(t3);
-//		this.scheduler.getTasks().add(ts);
-//		
-//		this.scheduler.getTasks().add(s1);
-		
-		
-		GeneratorController.TASKS.add(t1);
-		GeneratorController.TASKS.add(t2);
-//		GeneratorController.TASKS.add(t3);
-
-		GeneratorController.TASKS.add(ts);
-
-		
-		GeneratorController.TASKS.add(s1);
-		
-		tasksTable.getItems().addAll(GeneratorController.TASKS);
-	}
-	
-	public Integer getTimeSlotFromUser(final String escalonamento){
-		
-		GridPane grid = new GridPane();
+                techniqueChoiceBox.setItems(FXCollections.observableArrayList(
+                                "RateMonotonic", "Deadline Monotonic",
+                                "Earliest Deadline First", "Round Robin", "Least Laxity"));
+                configureTable();
+        }
+        
+        public Integer getTimeSlotFromUser(final String escalonamento){
+                
+                GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(0, 10, 0, 10));
@@ -532,51 +423,51 @@ public class GeneratorController implements Initializable {
         grid.add(username, 1, 0);
                         
         Callback<Void, Void> myCallback = new Callback<Void, Void>() {
-        	@Override
-        	public Void call(Void arg0) {
-        		
-        		int timeSlot = 1;
-        		
-        		try{
-        			timeSlot = Integer.parseInt(username.getText());
-        			if (timeSlot <= 0){
-        				throw new NumberFormatException();
-        			}
-        		}catch(NumberFormatException ne){
-        			Dialogs.showWarningDialog(MainApp.STAGE,"Apenas números inteiros e maiores que 0 (zero) são permitidos", "Erro de Validação", "Atenção");       
-        			getTimeSlotFromUser(escalonamento);
-        		}
-        		
-        		GeneratorController.TIME_SLOT = timeSlot;
-        		return null;
-        	}
+                @Override
+                public Void call(Void arg0) {
+                        
+                        int timeSlot = 1;
+                        
+                        try{
+                                timeSlot = Integer.parseInt(username.getText());
+                                if (timeSlot <= 0){
+                                        throw new NumberFormatException();
+                                }
+                        }catch(NumberFormatException ne){
+                                Dialogs.showWarningDialog(MainApp.STAGE,"Apenas números inteiros e maiores que 0 (zero) são permitidos", "Erro de Validação", "Atenção");
+                                getTimeSlotFromUser(escalonamento);
+                        }
+                        
+                        GeneratorController.TIME_SLOT = timeSlot;
+                        return null;
+                }
         };
         
         Dialogs.showCustomDialog(MainApp.STAGE, grid, escalonamento, "Entrada de Dados", DialogOptions.OK, myCallback);
         return GeneratorController.TIME_SLOT;
-	}
-	
-	/**
-	 * Metodo que exibe a tela de cadastro para tarefas
-	 * periodicas e esporadicas.
-	 * 
-	 */
-	public void addTask(){
-		
-		GridPane grid = new GridPane();
+        }
+        
+        /**
+         * Metodo que exibe a tela de cadastro para tarefas
+         * periodicas e esporadicas.
+         *
+         */
+        public void addTask(){
+                
+                GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(0, 10, 0, 10));
         
         final TextField taskName = new TextField();
         grid.add(new Label("Nome:"), 0, 0);
-        grid.add(taskName, 1, 0); 	
+        grid.add(taskName, 1, 0);         
         
-        ObservableList<String> options = 
-		    FXCollections.observableArrayList(
-		        "Periódica",
-		        "Esporádica"
-		    );
+        ObservableList<String> options =
+                 FXCollections.observableArrayList(
+                 "Periódica",
+                 "Esporádica"
+                 );
         
         final ComboBox<String> taskType = new ComboBox(options);
         taskType.setPromptText("Periódica");
@@ -585,114 +476,114 @@ public class GeneratorController implements Initializable {
         grid.add(taskType, 3, 0);
 
         final TextField computationTime = new TextField();
-        grid.add(new Label("Tempo de Computação: "), 0, 1);       
+        grid.add(new Label("Tempo de Computação: "), 0, 1);
         grid.add(computationTime, 1, 1);
         
-        final TextField period = new TextField();        
+        final TextField period = new TextField();
         grid.add(new Label("Período: "), 2, 1);
         grid.add(period, 3, 1);
         
-        final TextField deadline = new TextField();        
+        final TextField deadline = new TextField();
         grid.add(new Label("Deadline: "), 0, 2);
         grid.add(deadline, 1, 2);
         
-        final TextField activationTime = new TextField();        
+        final TextField activationTime = new TextField();
         grid.add(new Label("Tempo de Ativação: "), 2, 2);
         grid.add(activationTime, 3, 2);
                 
         Callback<Void, Void> myCallback = new Callback<Void, Void>() {
-        	@Override
-        	public Void call(Void arg0) {
-        		
-        		try{
-	        		if ("PERIÓDICA".equals(taskType.getValue().toUpperCase())){
-	        			GeneratorController.TASK = new PeriodicTask();
-	        		}
-	        		if ("ESPORÁDICA".equals(taskType.getValue().toUpperCase())){
-	        			GeneratorController.TASK = new SporadicTask();
-	        		}
-	        		
-	        		if (GeneratorController.TASK instanceof PeriodicTask){
-	        			PeriodicTask pTask = (PeriodicTask) GeneratorController.TASK;
-	        			
-	        			pTask.setName(taskName.getText());
-	        			if (existsTaskName(pTask.getName()) == false){
-	        			
-		        			pTask.setComputationTime(Integer.valueOf(computationTime.getText()));
-		        			pTask.setPeriod(Integer.valueOf(period.getText()));
-		        			pTask.setDeadline(Integer.valueOf(deadline.getText()));
-		        			pTask.setActivationTime(Integer.valueOf(activationTime.getText()));
-		        			
-		        			GeneratorController.TASKS.add(pTask);	        			
-		        			ObservableList<Task> observableArrayList = FXCollections.observableArrayList(GeneratorController.TASKS);	        			
-		        			GeneratorController.tasksTable.setItems(observableArrayList);
-	        			}
-	        		}
-	        		if (GeneratorController.TASK instanceof SporadicTask){
-	        			SporadicTask sTask = (SporadicTask) GeneratorController.TASK;
-	        			
-	        			sTask.setName(taskName.getText());
-	        			if (existsTaskName(sTask.getName()) == false){
-	        			
-	        				sTask.setComputationTime(Integer.valueOf(computationTime.getText()));
-	        				sTask.setActivationTime(Integer.valueOf(activationTime.getText()));
-		        			
-		        			GeneratorController.TASKS.add(sTask);	        			
-		        			ObservableList<Task> observableArrayList = FXCollections.observableArrayList(GeneratorController.TASKS);	        			
-		        			GeneratorController.tasksTable.setItems(observableArrayList);
-	        			}
-	        		}
-	        		
-        		}catch(NumberFormatException ne){
-        			Dialogs.showWarningDialog(MainApp.STAGE,"Apenas números inteiros e maiores que 0 (zero) são permitidos", "Erro de Validação", "Atenção");       
-        			addTask();
-        		}        		        		
-        		return null;
-        	}
+                @Override
+                public Void call(Void arg0) {
+                        
+                        try{
+                         if ("PERIÓDICA".equals(taskType.getValue().toUpperCase())){
+                                 GeneratorController.TASK = new PeriodicTask();
+                         }
+                         if ("ESPORÁDICA".equals(taskType.getValue().toUpperCase())){
+                                 GeneratorController.TASK = new SporadicTask();
+                         }
+                         
+                         if (GeneratorController.TASK instanceof PeriodicTask){
+                                 PeriodicTask pTask = (PeriodicTask) GeneratorController.TASK;
+                                 
+                                 pTask.setName(taskName.getText());
+                                 if (existsTaskName(pTask.getName()) == false){
+                                 
+                                         pTask.setComputationTime(Integer.valueOf(computationTime.getText()));
+                                         pTask.setPeriod(Integer.valueOf(period.getText()));
+                                         pTask.setDeadline(Integer.valueOf(deadline.getText()));
+                                         pTask.setActivationTime(Integer.valueOf(activationTime.getText()));
+                                         
+                                         GeneratorController.TASKS.add(pTask);                                 
+                                         ObservableList<Task> observableArrayList = FXCollections.observableArrayList(GeneratorController.TASKS);                                 
+                                         GeneratorController.tasksTable.setItems(observableArrayList);
+                                 }
+                         }
+                         if (GeneratorController.TASK instanceof SporadicTask){
+                                 SporadicTask sTask = (SporadicTask) GeneratorController.TASK;
+                                 
+                                 sTask.setName(taskName.getText());
+                                 if (existsTaskName(sTask.getName()) == false){
+                                 
+                                         sTask.setComputationTime(Integer.valueOf(computationTime.getText()));
+                                         sTask.setActivationTime(Integer.valueOf(activationTime.getText()));
+                                         
+                                         GeneratorController.TASKS.add(sTask);                                 
+                                         ObservableList<Task> observableArrayList = FXCollections.observableArrayList(GeneratorController.TASKS);                                 
+                                         GeneratorController.tasksTable.setItems(observableArrayList);
+                                 }
+                         }
+                         
+                        }catch(NumberFormatException ne){
+                                Dialogs.showWarningDialog(MainApp.STAGE,"Apenas números inteiros e maiores que 0 (zero) são permitidos", "Erro de Validação", "Atenção");
+                                addTask();
+                        }                                  
+                        return null;
+                }
         };
         
         Dialogs.showCustomDialog(MainApp.STAGE, grid, "Adicionar Tarefa", "Entrada de Dados", DialogOptions.OK, myCallback);
-	}
-	
-	public void showServerCapacity(){
-		
-		if (this.serverCapacity == null){
-			Dialogs.showWarningDialog(MainApp.STAGE, "Não existe nenhum gráfico de capacidade de servidor disponível.", "Não foi possível realizar a operação", "Alerta");
-			return;
-		}else{
-			
-			AreaChart<Number, Number> temp = new AreaChart<Number, Number>(
-					this.serverCapacity.getXAxis(), 
-					this.serverCapacity.getYAxis(), 
-					this.serverCapacity.getData());
-					
-			this.stageServerCapacity = new Stage();					
-			this.stageServerCapacity.setTitle("Capacidade do Servidor");
-			Scene scene  = new Scene(temp,800,600);
-	        this.stageServerCapacity.setScene(scene);			
+        }
+        
+        public void showServerCapacity(){
+                
+                if (this.serverCapacity == null){
+                        Dialogs.showWarningDialog(MainApp.STAGE, "Não existe nenhum gráfico de capacidade de servidor disponível.", "Não foi possível realizar a operação", "Alerta");
+                        return;
+                }else{
+                        
+                        AreaChart<Number, Number> temp = new AreaChart<Number, Number>(
+                                        this.serverCapacity.getXAxis(),
+                                        this.serverCapacity.getYAxis(),
+                                        this.serverCapacity.getData());
+                                        
+                        this.stageServerCapacity = new Stage();                                        
+                        this.stageServerCapacity.setTitle("Capacidade do Servidor");
+                        Scene scene = new Scene(temp,800,600);
+         this.stageServerCapacity.setScene(scene);                        
             this.stageServerCapacity.show();
-		}		
-	}
-	
-	private boolean existsTaskName(String taskName){		
-		for(Task task : GeneratorController.TASKS){
-			if (taskName.equals(task.getName())){
-    			Dialogs.showWarningDialog(MainApp.STAGE,"Já existe uma tarefa cadastrada com o nome '"+taskName+"'", "Erro de Validação", "Atenção");
-    			return true;
-			}
-		}
-		return false;
-	}
-	
-	private class ButtonCell extends TableCell<Record, Boolean> {
+                }                
+        }
+        
+        private boolean existsTaskName(String taskName){                
+                for(Task task : GeneratorController.TASKS){
+                        if (taskName.equals(task.getName())){
+                            Dialogs.showWarningDialog(MainApp.STAGE,"Já existe uma tarefa cadastrada com o nome '"+taskName+"'", "Erro de Validação", "Atenção");
+                            return true;
+                        }
+                }
+                return false;
+        }
+        
+        private class ButtonCell extends TableCell<Record, Boolean> {
         final Button cellButton = new Button("X");
          
-        ButtonCell(){             
+        ButtonCell(){
             cellButton.setOnAction(new EventHandler<ActionEvent>(){
  
                 @Override
                 public void handle(ActionEvent t) {
-                	  int selectdIndex = getTableRow().getIndex();
+                         int selectdIndex = getTableRow().getIndex();
                       GeneratorController.tasksTable.getItems().remove(selectdIndex);
                       GeneratorController.TASKS.remove(selectdIndex);
                 }
@@ -707,22 +598,22 @@ public class GeneratorController implements Initializable {
             }
         }
     }
-	
-	private boolean existsSporadicTasks(){
-		for (Task task : GeneratorController.TASKS) {
-			if (task instanceof SporadicTask){
-				return true;
-			}			
-		}
-		return false;
-	}
-	
-	private boolean existsTaskServer(){
-		for (Task task : GeneratorController.TASKS) {
-			if (task instanceof PeriodicTask && task.getName().equals("TS")){
-				return true;				
-			}			
-		}
-		return false;
-	}
+        
+        private boolean existsSporadicTasks(){
+                for (Task task : GeneratorController.TASKS) {
+                        if (task instanceof SporadicTask){
+                                return true;
+                        }                        
+                }
+                return false;
+        }
+        
+        private boolean existsTaskServer(){
+                for (Task task : GeneratorController.TASKS) {
+                        if (task instanceof PeriodicTask && task.getName().equals("TS")){
+                                return true;                                
+                        }                        
+                }
+                return false;
+        }
 }
